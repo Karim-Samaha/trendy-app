@@ -26,6 +26,7 @@ import { UserType } from "../UserContext";
 import jwt_decode from "jwt-decode";
 import { addToCart } from "../redux/CartReducer";
 import { config } from "./config";
+import Product from "../components/Product";
 const HomeScreen = () => {
   const images = [
     "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/wb9ms.jpeg",
@@ -36,13 +37,13 @@ const HomeScreen = () => {
   const offers = [
     {
       id: "0",
-      title:
+      name:
         "منتج 1",
       offer: "72%",
-      oldPrice: 7500,
+      priceBefore: 7500,
       price: 4500,
       image:
-        "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/فازات ورد.jpeg",
+        "فازات ورد.jpeg",
       carouselImages: [
         "https://m.media-amazon.com/images/I/61a2y1FCAJL._SX679_.jpg",
         "https://m.media-amazon.com/images/I/71DOcYgHWFL._SX679_.jpg",
@@ -54,12 +55,13 @@ const HomeScreen = () => {
     },
     {
       id: "1",
-      title:
+      name:
         "منتج 2",
       offer: "40%",
-      oldPrice: 7955,
+      priceBefore: 7955,
       price: 3495,
-      image: "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/فازات ورد.jpeg",
+      image:
+        "فازات ورد.jpeg",
       carouselImages: [
         "https://m.media-amazon.com/images/I/71h2K2OQSIL._SX679_.jpg",
         "https://m.media-amazon.com/images/I/71BlkyWYupL._SX679_.jpg",
@@ -70,24 +72,26 @@ const HomeScreen = () => {
     },
     {
       id: "2",
-      title:
+      name:
         "منتج 3",
       offer: "40%",
-      oldPrice: 7955,
+      priceBefore: 7955,
       price: 3495,
-      image: "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/فازات ورد.jpeg",
+      image:
+        "فازات ورد.jpeg",
       carouselImages: ["https://m.media-amazon.com/images/I/41t7Wa+kxPL.jpg"],
       color: "black",
       size: "Normal",
     },
     {
       id: "3",
-      title:
+      name:
         "منتج 4",
       offer: "40%",
-      oldPrice: 24999,
+      priceBefore: 24999,
       price: 19999,
-      image: "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/فازات ورد.jpeg",
+      image:
+        "فازات ورد.jpeg",
       carouselImages: [
         "https://m.media-amazon.com/images/I/41bLD50sZSL._SX300_SY300_QL70_FMwebp_.jpg",
         "https://m.media-amazon.com/images/I/616pTr2KJEL._SX679_.jpg",
@@ -109,42 +113,7 @@ const HomeScreen = () => {
     sectionThreeRef.current.scrollToEnd({ animated: false });
 
   };
-  const [list, setList] = useState([
-    {
-      id: "0",
-      image: "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/فازات ورد.jpeg",
-      name: "الاكثر مبيعا",
-    },
-    {
-      id: "1",
-      image:
-        "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/فازات ورد.jpeg",
-      name: "فازات ورد",
-    },
-    {
-      id: "3",
-      image:
-        "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/فازات ورد.jpeg",
-      name: "ورد مع سمك",
-    },
-    {
-      id: "4",
-      image:
-        "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/فازات ورد.jpeg",
-      name: "ورود التهنئة",
-    },
-    {
-      id: "5",
-      image:
-        "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/فازات ورد.jpeg",
-      name: "ورد",
-    },
-    {
-      id: "6",
-      image: "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/فازات ورد.jpeg",
-      name: "ورد",
-    },
-  ])
+  const [list, setList] = useState([])
   const [products, setProducts] = useState([]);
   const navigation = useNavigation();
   const [open, setOpen] = useState(false);
@@ -308,7 +277,7 @@ const HomeScreen = () => {
               onContentSizeChange={scrollToEnd}
               ref={categoryRef}
             >
-              {list.map((item, index) => (
+              {list.length > 0 ? list.map((item, index) => (
                 <Pressable
                   key={index}
                   style={{
@@ -319,7 +288,16 @@ const HomeScreen = () => {
                     padding: 10,
                     borderRadius: 10
                   }}
-
+                  onPress={() => navigation.navigate("SubCategories", {
+                    id: item?.id,
+                    title: item?.title,
+                    price: item?.price,
+                    carouselImages: item?.carouselImages,
+                    color: item?.color,
+                    size: item?.size,
+                    oldPrice: item?.oldPrice,
+                    item: item,
+                  })}
                 >
                   <Image
                     style={{ width: 100, height: 100, resizeMode: "cover", borderRadius: 11 }}
@@ -337,7 +315,7 @@ const HomeScreen = () => {
                     {item?.name}
                   </Text>
                 </Pressable>
-              ))}
+              )) : null}
             </ScrollView>
           </View>
           <Text
@@ -359,69 +337,7 @@ const HomeScreen = () => {
               onContentSizeChange={scrollToEnd}
               ref={sectionOneRef}>
               {offers.map((item, index) => (
-                <Pressable
-                  onPress={() =>
-                    navigation.navigate("Info", {
-                      id: item.id,
-                      title: item.title,
-                      price: item?.price,
-                      carouselImages: item.carouselImages,
-                      color: item?.color,
-                      size: item?.size,
-                      oldPrice: item?.oldPrice,
-                      item: item,
-                    })
-                  }
-                  style={{
-                    marginVertical: 10,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginHorizontal: 10
-                  }}
-                >
-                  <Image
-                    style={{ width: 120, height: 120, resizeMode: "contain", borderRadius: 11 }}
-                    source={{ uri: item?.image }}
-                  />
-                  <Text style={{ fontWeight: "bold", fontSize: 16 }}>{item.title}</Text>
-                  <View>
-
-                    <Text style={{ fontWeight: "bold", fontSize: 11, }}>سعر قبل الخصم : <Text style={{ textDecorationLine: 'line-through', textDecorationStyle: 'solid', color: "#ff1111" }}>{item.oldPrice}</Text></Text>
-                    <Text style={{ fontWeight: "bold", fontSize: 16 }}>السعر : {item.price}</Text>
-
-                  </View>
-                  <View
-                    style={{
-                      backgroundColor: "#FDFDFD",
-                      paddingVertical: 5,
-                      width: 100,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: 10,
-                      borderRadius: 11,
-                      borderWidth: 1,
-                      borderColor : "#55a8b9"
-                    }}
-                  >
-                    <Text
-                      style={{
-                        textAlign: "center",
-                        color: "#55a8b9",
-                        fontSize: 13,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      خصم {item?.offer}
-                    </Text>
-                  </View>
-                  <Pressable style={{
-                    backgroundColor: "#55a8b9", width: 120, alignItems: "center", justifyContent: "center",
-                    height: 36, borderRadius: 6, marginTop: 10
-                  }} onPress={() => addItemToCart(item)}>
-                    <Text style={{ color: "#fff" }} >اضف الي السلة</Text>
-                  </Pressable>
-                  
-                </Pressable>
+                <Product item={item} key={item.id} />
               ))}
             </ScrollView>
             <Image src={images[0]} style={{ width: "95%", height: 160, marginHorizontal: "2.5%", marginVertical: 15 }} />
@@ -437,70 +353,7 @@ const HomeScreen = () => {
               onContentSizeChange={scrollToEnd}
               ref={sectionTwoRef}>
               {offers.map((item, index) => (
-                <Pressable
-                  onPress={() =>
-                    navigation.navigate("Info", {
-                      id: item.id,
-                      title: item.title,
-                      price: item?.price,
-                      carouselImages: item.carouselImages,
-                      color: item?.color,
-                      size: item?.size,
-                      oldPrice: item?.oldPrice,
-                      item: item,
-                    })
-                  }
-                  style={{
-                    marginVertical: 10,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginHorizontal: 10
-                  }}
-                >
-                  <Image
-                    style={{ width: 120, height: 120, resizeMode: "contain", borderRadius: 11 }}
-                    source={{ uri: item?.image }}
-                  />
-                  <Text style={{ fontWeight: "bold", fontSize: 16 }}>{item.title}</Text>
-                  <View>
-
-                    <Text style={{ fontWeight: "bold", fontSize: 11, }}>سعر قبل الخصم : <Text style={{ textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>{item.oldPrice}</Text></Text>
-                    <Text style={{ fontWeight: "bold", fontSize: 16 }}>السعر : {item.price}</Text>
-
-                  </View>
-                  <View
-                    style={{
-                      backgroundColor: "#FDFDFD",
-                      paddingVertical: 5,
-                      width: 100,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: 10,
-                      borderRadius: 11,
-                      borderWidth: 1,
-                      borderColor : "#55a8b9"
-                    }}
-                  >
-
-                    <Text
-                      style={{
-                        textAlign: "center",
-                        color: "#55a8b9",
-                        fontSize: 13,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      خصم {item?.offer}
-                    </Text>
-                  </View>
-                  <Pressable style={{
-                    backgroundColor: "#55a8b9", width: 120, alignItems: "center", justifyContent: "center",
-                    height: 36, borderRadius: 6, marginTop: 10
-                  }} onPress={() => addItemToCart(item)}>
-                    <Text style={{ color: "#fff" }} >اضف الي السلة</Text>
-                  </Pressable>
-               
-                </Pressable>
+                <Product item={item} key={item.id} />
               ))}
 
             </ScrollView>
@@ -517,69 +370,7 @@ const HomeScreen = () => {
               onContentSizeChange={scrollToEnd}
               ref={sectionThreeRef}>
               {offers.map((item, index) => (
-                <Pressable
-                  onPress={() =>
-                    navigation.navigate("Info", {
-                      id: item.id,
-                      title: item.title,
-                      price: item?.price,
-                      carouselImages: item.carouselImages,
-                      color: item?.color,
-                      size: item?.size,
-                      oldPrice: item?.oldPrice,
-                      item: item,
-                    })
-                  }
-                  style={{
-                    marginVertical: 10,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginHorizontal: 10
-                  }}
-                >
-                  <Image
-                    style={{ width: 120, height: 120, resizeMode: "contain", borderRadius: 11 }}
-                    source={{ uri: item?.image }}
-                  />
-                  <Text style={{ fontWeight: "bold", fontSize: 16 }}>{item.title}</Text>
-                  <View>
-
-                    <Text style={{ fontWeight: "bold", fontSize: 11, }}>سعر قبل الخصم : <Text style={{ textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>{item.oldPrice}</Text></Text>
-                    <Text style={{ fontWeight: "bold", fontSize: 16 }}>السعر : {item.price}</Text>
-
-                  </View>
-                  <View
-                    style={{
-                      backgroundColor: "#FDFDFD",
-                      paddingVertical: 5,
-                      width: 100,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: 10,
-                      borderRadius: 11,
-                      borderWidth: 1,
-                      borderColor : "#55a8b9"
-                    }}
-                  >
-                    <Text
-                      style={{
-                        textAlign: "center",
-                        color: "#55a8b9",
-                        fontSize: 13,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      خصم {item?.offer}
-                    </Text>
-                  </View>
-                  <Pressable style={{
-                    backgroundColor: "#55a8b9", width: 120, alignItems: "center", justifyContent: "center",
-                    height: 36, borderRadius: 6, marginTop: 10
-                  }} onPress={() => addItemToCart(item)}>
-                    <Text style={{ color: "#fff" }} >اضف الي السلة</Text>
-                  </Pressable>
-              
-                </Pressable>
+                <Product item={item} key={item.id} />
               ))}
             </ScrollView>
           </View>

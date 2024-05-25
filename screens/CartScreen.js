@@ -17,6 +17,7 @@ import {
   removeFromCart,
 } from "../redux/CartReducer";
 import { useNavigation } from "@react-navigation/native";
+import { config } from "./config";
 
 const CartScreen = () => {
   const cart = useSelector((state) => state.cart.cart);
@@ -35,6 +36,35 @@ const CartScreen = () => {
     dispatch(removeFromCart(item));
   };
   const navigation = useNavigation();
+  if (cart.length <= 0) {
+    return (
+      <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
+        <View 
+        style={{ justifyContent: "center", width: "100%", height: 600,
+         justifyContent: "center", alignItems: "center", }}>
+          <Text style={{fontSize: 18, fontWeight: "bold", marginBottom:30}}
+          >لا يوجد منتجات في عربة التسوق
+          </Text>
+          <Pressable
+        onPress={() => navigation.navigate("Home")}
+        style={{
+          backgroundColor: "#55a8b9",
+          padding: 10,
+          borderRadius: 20,
+          justifyContent: "center",
+          alignItems: "center",
+          marginHorizontal: 10,
+          width: "60%",
+        }}
+      >
+        <View>
+          <Text style={{ color: "#fff" }}>التسوق</Text>
+        </View>
+      </Pressable>
+        </View>
+      </ScrollView>
+    )
+  }
   return (
     <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
 
@@ -95,10 +125,11 @@ const CartScreen = () => {
 
               }}
             >
+
               <View>
                 <Image
                   style={{ width: 140, height: 140, resizeMode: "contain" }}
-                  source={{ uri: item?.image }}
+                  source={{ uri: `${config.assetsUrl}/${item?.item?.image}` }}
                 />
               </View>
 
@@ -109,13 +140,10 @@ const CartScreen = () => {
                 <Text
                   style={{ fontSize: 20, fontWeight: "bold", marginTop: 6 }}
                 >
-                  {item?.price}
+                  {item?.price}رس
                 </Text>
 
-                <Text style={{ color: "green" }}>In Stock</Text>
-                {/* <Text style={{ fontWeight: "500", marginTop: 6 }}>
-                  {item?.rating?.rate} ratings
-                </Text> */}
+               
               </View>
             </Pressable>
 

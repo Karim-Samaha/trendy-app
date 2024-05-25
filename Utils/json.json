@@ -1,0 +1,24 @@
+{
+  "__v": 0,
+  "_id": "65f591766bd1131a8195f021",
+  "accessToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWY1OTE3NjZiZDExMzFhODE5NWYwMjEiLCJlbWFpbCI6ImthcmltLmFkbWluQGFkbWluLmNvbSIsIm5hbWUiOiJrYXJpbSBtYWhtb3VkIiwicm9sZSI6ImFkbWluIiwiY3JlYXRlZEF0IjoiMjAyNC0wMy0xNlQxMjozMjo1NC40NTFaIiwidXBkYXRlZEF0IjoiMjAyNC0wNS0yNVQxMjoxMToxNi45ODRaIiwiX192IjowLCJmYXZvcml0ZSI6WyI2NWZiMjRmYThmNmM0ZjE0ZmE3MTYxYTgiLCI2NWZiMjVjZjkyZGMzY2RmYjE5ZGI3MjEiXSwicGhvbmUiOiIxMjg4MDEwMTk2IiwiYWN0aXZlIjp0cnVlLCJhZGRyZXNzIjoi2LnZhtmI2KfYp9in2KfYp9mG2Yog2LHYp9in2KfZitisINis2KfYp9in2KfYp9mKIiwicGVybWlzc2lvbnMiOlsidXNlcnMiLCJzYWxlcyIsIm9yZGVycyIsImNtcyIsInNjcmlwdHMiLCJyZXZpZXdzIiwibWFya3RpbmciLCJwcm9kdWN0LXdyaXRlIl0sInNlc3Npb24iOiI2NjUxZjAyNWY4ZmQyNzQ2M2UwZTNkODkiLCJpYXQiOjE3MTY2NDU5MjUsImV4cCI6ODgxMTY2NDU5MjV9.OsDw9RU719yyuGd_ih761STuhEJ70jcW-gNxVsUQOGD7Yf-Sh8NVwZ_w2iERINaDzu9AVFK5Smsg5NWjdJ2QMJLEXQJpziOAxWMVscCd_R0fE9VCVWqr-Kib8Z5pj3HtyRe6OIVyEgX4ani2Eue7shczK0d9vshVTcDfDkFjOdUj5AvqojVC7SnAyTrZ2A55JxHI3FFZKaPrB5iWzdNLqG3aZd8wqmke5tBQeYq2gt1R3SePQKElvxYtlHrUmfq7eekjyfacvDe6ocLIOM0g-vBm5CogATPwICd2c7qcKpa37eq3XIsTKagRbT1uTDDJhZnBjF3dWalfLtLLBMhdubpwBLWP3f3A48WIxIHoakj3MM54XS2WUrEucAdhDAo65kJjr5XPsGFATFNwQL-wJssPBSlwZmctSZbu8PC4pnpvXsJCzW5LkPEptXRkml0yPIyuVOm-2qqUMq-oL6TFH-6d-4fBEC8RkjhiF7VD_sFd7MnMAHx2lhnFBn7qxicuXnI7ESvJdTvhJOFLwgK199wiLXn0_7aofJx5xy6eojFN1Hpi0Ewgs01FEiGFG_Sr6ZBPZBMPjDGplc8zg2lXwikn5jOymyxZtUyxjX6Dt1tiEx-pynjlH1AoPNnC0N6CJNWiF11hKtlPvqNxAZ0eSQg0ikfwvNx-0SHMlDwOtm4",
+  "active": true,
+  "address": "عنواااااني رااايج جاااااي",
+  "createdAt": "2024-03-16T12:32:54.451Z",
+  "email": "karim.admin@admin.com",
+  "favorite": ["65fb24fa8f6c4f14fa7161a8", "65fb25cf92dc3cdfb19db721"],
+  "name": "karim mahmoud",
+  "permissions": [
+    "users",
+    "sales",
+    "orders",
+    "cms",
+    "scripts",
+    "reviews",
+    "markting",
+    "product-write"
+  ],
+  "phone": "1288010196",
+  "role": "admin",
+  "updatedAt": "2024-05-25T12:11:16.984Z"
+}

@@ -146,6 +146,7 @@ const ProfileScreen = () => {
             height: 50,
             justifyContent: "center"
           }}
+          onPress={() => navigation.navigate("OrderHistory")}
         >
           <Text style={{ fontWeight: "bold", fontSize: 18 }}>طلباتي</Text>
         </Pressable>

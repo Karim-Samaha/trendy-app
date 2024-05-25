@@ -9,16 +9,21 @@ _axios.interceptors.request.use(
             Accept: 'application/json, text/plain, */*',
             'Content-Type': 'application/json',
         }
-        if (config?.session?.user?.accessToken) {
-            headers['Authorization'] = `Bearer ${config.session.user.accessToken}`
+        if (config?.user?.accessToken) {
+            headers['Authorization'] = `Bearer ${config.user.accessToken}`
+        }
+        if (JSON.parse(config.user).accessToken) {
+            headers['Authorization'] = `Bearer ${JSON.parse(config.user).accessToken}`
+
         }
         if (config?.userToken) {
-            headers['Authorization'] = `Bearer ${config.session.user.accessToken}`
+            headers['Authorization'] = `Bearer ${config.user.accessToken}`
         }
         if (!config.data) {
             config.data = {}
         }
         config.headers = headers
+
         return config
     },
     function (error) {

@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Login from "../screens/Login";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { handleLogin } from "../redux/userReducer";
+import OrderHistory from "../screens/OrderHistory";
 const StackNavigator = () => {
   const { login } = useSelector((state) => state.user)
   console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!")
@@ -150,6 +151,11 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Confirm"
           component={ConfirmationScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="OrderHistory"
+          component={OrderHistory}
           options={{ headerShown: false }}
         />
 
