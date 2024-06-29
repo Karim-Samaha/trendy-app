@@ -27,22 +27,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserType } from "../UserContext";
 import jwt_decode from "jwt-decode";
 import { config } from "./config";
+import Search from "../components/Search";
 
 const Categories = () => {
     const [list, setList] = useState([])
+    const [listImgError, setListImgError] = useState([])
 
 
-    const categoryRef = useRef();
-    const sectionOneRef = useRef();
-    const sectionTwoRef = useRef();
-    const sectionThreeRef = useRef();
 
 
-    const [products, setProducts] = useState([]);
     const navigation = useNavigation();
     const [addresses, setAddresses] = useState([]);
     const { userId, setUserId } = useContext(UserType);
-    const [selectedAddress, setSelectedAdress] = useState("");
     const fetchCategory = async () => {
         try {
             const response = await axios.get(`${config.backendUrl}/category`);
@@ -98,50 +94,7 @@ const Categories = () => {
                 <ScrollView style={{
                     direction: "rtl"
                 }}>
-                    <View
-                        style={{
-                            backgroundColor: "#00CED1",
-                            padding: 10,
-                            flexDirection: "row",
-                            alignItems: "center",
-                            direction: "rtl",
-                            flexDirection: "row-reverse"
-                        }}
-                    >
-                        <Pressable
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                marginHorizontal: 7,
-                                backgroundColor: "white",
-                                borderRadius: 3,
-                                height: 38,
-                                flex: 1,
-                                direction: "rtl",
-                                flexDirection: "row-reverse",
-                                position: "relative"
-                            }}
-                        >
-
-                            <TextInput placeholder="ابحث عن منتجك" style={{
-                                direction: "rtl", flexDirection: "row-reverse",
-                            }}
-                            />
-                            <AntDesign
-                                style={{
-                                    position: "absolute", right: 5,
-                                    top: 8,
-                                }}
-                                name="search1"
-                                size={22}
-                                color="black"
-                            />
-                        </Pressable>
-
-                    </View>
-
-
-
+                    <Search />
                     <View style={{ paddingHorizontal: 10, paddingVertical: 20 }}>
                         <Text style={{ fontSize: 18, fontWeight: "bold", color: "#55a8b9", paddingTop: 30 }}>كل التصنيفات</Text>
                         <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", paddingTop: 30 }}>
@@ -172,7 +125,11 @@ const Categories = () => {
                                 >
                                     <Image
                                         style={{ width: 120, height: 100, resizeMode: "cover", borderRadius: 11 }}
-                                        source={{ uri: `${config.backendBase}${item.image}` }}
+                                        source={{
+                                            uri: listImgError.includes(item?._id) ? "https://picsum.photos/200/300"
+                                                : `${config.backendBase}${item.image}`
+                                        }}
+                                        onError={() => setListImgError((prev) => ([...prev, item?._id]))}
                                     />
                                     <Text
                                         style={{

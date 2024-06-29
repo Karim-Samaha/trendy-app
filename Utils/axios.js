@@ -5,6 +5,7 @@ const _axios = axios.create({
 })
 _axios.interceptors.request.use(
     function (config) {
+        console.log({config: config.parsedUser})
         let headers = {
             Accept: 'application/json, text/plain, */*',
             'Content-Type': 'application/json',
@@ -12,18 +13,14 @@ _axios.interceptors.request.use(
         if (config?.user?.accessToken) {
             headers['Authorization'] = `Bearer ${config.user.accessToken}`
         }
-        if (JSON.parse(config.user).accessToken) {
-            headers['Authorization'] = `Bearer ${JSON.parse(config.user).accessToken}`
-
-        }
-        if (config?.userToken) {
-            headers['Authorization'] = `Bearer ${config.user.accessToken}`
+        if (config.parsedUser?.accessToken) {
+            headers['Authorization'] = `Bearer ${config.parsedUser?.accessToken}`
         }
         if (!config.data) {
             config.data = {}
         }
         config.headers = headers
-
+        console.log(config.headers)
         return config
     },
     function (error) {

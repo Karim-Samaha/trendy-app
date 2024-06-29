@@ -3,13 +3,11 @@ import {
     View, Text, StyleSheet, Button, TextInput, Pressable,
 } from "react-native"
 import DateTimePicker from '@react-native-community/datetimepicker';
-import RNDateTimePicker from '@react-native-community/datetimepicker';
-import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import Checkbox from 'expo-checkbox';
 import AddToCartMessage from "./AddToCartMessage";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/CartReducer";
-import { SelectList } from 'react-native-dropdown-select-list'
+// import { SelectList } from 'react-native-dropdown-select-list'
 
 const AddToCartForm = ({ formType, product }) => {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -157,14 +155,14 @@ const AddToCartForm = ({ formType, product }) => {
             </View>}
             {formType === 'GIFT' && <View style={styles.inputContainer}>
                 <Text>اضافات الورود</Text>
-                <SelectList
+                {/* <SelectList
                     setSelected={(val) => setGiftSelected(val)}
                     data={data}
                     save="value"
                     defaultOption={data[0]}
                     placeholder={" "}
                     search={false}
-                />
+                /> */}
                 {(giftSelect === 'كروت اهداء' || giftSelect === '1') && <Pressable
                     onPress={() => null}
                     style={{
@@ -301,7 +299,8 @@ const styles = StyleSheet.create({
         borderRadius: 11,
         marginTop: 10,
         marginBottom: 10,
-        padding: 10
+        padding: 10,
+        textAlign: "right"
     },
     checkboxContainer: {
         alignItems: "center",

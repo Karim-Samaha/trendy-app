@@ -1,14 +1,15 @@
 import { View, StyleSheet, Text, Image } from "react-native"
 import { config } from "../screens/config"
 const AddToCartMessage = ({ product }) => {
+    console.log({product})
     return <View style={styles.container}>
         <Text style={styles.header}>تم اضافة المنتج الي السلة</Text>
         <View style={styles.productContainer}>
             <Image
                 style={{ width: 50, height: 50, resizeMode: "cover", borderRadius: 11, marginHorizontal: 10 }}
-                source={{ uri: `${product.item.image}` }}
+                source={{ uri: `${config.assetsUrl}/${product.item.image}` }}
             />
-            <Text>{product.title}</Text>
+            <Text>{product.item?.name}</Text>
         </View>
     </View>
 }

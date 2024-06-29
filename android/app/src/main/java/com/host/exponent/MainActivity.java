@@ -1,4 +1,4 @@
-package com.ecommerceproject;
+package com.host.exponent;
 
 import android.os.Build;
 import android.os.Bundle;

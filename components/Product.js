@@ -1,10 +1,11 @@
-import { View, Pressable, Image, Text, } from "react-native"
+import { View, Pressable, Image, Text, StyleSheet } from "react-native"
 import { useNavigation } from "@react-navigation/native";
 import { config } from "../screens/config";
+import { useState } from "react";
 
 const Product = ({ item }) => {
     const navigation = useNavigation();
-
+    const [imageHasError, setImageHasError] = useState(false)
     return <Pressable
         onPress={() =>
             navigation.navigate("Info", {
@@ -27,13 +28,18 @@ const Product = ({ item }) => {
     >
         <Image
             style={{ width: 120, height: 120, resizeMode: "contain", borderRadius: 11 }}
-            source={{ uri: `${config.assetsUrl}/${item?.image}` }}
+            source={{
+                uri: imageHasError ? "https://picsum.photos/200/300" :
+                    `${config.assetsUrl}/${item?.image}`
+            }}
+            onError={() => setImageHasError(true)}
+
         />
         <Text style={{ fontWeight: "bold", fontSize: 16 }}>{item.name.length > 20 ? `${item.name.substring(0, 19)}...` : item.name}</Text>
         <View>
             {item.priceBefore && <Text style={{ fontWeight: "bold", fontSize: 11, }}>سعر قبل الخصم : <Text style={{ textDecorationLine: 'line-through', textDecorationStyle: 'solid', color: "#ff1111" }}>{item.priceBefore}</Text></Text>
             }
-            <Text style={{ fontWeight: "bold", fontSize: 16 }}>السعر : {item.price}</Text>
+            <Text style={{ fontWeight: "bold", fontSize: 16 }}>السعر : {item.price} ر.س</Text>
 
         </View>
         {item.priceBefore && <View
@@ -60,14 +66,38 @@ const Product = ({ item }) => {
                 خصم {100 - (item.price / item.priceBefore * 100).toFixed(0)} %
             </Text>
         </View>}
-        <Pressable style={{
-            backgroundColor: "#55a8b9", width: 120, alignItems: "center", justifyContent: "center",
-            height: 36, borderRadius: 6, marginTop: 10
-        }} onPress={() => null}>
+        <Pressable style={styles.mainBtn} onPress={() => navigation.navigate("Info", {
+            id: item.id,
+            title: item.title,
+            price: item?.price,
+            carouselImages: item.carouselImages,
+            color: item?.color,
+            size: item?.size,
+            oldPrice: item?.oldPrice,
+            item: item,
+        })}>
             <Text style={{ color: "#fff" }} >اضف الي السلة</Text>
         </Pressable>
+        <View>
+
+        </View>
 
     </Pressable>
 }
 
 export default Product
+
+
+const styles = StyleSheet.create({
+    mainBtn: {
+
+        backgroundColor: "#55a8b9",
+        width: 120,
+        alignItems: "center",
+        justifyContent: "center",
+        height: 36,
+        borderRadius: 6,
+        marginTop: 10
+
+    }
+});

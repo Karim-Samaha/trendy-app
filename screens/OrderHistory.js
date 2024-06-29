@@ -27,6 +27,7 @@ const OrderHistory = () => {
         limit: 3,
     });
     const cart = useSelector((state) => state.cart.cart);
+    const [user, setUser] = useState({})
     const [orders, setOrders] = useState([])
     const hangleShowMore = () => {
         setPagination((prev) => ({ ...prev, limit: (prev.limit += 3) }));
@@ -35,8 +36,11 @@ const OrderHistory = () => {
         const user = await AsyncStorage.getItem(("user"))
         if (user) {
             let parsedUser = JSON.parse(user)
+            setUser(parsedUser)
             const response = await _axios.post(`${config.backendUrl}/get-user-order?page=${pagination.page}&limit=${pagination.limit}`,
-                { test: "!" }, { user })
+                { test: "!" }, { parsedUser })
+            console.log("!!!!!!!!!!!!!!!")
+            console.log(response.data)
             setOrders(response.data.data)
         }
     }
@@ -51,7 +55,7 @@ const OrderHistory = () => {
     }
 
     return (
-        <ScrollView style={{ marginTop: 55, flex: 1, backgroundColor: "white" }}>
+        <ScrollView style={{ marginTop: 0, flex: 1, backgroundColor: "white" }}>
 
             <View style={{ padding: 10, flexDirection: "row", alignItems: "center", flexDirection: "row-reverse" }}>
                 <Text style={{ fontSize: 18, fontWeight: "bold" }}>الطلبات السابقة</Text>
@@ -119,6 +123,13 @@ const OrderHistory = () => {
                                     <Text style={{ fontSize: 16, }}>{purchaseItem.name}</Text>
                                     <Text style={{ textAlign: "right" }}>الكمية : <Text style={{ fontWeight: "bold" }}>{purchaseItem.quantity}</Text></Text>
                                     <Text style={{ textAlign: "right" }}>السعر : <Text style={{ fontWeight: "bold" }}>{purchaseItem.price}رس</Text></Text>
+                                    <Text style={{ textAlign: "right" }}>طريقة الشحن : <Text style={{ fontWeight: "bold" }}>{item.ShippingType}</Text></Text>
+                                    <Text style={{ textAlign: "right" }}>بيانات المستلم  : <Text style={{ fontWeight: "bold" }}>
+                                        {purchaseItem?.formInfo?.sentTo || item.ShippingInfo?.name || user?.name || user?.email || ""}</Text></Text>
+                                    <Text style={{ textAlign: "right" }}>عنوان الشحن : <Text style={{ fontWeight: "bold" }}> {purchaseItem?.formInfo?.address ||
+                                        "لم يتم تحديد العنوان (سيقوم الدعم بالتواصل مع المستلم)"}</Text></Text>
+
+
                                     <View style={styles.extra}><Text> التوصيل
                                         ( + 0.00 ر.س )</Text></View>
                                     <View style={styles.extra}><Text>
@@ -135,7 +146,7 @@ const OrderHistory = () => {
                     </View>
                 )) : null}
                 <Pressable style={styles.more} onPress={hangleShowMore}>
-                    <Text style={{fontSize: 18, fontWeight: "bold", color: "#fff"}}>عرض المزيد</Text>
+                    <Text style={{ fontSize: 18, fontWeight: "bold", color: "#fff" }}>عرض المزيد</Text>
                 </Pressable>
             </View>
         </ScrollView>

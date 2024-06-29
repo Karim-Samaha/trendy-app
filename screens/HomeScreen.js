@@ -27,105 +27,39 @@ import jwt_decode from "jwt-decode";
 import { addToCart } from "../redux/CartReducer";
 import { config } from "./config";
 import Product from "../components/Product";
+import Search from "../components/Search";
 const HomeScreen = () => {
-  const images = [
-    "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/wb9ms.jpeg",
-    "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/dznig.png",
-    "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/wb9ms.jpeg",
-  ];
-
-  const offers = [
-    {
-      id: "0",
-      name:
-        "منتج 1",
-      offer: "72%",
-      priceBefore: 7500,
-      price: 4500,
-      image:
-        "فازات ورد.jpeg",
-      carouselImages: [
-        "https://m.media-amazon.com/images/I/61a2y1FCAJL._SX679_.jpg",
-        "https://m.media-amazon.com/images/I/71DOcYgHWFL._SX679_.jpg",
-        "https://m.media-amazon.com/images/I/71LhLZGHrlL._SX679_.jpg",
-        "https://m.media-amazon.com/images/I/61Rgefy4ndL._SX679_.jpg",
-      ],
-      color: "Green",
-      size: "Normal",
-    },
-    {
-      id: "1",
-      name:
-        "منتج 2",
-      offer: "40%",
-      priceBefore: 7955,
-      price: 3495,
-      image:
-        "فازات ورد.jpeg",
-      carouselImages: [
-        "https://m.media-amazon.com/images/I/71h2K2OQSIL._SX679_.jpg",
-        "https://m.media-amazon.com/images/I/71BlkyWYupL._SX679_.jpg",
-        "https://m.media-amazon.com/images/I/71c1tSIZxhL._SX679_.jpg",
-      ],
-      color: "black",
-      size: "Normal",
-    },
-    {
-      id: "2",
-      name:
-        "منتج 3",
-      offer: "40%",
-      priceBefore: 7955,
-      price: 3495,
-      image:
-        "فازات ورد.jpeg",
-      carouselImages: ["https://m.media-amazon.com/images/I/41t7Wa+kxPL.jpg"],
-      color: "black",
-      size: "Normal",
-    },
-    {
-      id: "3",
-      name:
-        "منتج 4",
-      offer: "40%",
-      priceBefore: 24999,
-      price: 19999,
-      image:
-        "فازات ورد.jpeg",
-      carouselImages: [
-        "https://m.media-amazon.com/images/I/41bLD50sZSL._SX300_SY300_QL70_FMwebp_.jpg",
-        "https://m.media-amazon.com/images/I/616pTr2KJEL._SX679_.jpg",
-        "https://m.media-amazon.com/images/I/71wSGO0CwQL._SX679_.jpg",
-      ],
-      color: "Norway Blue",
-      size: "8GB RAM, 128GB Storage",
-    },
-  ];
+  // const images = [
+  //   "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/wb9ms.jpeg",
+  //   "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/dznig.png",
+  //   "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/wb9ms.jpeg",
+  // ];
+  const [sections, setSections] = useState({})
+  const [images, setImages] = useState({
+    banners: [],
+    heros: []
+  })
   const categoryRef = useRef();
   const sectionOneRef = useRef();
   const sectionTwoRef = useRef();
   const sectionThreeRef = useRef();
 
   const scrollToEnd = (ref) => {
-    categoryRef.current.scrollToEnd({ animated: false });
-    sectionOneRef.current.scrollToEnd({ animated: false });
-    sectionTwoRef.current.scrollToEnd({ animated: false });
-    sectionThreeRef.current.scrollToEnd({ animated: false });
+    categoryRef.current?.scrollToEnd({ animated: false });
+    sectionOneRef.current?.scrollToEnd({ animated: false });
+    sectionTwoRef.current?.scrollToEnd({ animated: false });
+    sectionThreeRef.current?.scrollToEnd({ animated: false });
 
   };
   const [list, setList] = useState([])
-  const [products, setProducts] = useState([]);
+  const [listImgError, setListImgError] = useState([])
   const navigation = useNavigation();
-  const [open, setOpen] = useState(false);
   const [addresses, setAddresses] = useState([]);
   const { userId, setUserId } = useContext(UserType);
   const [selectedAddress, setSelectedAdress] = useState("");
   const dispatch = useDispatch();
 
 
-  const addItemToCart = (item) => {
-    dispatch(addToCart(item));
-  };
   const fetchCategory = async () => {
     try {
       const response = await axios.get(`${config.backendUrl}/category`);
@@ -134,22 +68,42 @@ const HomeScreen = () => {
       console.log("error message", error);
     }
   };
+  const fetchSections = async (order) => {
+    try {
+      const response = await axios.get(`${config.backendUrl}/subcategory?isHomeSection=${order}`);
+      setSections(prev => ({ ...prev, [order]: { productsList: response.data.data[0]?.productList.filter((item) => item?.active), categoryName: response.data.data[0].name } }));
+    } catch (error) {
+      console.log("error message", error);
+    }
+  };
+  const fetchBanners = async () => {
+    try {
+      const response = await axios.get(`${config.backendUrl}/banners`);
+      setImages((prev) => ({
+        ...prev, banners: response.data.data.filter((item) => item.type === 'BANNER'),
+        heros: response.data.data.filter((item) => item.type === 'HERO_IMG'),
+      }))
+      console.log("!!!!!!!!!")
+      console.log(response.data)
+    } catch (error) {
+      console.log("error message", error);
+    }
+  }
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("https://fakestoreapi.com/products");
-        setProducts(response.data);
-      } catch (error) {
-        console.log("error message", error);
-      }
-    };
+  }, [images])
+  useEffect(() => {
+    Promise.all([fetchCategory(),
+    fetchSections(1),
+    fetchSections(2),
+    fetchSections(3),
+    fetchBanners(),])
+  }, []);
 
-    fetchData();
-    fetchCategory()
-  }, []);
-  const onGenderOpen = useCallback(() => {
-    setCompanyOpen(false);
-  }, []);
+  useEffect(() => {
+    console.log("!!!!!")
+    console.log({ sections })
+  }, [sections])
+
 
   const cart = useSelector((state) => state.cart.cart);
   const [modalVisible, setModalVisible] = useState(false);
@@ -170,17 +124,16 @@ const HomeScreen = () => {
       console.log("error", error);
     }
   };
-  useEffect(() => {
-    const fetchUser = async () => {
-      const token = await AsyncStorage.getItem("authToken");
-      const decodedToken = jwt_decode(token);
-      const userId = decodedToken.userId;
-      setUserId(userId);
-    };
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     const token = await AsyncStorage.getItem("authToken");
+  //     const decodedToken = jwt_decode(token);
+  //     const userId = decodedToken.userId;
+  //     setUserId(userId);
+  //   };
 
-    fetchUser();
-  }, []);
-  console.log("address", addresses);
+  //   fetchUser();
+  // }, []);
   return (
     <>
       <SafeAreaView
@@ -193,83 +146,15 @@ const HomeScreen = () => {
         <ScrollView style={{
           direction: "rtl"
         }}>
-          <View
-            style={{
-              backgroundColor: "#00CED1",
-              padding: 10,
-              flexDirection: "row",
-              alignItems: "center",
-              direction: "rtl",
-              flexDirection: "row-reverse"
-            }}
-          >
-            <Pressable
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginHorizontal: 7,
-                backgroundColor: "white",
-                borderRadius: 3,
-                height: 38,
-                flex: 1,
-                direction: "rtl",
-                flexDirection: "row-reverse",
-                position: "relative"
-              }}
-            >
-
-              <TextInput placeholder="ابحث عن منتجك" style={{
-                // direction: "rtl", flexDirection: "row-reverse",
-              }}
-              />
-              <AntDesign
-                style={{
-                  position: "absolute", right: 5,
-                  top: 8,
-                }} name="search1"
-                size={22}
-                color="black" />
-            </Pressable>
-
-          </View>
-
-          <Pressable
-            onPress={() => setModalVisible(!modalVisible)}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 5,
-              padding: 10,
-              backgroundColor: "#AFEEEE",
-            }}
-          >
-            {/* <Ionicons name="location-outline" size={24} color="black" />
-
-            <Pressable>
-              {selectedAddress ? (
-                <Text>
-                  Deliver to {selectedAddress?.name} - {selectedAddress?.street}
-                </Text>
-              ) : (
-                <Text style={{ fontSize: 13, fontWeight: "500" }}>
-                  Add a Address
-                </Text>
-              )}
-            </Pressable>
-
-            <MaterialIcons name="keyboard-arrow-down" size={24} color="black" /> */}
-          </Pressable>
-
-
-
-          <SliderBox
-            images={images}
+          <Search />
+          {images?.heros.length > 0 ? <SliderBox
+            images={images.heros.map((item) => `${config.backendBase}${item?.imageSrc}`)}
             autoPlay
             circleLoop
             dotColor={"#13274F"}
             inactiveDotColor="#90A4AE"
             ImageComponentStyle={{ width: "100%" }}
-          />
+          /> : null}
           <View style={{ direction: "rtl" }}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
               flexDirection: "row-reverse"
@@ -301,7 +186,11 @@ const HomeScreen = () => {
                 >
                   <Image
                     style={{ width: 100, height: 100, resizeMode: "cover", borderRadius: 11 }}
-                    source={{ uri: `${config.backendBase}${item.image}` }}
+                    source={{
+                      uri: listImgError.includes(item?._id) ? "https://picsum.photos/200/300"
+                        : `${config.backendBase}${item.image}`
+                    }}
+                    onError={() => setListImgError((prev) => ([...prev, item?._id]))}
                   />
 
                   <Text
@@ -327,52 +216,68 @@ const HomeScreen = () => {
             }}
           />
           <View>
-            <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold", direction: "rtl", color: "#55a8b9" }}>
-              الاكثر مبيعا
-            </Text>
+            {sections["1"]?.productsList?.length > 0 ? <>
+              <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold", direction: "rtl", color: "#55a8b9" }}>
+                {sections["1"]?.categoryName}
+              </Text>
 
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
-              flexDirection: "row-reverse"
-            }}
-              onContentSizeChange={scrollToEnd}
-              ref={sectionOneRef}>
-              {offers.map((item, index) => (
-                <Product item={item} key={item.id} />
-              ))}
-            </ScrollView>
-            <Image src={images[0]} style={{ width: "95%", height: 160, marginHorizontal: "2.5%", marginVertical: 15 }} />
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
+                flexDirection: "row-reverse"
+              }}
+                onContentSizeChange={scrollToEnd}
+                ref={sectionOneRef}>
+                {sections["1"]?.productsList?.map((item, index) => (
+                  <Product item={item} key={item.id} />
+                ))}
+              </ScrollView>
+            </> : null}
+
+            {images?.banners.length > 0 &&
+              <>
+                <Image src={`${config.backendBase}${images?.banners[0].imageSrc}`}
+                  style={{ width: "100%", height: 200, marginVertical: 15 }} />
+              </>
+            }
           </View>
           <View>
-            <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold", direction: "rtl", color: "#55a8b9" }}>
-              الاكثر مبيعا
-            </Text>
+            {sections["2"]?.productsList?.length > 0 ? <>
+              <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold", direction: "rtl", color: "#55a8b9" }}>
+                {sections["2"]?.categoryName}
+              </Text>
 
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
-              flexDirection: "row-reverse"
-            }}
-              onContentSizeChange={scrollToEnd}
-              ref={sectionTwoRef}>
-              {offers.map((item, index) => (
-                <Product item={item} key={item.id} />
-              ))}
-
-            </ScrollView>
-            <Image src={images[1]} style={{ width: "95%", height: 160, marginHorizontal: "2.5%", marginVertical: 15 }} />
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
+                flexDirection: "row-reverse"
+              }}
+                onContentSizeChange={scrollToEnd}
+                ref={sectionTwoRef}>
+                {sections["2"]?.productsList?.map((item, index) => (
+                  <Product item={item} key={item.id} />
+                ))}
+              </ScrollView>
+            </> : null}
+            {images?.banners.length > 1 &&
+              <>
+                <Image src={`${config.backendBase}${images?.banners[1].imageSrc}`}
+                  style={{ height: 200, marginVertical: 15 }} />
+              </>
+            }
           </View>
           <View>
-            <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold", direction: "rtl", color: "#55a8b9" }}>
-              الاكثر مبيعا
-            </Text>
+            {sections["3"]?.productsList?.length > 0 ? <>
+              <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold", direction: "rtl", color: "#55a8b9" }}>
+                {sections["3"]?.categoryName}
+              </Text>
 
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
-              flexDirection: "row-reverse"
-            }}
-              onContentSizeChange={scrollToEnd}
-              ref={sectionThreeRef}>
-              {offers.map((item, index) => (
-                <Product item={item} key={item.id} />
-              ))}
-            </ScrollView>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
+                flexDirection: "row-reverse"
+              }}
+                onContentSizeChange={scrollToEnd}
+                ref={sectionThreeRef}>
+                {sections["3"]?.productsList?.map((item, index) => (
+                  <Product item={item} key={item.id} />
+                ))}
+              </ScrollView>
+            </> : null}
           </View>
 
           <Text
@@ -383,9 +288,6 @@ const HomeScreen = () => {
               marginTop: 15,
             }}
           />
-
-
-
         </ScrollView>
       </SafeAreaView >
 

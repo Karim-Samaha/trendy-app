@@ -23,10 +23,12 @@ import Login from "../screens/Login";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { handleLogin } from "../redux/userReducer";
 import OrderHistory from "../screens/OrderHistory";
+import Payment from "../screens/Payment";
+import AccountInfo from "../screens/AccountInfo";
+import Favorite from "../screens/Favorite";
 const StackNavigator = () => {
+
   const { login } = useSelector((state) => state.user)
-  console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!")
-  console.log({ hhhhh: login })
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
   const dispatch = useDispatch();
@@ -35,7 +37,6 @@ const StackNavigator = () => {
     if (user) {
       let parsedUser = JSON.parse(user)
       if (parsedUser?.accessToken) {
-        setUser(parsedUser)
         dispatch(handleLogin())
       }
     }
@@ -51,7 +52,7 @@ const StackNavigator = () => {
           component={HomeScreen}
           options={{
             tabBarLabel: "الرئيسية",
-            tabBarLabelStyle: { color: "#008E97" },
+            tabBarLabelStyle: { color: "#008E97", fontWeight: "bold" },
             headerShown: false,
             tabBarIcon: ({ focused }) =>
               focused ? (
@@ -66,8 +67,14 @@ const StackNavigator = () => {
           component={Categories}
           options={{
             tabBarLabel: "التصنيفات",
-            tabBarLabelStyle: { color: "#008E97" },
-            headerShown: false,
+            tabBarLabelStyle: { color: "#008E97", fontWeight: "bold" },
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: 'التصنيفات',
+            headerTintColor: "#fff",
             tabBarIcon: ({ focused }) =>
               focused ? (
                 <Entypo name="home" size={24} color="#008E97" />
@@ -80,9 +87,11 @@ const StackNavigator = () => {
         <Tab.Screen
           name="Profile"
           component={login ? ProfileScreen : Login}
+
           options={{
             tabBarLabel: "حسابي",
-            tabBarLabelStyle: { color: "#008E97" },
+            tabBarLabelStyle: { color: "#008E97", fontWeight: "bold" },
+            headerShown: false,
             tabBarIcon: ({ focused }) =>
               focused ? (
                 <Ionicons name="person" size={24} color="#008E97" />
@@ -97,8 +106,14 @@ const StackNavigator = () => {
           component={CartScreen}
           options={{
             tabBarLabel: "السلة",
-            tabBarLabelStyle: { color: "#008E97" },
-            headerShown: false,
+            tabBarLabelStyle: { color: "#008E97", fontWeight: "bold" },
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: 'العربة',
+            headerTintColor: "#fff",
             tabBarIcon: ({ focused }) =>
               focused ? (
                 <AntDesign name="shoppingcart" size={24} color="#008E97" />
@@ -131,13 +146,28 @@ const StackNavigator = () => {
         <Stack.Screen
           name="SubCategories"
           component={SubCategorie}
-          options={{ headerShown: false, }}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: 'التصنيفات',
+            headerTintColor: "#fff",
+          }}
         />
         <Stack.Screen
           name="Info"
           component={ProductInfoScreen}
-          options={{ headerShown: false }}
-        />
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: 'تفاصيل المنتج',
+            headerTintColor: "#fff",
+          }} />
         <Stack.Screen
           name="Address"
           component={AddAddressScreen}
@@ -156,14 +186,58 @@ const StackNavigator = () => {
         <Stack.Screen
           name="OrderHistory"
           component={OrderHistory}
-          options={{ headerShown: false }}
-        />
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: 'الطلبات السابقة',
+            headerTintColor: "#fff",
+          }} />
 
         <Stack.Screen
           name="Order"
           component={OrderScreen}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="Payment"
+          component={Payment}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: 'الدفع',
+            headerTintColor: "#fff",
+          }} />
+        <Stack.Screen
+          name="Account"
+          component={AccountInfo}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: 'بيانات الحساب',
+            headerTintColor: "#fff",
+          }}
+        />
+        <Stack.Screen
+          name="Favorite"
+          component={Favorite}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: 'قائمتي',
+            headerTintColor: "#fff",
+          }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
