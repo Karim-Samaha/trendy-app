@@ -26,6 +26,7 @@ import OrderHistory from "../screens/OrderHistory";
 import Payment from "../screens/Payment";
 import AccountInfo from "../screens/AccountInfo";
 import Favorite from "../screens/Favorite";
+import SearchScreen from "../screens/Search";
 const StackNavigator = () => {
 
   const { login } = useSelector((state) => state.user)
@@ -53,7 +54,13 @@ const StackNavigator = () => {
           options={{
             tabBarLabel: "الرئيسية",
             tabBarLabelStyle: { color: "#008E97", fontWeight: "bold" },
-            headerShown: false,
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: 'الرئيسية',
+            headerTintColor: "#fff",
             tabBarIcon: ({ focused }) =>
               focused ? (
                 <Entypo name="home" size={24} color="#008E97" />
@@ -87,11 +94,16 @@ const StackNavigator = () => {
         <Tab.Screen
           name="Profile"
           component={login ? ProfileScreen : Login}
-
           options={{
             tabBarLabel: "حسابي",
             tabBarLabelStyle: { color: "#008E97", fontWeight: "bold" },
-            headerShown: false,
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: login ? "حسابي" : "تسجيل الدخول",
+            headerTintColor: "#fff",
             tabBarIcon: ({ focused }) =>
               focused ? (
                 <Ionicons name="person" size={24} color="#008E97" />
@@ -153,6 +165,19 @@ const StackNavigator = () => {
             },
             headerTitleAlign: 'center',
             title: 'التصنيفات',
+            headerTintColor: "#fff",
+          }}
+        />
+        <Stack.Screen
+          name="Search"
+          component={SearchScreen}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: 'نتائج البحث',
             headerTintColor: "#fff",
           }}
         />

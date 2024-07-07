@@ -91,11 +91,14 @@ const Categories = () => {
                     backgroundColor: "white",
                 }}
             >
+                <Search />
+
                 <ScrollView style={{
-                    direction: "rtl"
+                    direction: "rtl",
+                    paddingTop: 80,
+                   
                 }}>
-                    <Search />
-                    <View style={{ paddingHorizontal: 10, paddingVertical: 20 }}>
+                    <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingBottom: 80 }}>
                         <Text style={{ fontSize: 18, fontWeight: "bold", color: "#55a8b9", paddingTop: 30 }}>كل التصنيفات</Text>
                         <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", paddingTop: 30 }}>
                             {list.map((item, index) => (

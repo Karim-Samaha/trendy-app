@@ -9,10 +9,10 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/CartReducer";
 // import { SelectList } from 'react-native-dropdown-select-list'
 
-const AddToCartForm = ({ formType, product }) => {
+const AddToCartForm = ({ formType, product, setAddedToCart }) => {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [isTimeVisible, setIsTimeVisible] = useState(false);
-    const [addedToCart, setAddedToCart] = useState(false)
+    // const [addedToCart, setAddedToCart] = useState(false)
     const dateRef = useRef()
     const timeRef = useRef()
     const showDatePicker = () => {
@@ -75,13 +75,7 @@ const AddToCartForm = ({ formType, product }) => {
         setAddedToCart(true);
         dispatch(addToCart(itemToBeAdded));
     };
-    useEffect(() => {
-        if (addedToCart) {
-            setTimeout(() => {
-                setAddedToCart(false);
-            }, 3000);
-        }
-    }, [addedToCart])
+
     const validate = () => {
         let deliveryDate = true;
         let address = true;
@@ -274,7 +268,6 @@ const AddToCartForm = ({ formType, product }) => {
                     onCancel={hideTimePicker}
                 />
             }
-            {addedToCart && <AddToCartMessage product={product} />}
         </View >
     )
 }

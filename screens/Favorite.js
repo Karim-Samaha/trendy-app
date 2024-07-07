@@ -74,14 +74,16 @@ const Favorite = () => {
                     backgroundColor: "white",
                 }}
             >
+                <Search />
+
                 <ScrollView style={{
-                    direction: "rtl"
+                    direction: "rtl",
+                    paddingTop: 80,
                 }}>
-                    <Search />
 
 
 
-                    <View style={{ paddingHorizontal: 10, paddingVertical: 20 }}>
+                    <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingBottom: 80 }}>
                         {/* <View style={{ flexDirection: "row-reverse", alignItems: "center", marginTop: 10 }}>
                             <MaterialIcons name="favorite" size={24} color="#55a8b9" />
                             <Text style={{ fontSize: 20, fontWeight: "bold", marginHorizontal: 10 }}>
@@ -91,7 +93,7 @@ const Favorite = () => {
                         </View> */}
                         <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-around", paddingTop: 30, }}>
                             {products.length > 0 ? products.map((item) => {
-                                return <Product item={item} key={item?._id} />
+                                return <Product item={item} key={item?._id}  twoCell={true}/>
                             }) : products.length === 0 && productLoaded ?
                                 <Text style={{ fontWeight: "bold", fontSize: 18, marginTop: 40 }}>لم يتم اضافة منتجات في القائمة</Text>
                                 : null}

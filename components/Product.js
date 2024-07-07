@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { config } from "../screens/config";
 import { useState } from "react";
 
-const Product = ({ item }) => {
+const Product = ({ item, containerStyle, twoCell }) => {
     const navigation = useNavigation();
     const [imageHasError, setImageHasError] = useState(false)
     return <Pressable
@@ -23,11 +23,13 @@ const Product = ({ item }) => {
             marginVertical: 10,
             alignItems: "center",
             justifyContent: "center",
-            marginHorizontal: 10
+            marginHorizontal: twoCell ? "2.5%" : 10,
+            width: twoCell ? "45%" : "6%",
+            maxWidth: 170
         }}
     >
         <Image
-            style={{ width: 120, height: 120, resizeMode: "contain", borderRadius: 11 }}
+            style={{ width: "100%", height: containerStyle?.width || 120, resizeMode: "contain", borderRadius: 11 }}
             source={{
                 uri: imageHasError ? "https://picsum.photos/200/300" :
                     `${config.assetsUrl}/${item?.image}`
@@ -35,14 +37,14 @@ const Product = ({ item }) => {
             onError={() => setImageHasError(true)}
 
         />
-        <Text style={{ fontWeight: "bold", fontSize: 16 }}>{item.name.length > 20 ? `${item.name.substring(0, 19)}...` : item.name}</Text>
+        <Text numberOfLines={1} style={{ fontWeight: "bold", fontSize: 16 }}>{item.name.length > 20 ? `${item.name.substring(0, 19)}...` : item.name}</Text>
         <View>
             {item.priceBefore && <Text style={{ fontWeight: "bold", fontSize: 11, }}>سعر قبل الخصم : <Text style={{ textDecorationLine: 'line-through', textDecorationStyle: 'solid', color: "#ff1111" }}>{item.priceBefore}</Text></Text>
             }
             <Text style={{ fontWeight: "bold", fontSize: 16 }}>السعر : {item.price} ر.س</Text>
 
         </View>
-        {item.priceBefore && <View
+        {item?.priceBefore && <View
             style={{
                 backgroundColor: "#FDFDFD",
                 paddingVertical: 5,
@@ -90,7 +92,6 @@ export default Product
 
 const styles = StyleSheet.create({
     mainBtn: {
-
         backgroundColor: "#55a8b9",
         width: 120,
         alignItems: "center",

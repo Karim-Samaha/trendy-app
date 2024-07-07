@@ -72,76 +72,78 @@ const AccountInfo = () => {
 
 
     return (
-        <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 0 }}>
+        <>
             <Search />
-            <View style={{ padding: 10 }}>
-                <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
-                    بيانات الحساب
-                    {`  `}
-                    <FontAwesome5 name="info-circle" size={24} color="silver" />
-                </Text>
-                <View style={styles.formContainer}>
-                    <View style={styles.inputContainer}>
-                        <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
-                            <MaterialCommunityIcons name="rename-box" size={24} color="silver" />
-                            <Text style={{ marginHorizontal: 10 }}>الأسم</Text>
+            <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 0, paddingTop: 80 }}>
+                <View style={{ padding: 10 }}>
+                    <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
+                        بيانات الحساب
+                        {`  `}
+                        <FontAwesome5 name="info-circle" size={24} color="silver" />
+                    </Text>
+                    <View style={styles.formContainer}>
+                        <View style={styles.inputContainer}>
+                            <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
+                                <MaterialCommunityIcons name="rename-box" size={24} color="silver" />
+                                <Text style={{ marginHorizontal: 10 }}>الأسم</Text>
+                            </View>
+                            <TextInput style={styles.input} value={form.name}
+                                onChangeText={(e) => setForm(prev => ({ ...prev, name: e }))}
+                            />
                         </View>
-                        <TextInput style={styles.input} value={form.name}
-                            onChangeText={(e) => setForm(prev => ({ ...prev, name: e }))}
-                        />
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
-                            <MaterialIcons name="email" size={24} color="silver" />
-                            <Text style={{ marginHorizontal: 10 }}>البريد الالكتروني</Text>
+                        <View style={styles.inputContainer}>
+                            <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
+                                <MaterialIcons name="email" size={24} color="silver" />
+                                <Text style={{ marginHorizontal: 10 }}>البريد الالكتروني</Text>
+                            </View>
+                            <TextInput style={styles.input} value={form.email}
+                                onChangeText={(e) => setForm(prev => ({ ...prev, email: e }))}
+                            />
                         </View>
-                        <TextInput style={styles.input} value={form.email}
-                            onChangeText={(e) => setForm(prev => ({ ...prev, email: e }))}
-                        />
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
-                            <Entypo name="address" size={24} color="silver" />
-                            <Text style={{ marginHorizontal: 10 }}>العنوان</Text>
+                        <View style={styles.inputContainer}>
+                            <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
+                                <Entypo name="address" size={24} color="silver" />
+                                <Text style={{ marginHorizontal: 10 }}>العنوان</Text>
+                            </View>
+                            <TextInput style={styles.input} value={form.address}
+                                onChangeText={(e) => setForm(prev => ({ ...prev, address: e }))}
+                            />
                         </View>
-                        <TextInput style={styles.input} value={form.address}
-                            onChangeText={(e) => setForm(prev => ({ ...prev, address: e }))}
-                        />
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
-                            <AntDesign name="phone" size={24} color="silver" />
-                            <Text style={{ marginHorizontal: 10 }}>الهاتف</Text>
-                        </View>
-                        <TextInput style={styles.input} value={form.phone}
-                            onChangeText={(e) => setForm(prev => ({ ...prev, phone: e }))}
+                        <View style={styles.inputContainer}>
+                            <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
+                                <AntDesign name="phone" size={24} color="silver" />
+                                <Text style={{ marginHorizontal: 10 }}>الهاتف</Text>
+                            </View>
+                            <TextInput style={styles.input} value={form.phone}
+                                onChangeText={(e) => setForm(prev => ({ ...prev, phone: e }))}
 
-                        />
+                            />
+                        </View>
                     </View>
+                    {updated?.status === "success" && <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse", marginVertical: 20 }}>
+                        <AntDesign name="checkcircle" size={24} color="green" />
+                        <Text style={{ marginHorizontal: 10, color: "green", fontWeight: "bold" }}>الهاتف</Text>
+                    </View>}
+                    <Pressable
+                        onPress={handleSubmit}
+                        style={{
+                            backgroundColor: "#55a8b9",
+                            padding: 10,
+                            borderRadius: 20,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            marginHorizontal: 10,
+                            marginVertical: 10,
+                        }}
+                    >
+                        <View>
+                            <Text style={{ color: "#fff" }}>حفظ</Text>
+                        </View>
+                    </Pressable>
+
                 </View>
-                {updated?.status === "success" && <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse", marginVertical: 20 }}>
-                    <AntDesign name="checkcircle" size={24} color="green" />
-                    <Text style={{ marginHorizontal: 10, color: "green", fontWeight: "bold" }}>الهاتف</Text>
-                </View>}
-                <Pressable
-                    onPress={handleSubmit}
-                    style={{
-                        backgroundColor: "#55a8b9",
-                        padding: 10,
-                        borderRadius: 20,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginHorizontal: 10,
-                        marginVertical: 10,
-                    }}
-                >
-                    <View>
-                        <Text style={{ color: "#fff" }}>حفظ</Text>
-                    </View>
-                </Pressable>
-
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </>
     );
 };
 

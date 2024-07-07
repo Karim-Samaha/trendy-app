@@ -9,6 +9,7 @@ import {
     TextInput,
     Image,
     Button,
+    TouchableOpacity
 } from "react-native";
 import React, { useState, useEffect, useCallback, useContext, useRef } from "react";
 import { Feather } from "@expo/vector-icons";
@@ -43,76 +44,53 @@ const SubCategorie = () => {
     };
     const [products, setProducts] = useState([]);
     const [productLoaded, setProductLoaded] = useState(false)
-    const navigation = useNavigation();
-    const [addresses, setAddresses] = useState([]);
-    const { userId, setUserId } = useContext(UserType);
     const [currentSubId, setCurrentSubId] = useState("")
     const [subCategories, setSubCategories] = useState([])
     const [imageHasError, setImageHasError] = useState(false)
-
-    const dispatch = useDispatch();
-
+    const [limit, setLimit] = useState(12)
+    const requestMore = () => {
+        setLimit(prev => prev + 10)
+    }
     const fetchCategoryAllProducts = async () => {
         const categoryId = await route.params?.item?._id
-        const response = await axios.get(`${config.backendUrl}/category/${categoryId}/all-products?channel=web`)
+        const response = await axios.get(`${config.backendUrl}/category/${categoryId}/all-products?limit=${limit}`)
         let setObj = new Set(response.data.data.map(JSON.stringify));
         let output = Array.from(setObj).map(JSON.parse);
         setProducts(output)
         setProductLoaded(true)
     }
+
     const fetchSubCategory = async () => {
         const categoryId = await route.params?.item?._id
-        const response = await axios.get(`${config.backendUrl}/subcategory?ctg=${categoryId}`)
+        const response = await axios.get(`${config.backendUrl}/subcategory?ctg=${categoryId}&limit=${limit}`)
         setSubCategories(response.data.data.reverse())
     }
+
     const fetchSubCategoryProducts = async () => {
         const subCategoryId = currentSubId
-        const response = await axios.get(`${config.backendUrl}/subcategory/${subCategoryId}`)
+        const response = await axios.get(`${config.backendUrl}/subcategory/${subCategoryId}?limit=${limit}`)
         setProducts(response.data.data.productList.reverse())
         setProductLoaded(true)
     }
-    useEffect(() => {
-        if (!currentSubId && products.length <= 0) {
+    const handleRequestingProductsData = () => {
+        if (!currentSubId) {
             fetchCategoryAllProducts()
         } else {
+            console.log("this")
             fetchSubCategoryProducts()
         }
-    }, [currentSubId])
+    }
+    const handleSubCategorySelection = (id) => {
+        setLimit(12)
+        setCurrentSubId(id);
+    }
     useEffect(() => {
         fetchSubCategory()
     }, [])
-
-
-
-    const cart = useSelector((state) => state.cart.cart);
-    const [modalVisible, setModalVisible] = useState(false);
     useEffect(() => {
-        if (userId) {
-            fetchAddresses();
-        }
-    }, [userId, modalVisible]);
-    const fetchAddresses = async () => {
-        try {
-            const response = await axios.get(
-                `http://localhost:8000/addresses/${userId}`
-            );
-            const { addresses } = response.data;
+        handleRequestingProductsData()
+    }, [currentSubId, limit])
 
-            setAddresses(addresses);
-        } catch (error) {
-            console.log("error", error);
-        }
-    };
-    useEffect(() => {
-        const fetchUser = async () => {
-            const token = await AsyncStorage.getItem("authToken");
-            const decodedToken = jwt_decode(token);
-            const userId = decodedToken.userId;
-            setUserId(userId);
-        };
-
-        fetchUser();
-    }, []);
     return (
         <>
             <SafeAreaView
@@ -122,28 +100,19 @@ const SubCategorie = () => {
                     backgroundColor: "white",
                 }}
             >
+                <Search />
+
                 <ScrollView style={{
-                    direction: "rtl"
+                    direction: "rtl",
+                    paddingTop: 80
                 }}>
-                    <Search />
-                    <View style={{ paddingHorizontal: 10, paddingVertical: 20 }}>
+                    <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingBottom: 120 }}>
                         <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", paddingTop: 30 }}>
                             <Pressable
-                                style={{
-                                    width: "45%",
-                                    backgroundColor: "#f4f1df",
-                                    borderRadius: 11,
-                                    margin: 5,
-                                    height: 160,
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    marginBottom: 20,
-                                }}
-
-
+                                style={styles.ctgContainer}
                             >
                                 <Image
-                                    style={{ width: 120, height: 100, resizeMode: "cover", borderRadius: 11 }}
+                                    style={{ width: 160, height: 140, resizeMode: "cover", borderRadius: 11 }}
                                     source={{
                                         uri: imageHasError ? "https://picsum.photos/200/300" :
                                             `${config.backendBase}${route.params.item.image}`
@@ -153,12 +122,7 @@ const SubCategorie = () => {
                                 />
 
                                 <Text
-                                    style={{
-                                        textAlign: "center",
-                                        fontSize: 16,
-                                        fontWeight: "600",
-                                        marginTop: 5,
-                                    }}
+                                    style={styles.ctgName}
                                 >
                                     {route.params.item?.name}
                                 </Text>
@@ -176,7 +140,8 @@ const SubCategorie = () => {
                             paddingHorizontal: 10
                         }}
 
-                        >{route.params.item?.description}
+                        >
+                            {route.params.item?.description}
                         </Text>
                         {subCategories.length > 0 ?
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
@@ -188,20 +153,11 @@ const SubCategorie = () => {
                                 {subCategories.map((item) => {
                                     return <Pressable
                                         style={{
-                                            flexDirection: "row",
-                                            alignItems: "center",
-                                            marginHorizontal: 7,
-                                            backgroundColor: currentSubId === item?._id ? "#55a8b9" : "white",
-                                            paddingHorizontal: 20,
+                                            ...styles.subCtgLabel, backgroundColor: currentSubId === item?._id ? "#55a8b9" : "white",
                                             color: currentSubId === item?._id ? "#fff" : "000",
-                                            paddingVertical: 10,
-                                            borderColor: "#55a8b9",
-                                            borderWidth: 3,
-                                            borderRadius: 10,
-
                                         }}
                                         key={item?._id}
-                                        onPress={() => setCurrentSubId(item?._id)}
+                                        onPress={() => handleSubCategorySelection(item?._id)}
                                     >
                                         <Text style={{
                                             color: currentSubId === item?._id ? "#fff" : "#000",
@@ -212,13 +168,20 @@ const SubCategorie = () => {
                                     </Pressable>
                                 })}
                             </ScrollView> : null}
-                        <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-around", paddingTop: 30, }}>
+                        <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-around", paddingTop: 10, }}>
                             {products.length > 0 ? products.map((item) => {
-                                return <Product item={item} key={item?._id} />
+                                return <Product item={item} key={item?._id} containerStyle={{ width: 160, height: 140 }} twoCell={true} />
                             }) : products.length === 0 && productLoaded ?
                                 <Text style={{ fontWeight: "bold", fontSize: 18, marginTop: 40 }}>لا يوجد منتجات حاليا</Text>
                                 : null}
                         </View>
+                        {productLoaded && products.length >= 12 && <View style={{ alignItems: "center" }}>
+                            <TouchableOpacity style={styles.moreBtn} onPress={requestMore}>
+                                <Text style={styles.moreText}>
+                                    عرض المزيد
+                                </Text>
+                            </TouchableOpacity>
+                        </View>}
                     </View>
                 </ScrollView>
             </SafeAreaView >
@@ -229,4 +192,47 @@ const SubCategorie = () => {
 
 export default SubCategorie;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    ctgContainer: {
+        width: "60%",
+        backgroundColor: "#f4f1df",
+        borderRadius: 11,
+        margin: 5,
+        height: 200,
+        justifyContent: "center",
+        alignItems: "center",
+        marginBottom: 5,
+    },
+    ctgName: {
+        textAlign: "center",
+        fontSize: 18,
+        fontWeight: "bold",
+        marginTop: 5,
+    },
+    subCtgLabel: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginHorizontal: 7,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderColor: "#55a8b9",
+        borderWidth: 3,
+        borderRadius: 10,
+    },
+    moreBtn: {
+        backgroundColor: "#55a8b9",
+        paddingVertical: 10,
+        paddingHorizontal: 5,
+        borderRadius: 10,
+        justifyContent: "center",
+        alignItems: "center",
+        marginHorizontal: 10,
+        marginTop: 10,
+        width: "40%",
+    },
+    moreText: {
+        color: '#fff',
+        fontWeight: "bold"
+    }
+
+});

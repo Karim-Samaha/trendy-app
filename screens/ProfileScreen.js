@@ -35,14 +35,14 @@ const ProfileScreen = () => {
     checkIsLogedIn()
   }, [])
   const navigation = useNavigation();
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: "",
-      headerStyle: {
-        backgroundColor: "#00CED1",
-      },
-    });
-  }, []);
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     headerTitle: "",
+  //     headerStyle: {
+  //       backgroundColor: "#00CED1",
+  //     },
+  //   });
+  // }, []);
   const dispatch = useDispatch();
   const signOut = () => {
     dispatch(handleLogout())
@@ -70,131 +70,133 @@ const ProfileScreen = () => {
   //   fetchOrders();
   // }, []);
   return (
-    <ScrollView style={{ padding: 0, flex: 1, backgroundColor: "white" }}>
+    <>
       <Search />
-      <View style={{padding: 10}}>
+      <ScrollView style={{ padding: 0, flex: 1, backgroundColor: "white", paddingTop: 80 }}>
+        <View style={{ padding: 10 }}>
 
-        <View
-          style={{
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 10,
-            marginTop: 12,
-          }}
-        >
-          <Pressable
+          <View
             style={{
-              padding: 10,
-
-              width: "95%",
-              flex: 1,
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 10,
+              marginTop: 12,
             }}
           >
-            <Text style={{ fontWeight: "bold", textAlign: "right" }}>
-              {user_?.name || user_?.email || user_?.phone}
+            <Pressable
+              style={{
+                padding: 10,
 
-            </Text>
-          </Pressable>
-          <Pressable
-            style={{
-              padding: 10,
-              borderColor: "#55a8b9",
-              borderWidth: 1,
-              borderRadius: 8,
-              width: "95%",
-              flex: 1,
-              height: 50,
-              justifyContent: "center"
-            }}
-            onPress={() => navigation.navigate("OrderHistory")}
-          >
-            <View style={{ flexDirection: "row-reverse" }}>
-              <FontAwesome5 name="history" size={24} color="#55a8b9" />
-
-              <Text style={{ fontWeight: "bold", fontSize: 18, marginHorizontal: 10 }}>
-                طلباتي
+                width: "95%",
+                flex: 1,
+              }}
+            >
+              <Text style={{ fontWeight: "bold", textAlign: "right" }}>
+                {user_?.name || user_?.email || user_?.phone}
 
               </Text>
-            </View>
+            </Pressable>
+            <Pressable
+              style={{
+                padding: 10,
+                borderColor: "#55a8b9",
+                borderWidth: 1,
+                borderRadius: 8,
+                width: "95%",
+                flex: 1,
+                height: 50,
+                justifyContent: "center"
+              }}
+              onPress={() => navigation.navigate("OrderHistory")}
+            >
+              <View style={{ flexDirection: "row-reverse" }}>
+                <FontAwesome5 name="history" size={24} color="#55a8b9" />
 
-          </Pressable>
+                <Text style={{ fontWeight: "bold", fontSize: 18, marginHorizontal: 10 }}>
+                  طلباتي
 
-          <Pressable
+                </Text>
+              </View>
+
+            </Pressable>
+
+            <Pressable
+              style={{
+                padding: 10,
+                borderColor: "#55a8b9",
+                borderWidth: 1,
+                borderRadius: 8,
+                width: "95%",
+
+                flex: 1,
+                height: 50,
+                justifyContent: "center"
+
+              }}
+              onPress={() => navigation.navigate("Account")}
+
+            >
+              <View style={{ flexDirection: "row-reverse" }}>
+                <MaterialIcons name="manage-accounts" size={24} color="#55a8b9" />
+                <Text style={{ fontWeight: "bold", fontSize: 18, marginHorizontal: 10 }}>حسابي</Text>
+              </View>
+            </Pressable>
+          </View>
+
+          <View
             style={{
-              padding: 10,
-              borderColor: "#55a8b9",
-              borderWidth: 1,
-              borderRadius: 8,
-              width: "95%",
-
-              flex: 1,
-              height: 50,
-              justifyContent: "center"
-
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 10,
+              marginTop: 12,
             }}
-            onPress={() => navigation.navigate("Account")}
-
           >
-            <View style={{ flexDirection: "row-reverse" }}>
-              <MaterialIcons name="manage-accounts" size={24} color="#55a8b9" />
-              <Text style={{ fontWeight: "bold", fontSize: 18, marginHorizontal: 10 }}>حسابي</Text>
-            </View>
-          </Pressable>
+            <Pressable
+              style={{
+                padding: 10,
+                borderColor: "#55a8b9",
+                borderWidth: 1,
+                borderRadius: 8,
+                width: "95%",
+                flex: 1,
+                height: 50,
+                justifyContent: "center"
+
+              }}
+              onPress={() => navigation.navigate("Favorite")}
+
+            >
+              <View style={{ flexDirection: "row-reverse" }}>
+                <MaterialIcons name="favorite" size={24} color="#55a8b9" />
+                <Text style={{ fontWeight: "bold", fontSize: 18, marginHorizontal: 10 }}>قائمتي</Text>
+              </View>
+            </Pressable>
+
+            <Pressable
+              style={{
+                padding: 10,
+                borderColor: "#ff1111",
+                backgroundColor: "#ff1111",
+                borderWidth: 1,
+                borderRadius: 8,
+                width: "95%",
+                flex: 1,
+                height: 45,
+                justifyContent: "center"
+
+              }}
+              onPress={signOut}
+            >
+              <View style={{ flexDirection: "row-reverse" }}>
+                <SimpleLineIcons name="logout" size={22} color="black" />
+                <Text style={{ fontWeight: "bold", fontSize: 16, color: "#fff", marginHorizontal: 10 }}>تسجيل الخروج</Text>
+              </View>
+            </Pressable>
+          </View>
         </View>
 
-        <View
-          style={{
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 10,
-            marginTop: 12,
-          }}
-        >
-          <Pressable
-            style={{
-              padding: 10,
-              borderColor: "#55a8b9",
-              borderWidth: 1,
-              borderRadius: 8,
-              width: "95%",
-              flex: 1,
-              height: 50,
-              justifyContent: "center"
-
-            }}
-            onPress={() => navigation.navigate("Favorite")}
-
-          >
-            <View style={{ flexDirection: "row-reverse" }}>
-              <MaterialIcons name="favorite" size={24} color="#55a8b9" />
-              <Text style={{ fontWeight: "bold", fontSize: 18, marginHorizontal: 10 }}>قائمتي</Text>
-            </View>
-          </Pressable>
-
-          <Pressable
-            style={{
-              padding: 10,
-              borderColor: "#ff1111",
-              backgroundColor: "#ff1111",
-              borderWidth: 1,
-              borderRadius: 8,
-              width: "95%",
-              flex: 1,
-              height: 45,
-              justifyContent: "center"
-
-            }}
-            onPress={signOut}
-          >
-            <View style={{ flexDirection: "row-reverse" }}>
-              <SimpleLineIcons name="logout" size={22} color="black" />
-              <Text style={{ fontWeight: "bold", fontSize: 16, color: "#fff", marginHorizontal: 10 }}>تسجيل الخروج</Text>
-            </View>
-          </Pressable>
-        </View>
-      </View>
-
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 };
 

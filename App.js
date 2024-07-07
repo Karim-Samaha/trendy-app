@@ -5,11 +5,13 @@ import { Provider } from "react-redux";
 import StackNavigator from "./navigation/StackNavigator";
 import store from "./store";
 import { UserContext } from "./UserContext";
+
 I18nManager.forceRTL(false); 
 export default function App() {
   return (
     <>
       <Provider store={store}>
+      <StatusBar style="light" backgroundColor="#55a8b9" />
         <UserContext>
           <StackNavigator />
           <ModalPortal />

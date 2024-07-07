@@ -44,16 +44,16 @@ const Login = () => {
     ]);
     const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            headerTitle: "",
-            headerStyle: {
-                backgroundColor: "#00CED1",
-            },
+    // useLayoutEffect(() => {
+    //     navigation.setOptions({
+    //         headerTitle: "",
+    //         headerStyle: {
+    //             backgroundColor: "#00CED1",
+    //         },
 
 
-        });
-    }, []);
+    //     });
+    // }, []);
     const [user, setUser] = useState();
     useEffect(() => {
         const fetchUserProfile = async () => {
