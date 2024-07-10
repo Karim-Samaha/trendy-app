@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { config } from "../screens/config";
 import { useState } from "react";
 
-const Product = ({ item, containerStyle, twoCell }) => {
+const Product = ({ item, containerStyle, twoCell, handleAddToCart }) => {
     const navigation = useNavigation();
     const [imageHasError, setImageHasError] = useState(false)
     return <Pressable
@@ -68,7 +68,9 @@ const Product = ({ item, containerStyle, twoCell }) => {
                 خصم {100 - (item.price / item.priceBefore * 100).toFixed(0)} %
             </Text>
         </View>}
-        <Pressable style={styles.mainBtn} onPress={() => navigation.navigate("Info", {
+        {handleAddToCart ? <Pressable style={styles.mainBtn} onPress={() => handleAddToCart(item)}>
+            <Text style={{ color: "#fff" }} >اضف الي السلة</Text>
+        </Pressable> : <Pressable style={styles.mainBtn} onPress={() => navigation.navigate("Info", {
             id: item.id,
             title: item.title,
             price: item?.price,
@@ -79,7 +81,8 @@ const Product = ({ item, containerStyle, twoCell }) => {
             item: item,
         })}>
             <Text style={{ color: "#fff" }} >اضف الي السلة</Text>
-        </Pressable>
+        </Pressable>}
+
         <View>
 
         </View>

@@ -146,7 +146,9 @@ const HomeScreen = () => {
         <Search />
         <ScrollView style={{
           direction: "rtl",
-          paddingVertical: 80
+          paddingVertical: 80,
+          marginTop: 10
+
         }}>
           {images?.heros.length > 0 ? <SliderBox
             images={images.heros.map((item) => `${config.backendBase}${item?.imageSrc}`)}

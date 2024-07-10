@@ -27,8 +27,55 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import axios from "axios";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AddToCartMessage from "../components/AddToCartMessage";
+import RenderHTML from "react-native-render-html";
 
 const ProductInfoScreen = () => {
+  const tagsStyles = {
+    ol: {
+      direction: "rtl"
+    },
+    li: {
+      direction: "rtl",
+      textAlign: "right"
+
+
+    },
+    h2: {
+      direction: "rtl",
+      flexDirection: "row-reverse",
+      fontSize: 15,
+    },
+    ul: {
+
+      flexDirection: "row-reverse",
+      flexWrap: 'wrap',
+      listStyleType: 'none',
+
+    },
+    p: {
+      flexDirection: "row-reverse",
+      direction: "rtl",
+      fontSize: 15,
+      
+    },
+    span: {
+      flexDirection: "row-reverse",
+      textAlign: "right",
+      
+    },
+    div: {
+      flexDirection: "row-reverse",
+      textAlign: "right",
+
+
+    }
+    
+
+  };
+  function removeInlineStyles(htmlString) {
+    // Use a regular expression to remove all inline styles
+    return htmlString.replace(/style="[^"]*"/g, '');
+  }
 
   const route = useRoute();
   const { width } = Dimensions.get("window");
@@ -225,9 +272,11 @@ const ProductInfoScreen = () => {
           <FontAwesome5 name="info-circle" size={24} color="silver" style={{ marginHorizontal: 10 }} />
           <Text style={{ fontWeight: "bold", fontSize: 18 }}>عن المنتج:</Text>
         </View>
-        <View style={styles.descContent}>
-          <Text style={{ fontSize: 15 }}>{route.params.item?.description}</Text>
+        <View style={{ ...styles.descContent, }}>
+          <RenderHTML contentWidth={"100%"} source={{ html: route.params.item?.description }} tagsStyles={tagsStyles}
+          />
         </View>
+
         {formType !== "NORMAL_ORDER" && <Pressable
           // onPress={() => addItemToCart(route?.params?.item)}
           onPress={() => setFormType("NORMAL_ORDER")}

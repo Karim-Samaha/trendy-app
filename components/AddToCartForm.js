@@ -7,12 +7,18 @@ import Checkbox from 'expo-checkbox';
 import AddToCartMessage from "./AddToCartMessage";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/CartReducer";
-// import { SelectList } from 'react-native-dropdown-select-list'
+import { SelectList } from 'react-native-dropdown-select-list'
+import ProductAdds from "./ProductAddModal";
+import ProductAddsModal from "./ProductAddModal";
+import { Feather } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+
+// import DropDownPicker from 'react-native-dropdown-picker';
 
 const AddToCartForm = ({ formType, product, setAddedToCart }) => {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [isTimeVisible, setIsTimeVisible] = useState(false);
-    // const [addedToCart, setAddedToCart] = useState(false)
+    const [selectedAdds, setSelectedAdds] = useState([])
     const dateRef = useRef()
     const timeRef = useRef()
     const showDatePicker = () => {
@@ -25,6 +31,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
     const hideTimePicker = () => {
         setIsTimeVisible(false);
     };
+
     const [formValue, setFormValue] = useState({
         type: formType,
         deliveryDate: "",
@@ -68,7 +75,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
     const addItemToCart = (item, formValue) => {
         const itemToBeAdded = {
             formInfo: { ...formValue, type: formType },
-            selectedCard: {},
+            selectedCard: [...selectedAdds],
             ...item
             // id: item?._id
         }
@@ -98,13 +105,39 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
         if (isValid) addItemToCart(item, formValue);
     };
     const [giftSelect, setGiftSelected] = useState("كروت اهداء");
-
+    const [giftsModal, setGiftsModal] = useState(false)
+    const handleSelectAdd = (item) => {
+        const isIncluded = selectedAdds.find((prev) => prev?._id === item?._id)
+        if (isIncluded?._id) return null
+        setSelectedAdds(prev => ([...prev, { ...item, quantity: 1 }]))
+        setGiftsModal(false)
+    }
+    const handleSelectAddQty = (id, type) => {
+        let item = selectedAdds.find((prev) => prev?._id === id)
+        let quantity = item.quantity
+        if (type === 'add') {
+            quantity += 1
+            console.log("111")
+        } else if (type === 'deduct' && item.quantity > 1) {
+            quantity -= 1
+        }
+        item.quantity = quantity
+        const newSetOfAdds = selectedAdds.map((prev) => {
+            if (prev?._id === id) return item
+            return prev
+        })
+        setSelectedAdds(newSetOfAdds)
+    }
+    const deleteAdd = (id) => {
+        const newAdds = selectedAdds.filter((item) => item._id !== id)
+        setSelectedAdds(newAdds)
+    }
     const data = [
         { key: '1', value: 'كروت اهداء' },
         { key: '2', value: 'شيكولاتة بلجيكية' },
         { key: '3', value: 'بالونات' },
-
     ]
+
 
     return (
         <View style={styles.container}>
@@ -147,18 +180,18 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                     } />
                 {errors.address && formValue.addressSelected && < Text style={styles.error}>يجد تحديد العنوان</Text>}
             </View>}
-            {formType === 'GIFT' && <View style={styles.inputContainer}>
+            <View style={styles.inputContainer}>
                 <Text>اضافات الورود</Text>
-                {/* <SelectList
+                <SelectList
                     setSelected={(val) => setGiftSelected(val)}
                     data={data}
                     save="value"
                     defaultOption={data[0]}
                     placeholder={" "}
                     search={false}
-                /> */}
+                />
                 {(giftSelect === 'كروت اهداء' || giftSelect === '1') && <Pressable
-                    onPress={() => null}
+                    onPress={() => setGiftsModal(true)}
                     style={{
                         backgroundColor: "#55a8b9",
                         padding: 10,
@@ -176,7 +209,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                     </View>
                 </Pressable>}
                 {giftSelect === 'شيكولاتة بلجيكية' && <Pressable
-                    onPress={() => null}
+                    onPress={() => setGiftsModal(true)}
                     style={{
                         backgroundColor: "#55a8b9",
                         padding: 10,
@@ -194,7 +227,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                     </View>
                 </Pressable>}
                 {giftSelect === 'بالونات' && <Pressable
-                    onPress={() => null}
+                    onPress={() => setGiftsModal(true)}
                     style={{
                         backgroundColor: "#55a8b9",
                         padding: 10,
@@ -211,7 +244,29 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                         <Text style={{ color: "#fff" }}>اختيار بالونات</Text>
                     </View>
                 </Pressable>}
-            </View>}
+                <ProductAddsModal show={giftsModal} close={() => setGiftsModal(false)} category={giftSelect} handleSelectAdd={handleSelectAdd} />
+                {selectedAdds.length > 0 ? <View style={styles.addsContainer}>
+                    {selectedAdds.map((item) => {
+                        return <View style={styles.addsItem} key={item?._id}>
+                            <Text>{item?.name}</Text>
+                            <View style={styles.addsController}>
+                                <Pressable style={{ marginHorizontal: 10 }} onPress={() => handleSelectAddQty(item?._id, "add")}>
+                                    <Feather name="plus" size={24} color="black" />
+                                </Pressable>
+                                <Text>{item?.quantity}</Text>
+                                <Pressable style={{ marginHorizontal: 10 }} onPress={() => handleSelectAddQty(item?._id, "deduct")}>
+                                    <AntDesign name="minus" size={24} color="black" />
+                                </Pressable>
+                            </View>
+                            <Pressable onPress={() => deleteAdd(item?._id)}>
+                                <Text style={{ color: "red" }}>مسح</Text>
+                            </Pressable>
+                        </View>
+                    })}
+
+                </View> : null}
+
+            </View>
             {formType === "NORMAL_ORDER" && <Pressable
                 onPress={() => validateAndAddToCart(product, formValue)}
                 style={{
@@ -307,5 +362,23 @@ const styles = StyleSheet.create({
         marginHorizontal: 8,
         fontSize: 16,
         fontWeight: "bold",
+    },
+    addsContainer: {
+
+    },
+    addsItem: {
+        width: "100%",
+        borderWidth: 1,
+        borderStyle: "dashed",
+        borderColor: "#55a8b9",
+        paddingVertical: 5,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 9,
+        marginBottom: 5
+    },
+    addsController: {
+        flexDirection: "row-reverse",
+        marginVertical: 10
     }
 });

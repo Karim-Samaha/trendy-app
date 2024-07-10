@@ -21,7 +21,7 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { config } from "./config";
 import PaymentDialog from "../components/CheckoutModal";
-import { getUser, renderTotalPrice_ } from "../Utils/helpers";
+import { adjustNames, getUser, renderTotalPrice_ } from "../Utils/helpers";
 import Search from "../components/Search";
 import _axios from "../Utils/axios";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -32,12 +32,17 @@ const CartScreen = () => {
   const [coupon, setCoupon] = useState("");
   const [couponResponse, setCouponResponse] = useState({});
   const [selectedOption, setSelectedOption] = useState('1');
+  const [user, setUser] = useState();
+  const getUserDataFun = async () => {
+    const userData = await getUser()
+    setUser(userData)
+  }
   const renderTotalPrice = renderTotalPrice_(cart, couponResponse?.precent);
   const route = useRoute();
   // useEffect(() => {
   //   setCheckoutModal(false)
   // }, [route])
-  console.log({checkoutModal})
+  console.log({ checkoutModal })
   const dispatch = useDispatch();
   const increaseQuantity = (item) => {
     dispatch(incementQuantity(item));
@@ -67,7 +72,9 @@ const CartScreen = () => {
       })
       .catch((err) => console.log(err));
   };
-
+  useEffect(() => {
+    getUserDataFun()
+  }, [])
   const options = [
     { id: '1', text: 'من خلال Trendy Rose داخل الرياض' },
     { id: '2', text: 'من خلال Bosta خارج الرياض' },
@@ -168,11 +175,11 @@ const CartScreen = () => {
         <Text style={{ fontSize: 16, fontWeight: "400" }}>مجموع الكلي : </Text>
         <Text style={{ fontSize: 16, fontWeight: "bold" }}>{renderTotalPrice.fintalTotal} رس</Text>
       </View>
-      {checkoutModal && <PaymentDialog show={true} 
-      close={() => setCheckoutModal(false)} 
-      amount={renderTotalPrice.fintalTotal} 
-      vat={renderTotalPrice.vat}
-      couponResponse={couponResponse}
+      {checkoutModal && <PaymentDialog show={true}
+        close={() => setCheckoutModal(false)}
+        amount={renderTotalPrice.fintalTotal}
+        vat={renderTotalPrice.vat}
+        couponResponse={couponResponse}
       />}
 
       <View style={styles.shippingContainer}>
@@ -197,7 +204,7 @@ const CartScreen = () => {
           </TouchableOpacity>
         ))}
       </View>
-      <Pressable
+      {user ? <Pressable
         // onPress={() => navigation.navigate("Confirm")}
         style={{
           backgroundColor: "#55a8b9",
@@ -213,7 +220,25 @@ const CartScreen = () => {
         <Text style={{
           color: "#fff",
         }}>اتمام الدفع</Text>
-      </Pressable>
+      </Pressable> : <Pressable
+        // onPress={() => navigation.navigate("Confirm")}
+        style={{
+          backgroundColor: "#55a8b9",
+          padding: 10,
+          borderRadius: 5,
+          justifyContent: "center",
+          alignItems: "center",
+          marginHorizontal: 10,
+          marginTop: 10,
+        }}
+        onPress={() => navigation.navigate("Profile", {
+          callbackScreen: 'Cart'
+        })}
+      >
+        <Text style={{
+          color: "#fff",
+        }}>تسجيل الدخول لاتمام الدفع</Text>
+      </Pressable>}
 
       <Text
         style={{
@@ -243,8 +268,8 @@ const CartScreen = () => {
                 marginVertical: 10,
                 flexDirection: "row-reverse",
                 justifyContent: "flex-start",
-                alignItems: "flex-start"
-
+                alignItems: "flex-start",
+                flexWrap: "wrap"
               }}
             >
 
@@ -254,7 +279,6 @@ const CartScreen = () => {
                   source={{ uri: `${config.assetsUrl}/${item?.item?.image}` }}
                 />
               </View>
-
               <View style={{ marginRight: 20, width: 200 }} >
                 <Text numberOfLines={3} style={{
                   marginTop: 10, fontWeight: "bold", textAlign: "right"
@@ -277,9 +301,45 @@ const CartScreen = () => {
                 >
                   {item?.price}رس
                 </Text>
+                {item?.selectedCard.length > 0 ? item?.selectedCard.map((add) => {
+                  return <View style={{
+                    fontWeight: "bold",
+                    padding: 0, marginTop: 6,
+                    borderWidth: 1,
+                    borderColor: "#55a8b9",
+                    backgroundColor: "#f8fafc",
+                    textAlign: "center",
+                    color: "#55a8b9",
+                    borderRadius: 10,
+                    padding: 10,
+                    justifyContent: "center",
+                    alignItems: "center"
+                  }} key={item?._id}>
+                    <Text style={{ fontWeight: "bold" }}>اضافات الورود</Text>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        textAlign: "center",
+
+                      }}
+                    >
+                      {adjustNames(add?.name)}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        textAlign: "center",
+                        fontWeight: "bold"
+                      }}
+                    >
+                      {add.price} رس
+                    </Text>
+                  </View>
+                }) : null}
 
 
               </View>
+
             </Pressable>
 
             <Pressable

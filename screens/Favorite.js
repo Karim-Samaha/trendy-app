@@ -23,6 +23,7 @@ import Product from "../components/Product";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import _axios from "../Utils/axios";
 import Search from "../components/Search";
+import { useFocusEffect } from '@react-navigation/native';
 
 const Favorite = () => {
     const route = useRoute();
@@ -43,16 +44,22 @@ const Favorite = () => {
             let parsedUser = JSON.parse(user)
             const response = await _axios.post(`${config.backendUrl}/favorite`,
                 {}, { parsedUser })
-
             setProducts(response.data.data)
-            console.log(response.data.data)
             setProductLoaded(true)
         }
 
     }
     useEffect(() => {
         fetchFav()
+        console.log("what!!!")
     }, [])
+    useFocusEffect(
+        useCallback(() => {
+            fetchFav()
+        }, [])
+    );
+
+
 
 
 
@@ -93,7 +100,7 @@ const Favorite = () => {
                         </View> */}
                         <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-around", paddingTop: 30, }}>
                             {products.length > 0 ? products.map((item) => {
-                                return <Product item={item} key={item?._id}  twoCell={true}/>
+                                return <Product item={item} key={item?._id} twoCell={true} />
                             }) : products.length === 0 && productLoaded ?
                                 <Text style={{ fontWeight: "bold", fontSize: 18, marginTop: 40 }}>لم يتم اضافة منتجات في القائمة</Text>
                                 : null}

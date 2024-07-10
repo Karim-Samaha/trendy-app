@@ -10,13 +10,15 @@ const Payment = () => {
     const navigation = useNavigation();
     const route = useRoute();
     return <WebView
-        source={{ uri: `https://trendy-rose-ea018d58bf02.herokuapp.com/test?token=${route.params?.user?.accessToken}&amount=${route.params?.amount}&mobileSessionId=${route.params?.mobileSessionId}` }}
+        source={{ uri: `https://trendy-rose-backend-1d3339f8bb01.herokuapp.com/test?token=${route.params?.user?.accessToken}&amount=${route.params?.amount}&mobileSessionId=${route.params?.mobileSessionId}` }}
         // source={{ uri: `https://trendy-rose-ea018d58bf02.herokuapp.com/test-success?id=338b22b0-3121-48ed-8eb6-68b7d3b31f1f&status=paid&amount=1000&message=APPROVED` }}
         javaScriptEnabled={true}
         domStorageEnabled={true}
         startInLoadingState={true}
         style={{ marginTop: 0, height: 600 }}
-        onLoadStart={() => console.log('Loading started')}
+        onLoadStart={() => {
+            console.log({debUrl: `https://trendy-rose-backend-1d3339f8bb01.herokuapp.com/test?token=${route.params?.user?.accessToken}&amount=${route.params?.amount}&mobileSessionId=${route.params?.mobileSessionId}`})
+        }}
         onLoadEnd={() => console.log('Loading finished')}
         ignoreSslError={true}
         userAgent="Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/14E5239e Safari/602.1"

@@ -11,7 +11,7 @@ import {
     Button,
     TouchableOpacity
 } from "react-native";
-import React, { useState, useEffect, useCallback, useContext, useRef } from "react";
+import React, { useState, useEffect, useCallback, useContext, useRef, useLayoutEffect } from "react";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -29,7 +29,7 @@ import Search from "../components/Search";
 
 const SubCategorie = () => {
     const route = useRoute();
-
+    const navigation = useNavigation()
     const sectionRef = useRef();
     const sectionOneRef = useRef();
     const sectionTwoRef = useRef();
@@ -53,10 +53,11 @@ const SubCategorie = () => {
     }
     const fetchCategoryAllProducts = async () => {
         const categoryId = await route.params?.item?._id
-        const response = await axios.get(`${config.backendUrl}/category/${categoryId}/all-products?limit=${limit}`)
+        const response = await axios.get(`${config.backendUrl}/category/${categoryId}/all-products?limit=${limit}&channel=web`)
         let setObj = new Set(response.data.data.map(JSON.stringify));
         let output = Array.from(setObj).map(JSON.parse);
-        setProducts(output)
+        let active = output.filter((item) => item.active)
+        setProducts(active)
         setProductLoaded(true)
     }
 
@@ -90,6 +91,12 @@ const SubCategorie = () => {
     useEffect(() => {
         handleRequestingProductsData()
     }, [currentSubId, limit])
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: route.params.item?.name,
+        })
+
+    }, [navigation])
 
     return (
         <>
@@ -107,7 +114,7 @@ const SubCategorie = () => {
                     paddingTop: 80
                 }}>
                     <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingBottom: 120 }}>
-                        <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", paddingTop: 30 }}>
+                        {/* <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", paddingTop: 30 }}>
                             <Pressable
                                 style={styles.ctgContainer}
                             >
@@ -129,8 +136,8 @@ const SubCategorie = () => {
 
                             </Pressable>
 
-                        </View>
-                        <Text style={{
+                        </View> */}
+                        {/* <Text style={{
                             textAlign: "center",
                             fontSize: 16,
                             fontWeight: "600",
@@ -142,32 +149,50 @@ const SubCategorie = () => {
 
                         >
                             {route.params.item?.description}
-                        </Text>
+                        </Text> */}
                         {subCategories.length > 0 ?
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
-                                flexDirection: "row",
-                                justifyContent: "flex-end",
-                            }}
-                                onContentSizeChange={scrollToEnd}
-                                ref={sectionRef} >
-                                {subCategories.map((item) => {
-                                    return <Pressable
-                                        style={{
-                                            ...styles.subCtgLabel, backgroundColor: currentSubId === item?._id ? "#55a8b9" : "white",
-                                            color: currentSubId === item?._id ? "#fff" : "000",
-                                        }}
-                                        key={item?._id}
-                                        onPress={() => handleSubCategorySelection(item?._id)}
-                                    >
-                                        <Text style={{
-                                            color: currentSubId === item?._id ? "#fff" : "#000",
-                                        }}
+                            <>
+                                {subCategories.length > 1 && <Text style={{
+                                    textAlign: "center",
+                                    fontSize: 18,
+                                    fontWeight: "bold",
+                                    marginTop: 5,
+                                    marginBottom: 10,
+                                    textAlign: "right",
+                                    paddingHorizontal: 10
+                                }}
 
-                                        >{item.name}</Text>
+                                >
+                                    التصنيفات الفرعية
+                                </Text>}
 
-                                    </Pressable>
-                                })}
-                            </ScrollView> : null}
+                                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
+                                    flexDirection: "row",
+                                    justifyContent: "flex-end",
+                                }}
+                                    onContentSizeChange={scrollToEnd}
+                                    ref={sectionRef} >
+                                    {subCategories.map((item) => {
+                                        if (item.name.trim() === route.params.item?.name.trim()) {
+                                            return null
+                                        }
+                                        return <Pressable
+                                            style={{
+                                                ...styles.subCtgLabel, backgroundColor: currentSubId === item?._id ? "#55a8b9" : "white",
+                                                color: currentSubId === item?._id ? "#fff" : "000",
+                                            }}
+                                            key={item?._id}
+                                            onPress={() => handleSubCategorySelection(item?._id)}
+                                        >
+                                            <Text style={{
+                                                color: currentSubId === item?._id ? "#fff" : "#000",
+                                            }}
+
+                                            >{item.name}</Text>
+
+                                        </Pressable>
+                                    })}
+                                </ScrollView></> : null}
                         <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-around", paddingTop: 10, }}>
                             {products.length > 0 ? products.map((item) => {
                                 return <Product item={item} key={item?._id} containerStyle={{ width: 160, height: 140 }} twoCell={true} />
@@ -175,7 +200,7 @@ const SubCategorie = () => {
                                 <Text style={{ fontWeight: "bold", fontSize: 18, marginTop: 40 }}>لا يوجد منتجات حاليا</Text>
                                 : null}
                         </View>
-                        {productLoaded && products.length >= 12 && <View style={{ alignItems: "center" }}>
+                        {productLoaded && products.length >= 8 && <View style={{ alignItems: "center" }}>
                             <TouchableOpacity style={styles.moreBtn} onPress={requestMore}>
                                 <Text style={styles.moreText}>
                                     عرض المزيد

@@ -2,8 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const adjustNames = (text) => {
   let outPutText = "";
-  if (text.length > 60) {
-    outPutText = text?.substring(0, 60) + "...";
+  if (text.length > 25) {
+    outPutText = text?.substring(0, 25) + "...";
   } else {
     outPutText = text;
   }
