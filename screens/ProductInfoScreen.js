@@ -7,7 +7,8 @@ import {
   TextInput,
   ImageBackground,
   Dimensions,
-  I18nManager
+  I18nManager,
+  Share
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -56,12 +57,12 @@ const ProductInfoScreen = () => {
       flexDirection: "row-reverse",
       direction: "rtl",
       fontSize: 15,
-      
+
     },
     span: {
       flexDirection: "row-reverse",
       textAlign: "right",
-      
+
     },
     div: {
       flexDirection: "row-reverse",
@@ -69,13 +70,9 @@ const ProductInfoScreen = () => {
 
 
     }
-    
+
 
   };
-  function removeInlineStyles(htmlString) {
-    // Use a regular expression to remove all inline styles
-    return htmlString.replace(/style="[^"]*"/g, '');
-  }
 
   const route = useRoute();
   const { width } = Dimensions.get("window");
@@ -88,6 +85,28 @@ const ProductInfoScreen = () => {
   const scrollToEnd = () => {
     reviewRef.current?.scrollToEnd({ animated: false });
   };
+  const onShare = async () => {
+    const link = `https://www.cadeaumoi.com/product-detail/${route.params.item?._id}/${route.params.item?.name}`
+    try {
+      const result = await Share.share({
+        message: link,
+        url: link, // Add your content URL here
+      });
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          console.log('Shared with activity type:', result.activityType);
+        } else {
+          console.log('Shared successfully');
+        }
+      } else if (result.action === Share.dismissedAction) {
+        console.log('Share dismissed');
+      }
+    } catch (error) {
+      console.error('Error sharing content:', error.message);
+    }
+  };
+
   const handleFav = async () => {
     const user = await getUser();
     _axios
@@ -188,6 +207,7 @@ const ProductInfoScreen = () => {
                   alignItems: "center",
                   flexDirection: "row",
                 }}
+                onPress={onShare}
               >
                 <MaterialCommunityIcons
                   name="share-variant"
@@ -221,7 +241,10 @@ const ProductInfoScreen = () => {
           <Text style={{ fontSize: 15, fontWeight: "500" }}>
             {route?.params?.title}
           </Text>
+          <View style={{ flexDirection: 'row-reverse', alignItems: "center", marginBottom: 10 }}>
+            <Text style={{ fontWeight: "bold", fontSize: 16 }}>{route?.params.item?.name}</Text>
 
+          </View>
           <View>
             {route?.params?.item?.priceBefore &&
               <Text style={{ fontWeight: "bold", fontSize: 16, marginVertical: 8 }}>

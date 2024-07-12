@@ -1,44 +1,21 @@
 import {
-    ActivityIndicator,
-    Image,
     Modal,
-
-    Pressable,
-
     ScrollView,
-
     StyleSheet,
     Text,
-    TouchableOpacity,
     TouchableWithoutFeedback,
     View,
+    ActivityIndicator
 } from "react-native"
 import React, { useEffect, useMemo, useCallback } from "react"
-import { useDispatch, useSelector } from "react-redux"
 
 import { useState } from "react"
-import { useNavigation } from "@react-navigation/native"
 import _axios from "../Utils/axios"
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import { config } from "../screens/config"
-import { getUser, renderTotalPrice_ } from "../Utils/helpers"
 import axios from "axios"
 import Product from "./Product"
-import { useFocusEffect } from '@react-navigation/native';
 
 
-const ReadyUIPayments = {
-    SP: "stc_pay",
-    MC: "mada_card",
-    CC: "credit_card",
-}
-
-const CheckoutPayments = {
-    SP: "SP",
-    MC: "CC",
-    CC: "CC",
-    AP: "AP",
-}
 
 
 
@@ -64,14 +41,13 @@ const ProductAddsModal = ({ show, close, category, handleSelectAdd }) => {
         }
     }
     useEffect(() => {
-        console.log("run!")
+        setLoaded(false)
+        setProducts([])
         fetchProducts()
     }, [show])
 
-    const handleAddToCart = () => {
 
-    }
-
+    console.log({ loaded, products })
     const renderProductRows = (item) => {
         const rows = [];
         for (let i = 0; i < products.length; i += 2) {
@@ -105,6 +81,7 @@ const ProductAddsModal = ({ show, close, category, handleSelectAdd }) => {
                                     {renderTitle()}
                                 </Text>
                             </View>
+
                             <ScrollView style={{
                                 direction: "rtl",
                                 paddingVertical: 0,
@@ -116,7 +93,8 @@ const ProductAddsModal = ({ show, close, category, handleSelectAdd }) => {
                                 alignItems: "center"
                             }}>
                                 {loaded && products?.length > 0 && renderProductRows()}
-                                {loaded && products?.length === 0 && <Text>لا يوجد منتجات حاليا</Text>}
+                                {loaded && products?.length === 0 || loaded && !products && <Text>لا يوجد منتجات حاليا</Text>}
+                                {!loaded && <ActivityIndicator size="large"  />}
                             </ScrollView>
                         </View>
                     </TouchableWithoutFeedback>
@@ -136,6 +114,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         padding: 20,
+
     },
     wrapper: {
         width: "100%",
@@ -143,6 +122,7 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 8,
         alignItems: "center",
+
     },
     header: {
         width: "100%",
@@ -161,13 +141,14 @@ const styles = StyleSheet.create({
     productListContainer: {
         flexDirection: "row",
         flexWrap: "wrap",
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         paddingTop: 10,
         height: 550,
     },
     row: {
-        flexDirection: 'row',
+        flexDirection: "row-reverse",
         justifyContent: 'space-between',
         marginBottom: 10,
+        width: "100%",
     },
 })

@@ -18,6 +18,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import Search from "../components/Search";
+import StaticLinks from "../components/StaticLinks";
 
 const ProfileScreen = () => {
 
@@ -171,7 +172,7 @@ const ProfileScreen = () => {
                 <Text style={{ fontWeight: "bold", fontSize: 18, marginHorizontal: 10 }}>قائمتي</Text>
               </View>
             </Pressable>
-
+            <StaticLinks />
             <Pressable
               style={{
                 padding: 10,

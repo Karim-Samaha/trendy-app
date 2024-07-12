@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "ecommerce-project",
-    "slug": "ecommerce-project",
+    "name": "trendy-rose",
+    "slug": "trendy-rose",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/app-logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/app-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -16,20 +16,20 @@
     ],
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/app-logo.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.host.exponent"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/app-logo.png"
     },
     "ios": {
       "bundleIdentifier": "com.host.exponent"
     },
     "extra": {
       "eas": {
-        "projectId": "e2d32886-0562-4848-92cb-e1a3e32d89fe"
+        "projectId": "cd69da7d-75bd-4dff-8b06-28ebb4675701"
       }
     }
   }

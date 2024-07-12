@@ -25,6 +25,7 @@ const Product = ({ item, containerStyle, twoCell, handleAddToCart }) => {
             justifyContent: "center",
             marginHorizontal: twoCell ? "2.5%" : 10,
             width: twoCell ? "45%" : "6%",
+            minWidth: 120,
             maxWidth: 170
         }}
     >
@@ -80,7 +81,7 @@ const Product = ({ item, containerStyle, twoCell, handleAddToCart }) => {
             oldPrice: item?.oldPrice,
             item: item,
         })}>
-            <Text style={{ color: "#fff" }} >اضف الي السلة</Text>
+            <Text style={{ color: "#fff", fontSize: 13 }} >اضف الي السلة</Text>
         </Pressable>}
 
         <View>
@@ -96,7 +97,7 @@ export default Product
 const styles = StyleSheet.create({
     mainBtn: {
         backgroundColor: "#55a8b9",
-        width: 120,
+        width: "95%",
         alignItems: "center",
         justifyContent: "center",
         height: 36,

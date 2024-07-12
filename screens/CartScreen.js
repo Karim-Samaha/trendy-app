@@ -25,6 +25,7 @@ import { adjustNames, getUser, renderTotalPrice_ } from "../Utils/helpers";
 import Search from "../components/Search";
 import _axios from "../Utils/axios";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import StoreDeleiverForm from "../components/StoreDeleiverForm";
 
 const CartScreen = () => {
   const cart = useSelector((state) => state.cart.cart);
@@ -33,6 +34,12 @@ const CartScreen = () => {
   const [couponResponse, setCouponResponse] = useState({});
   const [selectedOption, setSelectedOption] = useState('1');
   const [user, setUser] = useState();
+  const [storeDeleviryData, setStoreDeleviryData] = useState({
+    name: "",
+    phone: "",
+    deliveryDate: "",
+    valid: false,
+  });
   const getUserDataFun = async () => {
     const userData = await getUser()
     setUser(userData)
@@ -180,6 +187,8 @@ const CartScreen = () => {
         amount={renderTotalPrice.fintalTotal}
         vat={renderTotalPrice.vat}
         couponResponse={couponResponse}
+        ShippingType={options.find((item) => item.id === selectedOption)?.text}
+        ShippingInfo={storeDeleviryData}
       />}
 
       <View style={styles.shippingContainer}>
@@ -191,7 +200,7 @@ const CartScreen = () => {
               styles.option,
               selectedOption === option.id && styles.selectedOption,
             ]}
-            onPress={() => null}
+            onPress={() => setSelectedOption(option.id)}
           >
             <Text
               style={[
@@ -203,42 +212,45 @@ const CartScreen = () => {
             </Text>
           </TouchableOpacity>
         ))}
+        {selectedOption === '3' && <StoreDeleiverForm storeDeleviryData={storeDeleviryData} setStoreDeleviryData={setStoreDeleviryData} />}
       </View>
-      {user ? <Pressable
-        // onPress={() => navigation.navigate("Confirm")}
-        style={{
-          backgroundColor: "#55a8b9",
-          padding: 10,
-          borderRadius: 5,
-          justifyContent: "center",
-          alignItems: "center",
-          marginHorizontal: 10,
-          marginTop: 10,
-        }}
-        onPress={() => setCheckoutModal(true)}
-      >
-        <Text style={{
-          color: "#fff",
-        }}>اتمام الدفع</Text>
-      </Pressable> : <Pressable
-        // onPress={() => navigation.navigate("Confirm")}
-        style={{
-          backgroundColor: "#55a8b9",
-          padding: 10,
-          borderRadius: 5,
-          justifyContent: "center",
-          alignItems: "center",
-          marginHorizontal: 10,
-          marginTop: 10,
-        }}
-        onPress={() => navigation.navigate("Profile", {
-          callbackScreen: 'Cart'
-        })}
-      >
-        <Text style={{
-          color: "#fff",
-        }}>تسجيل الدخول لاتمام الدفع</Text>
-      </Pressable>}
+      {user ?
+        (selectedOption !== '3' || selectedOption === '3' && storeDeleviryData.valid) &&
+        <Pressable
+          // onPress={() => navigation.navigate("Confirm")}
+          style={{
+            backgroundColor: "#55a8b9",
+            padding: 10,
+            borderRadius: 5,
+            justifyContent: "center",
+            alignItems: "center",
+            marginHorizontal: 10,
+            marginTop: 10,
+          }}
+          onPress={() => setCheckoutModal(true)}
+        >
+          <Text style={{
+            color: "#fff",
+          }}>اتمام الدفع</Text>
+        </Pressable> : <Pressable
+          // onPress={() => navigation.navigate("Confirm")}
+          style={{
+            backgroundColor: "#55a8b9",
+            padding: 10,
+            borderRadius: 5,
+            justifyContent: "center",
+            alignItems: "center",
+            marginHorizontal: 10,
+            marginTop: 10,
+          }}
+          onPress={() => navigation.navigate("Profile", {
+            callbackScreen: 'Cart'
+          })}
+        >
+          <Text style={{
+            color: "#fff",
+          }}>تسجيل الدخول لاتمام الدفع</Text>
+        </Pressable>}
 
       <Text
         style={{

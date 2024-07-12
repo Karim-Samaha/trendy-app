@@ -1,14 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
     View, Text, StyleSheet, Button, TextInput, Pressable,
 } from "react-native"
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Checkbox from 'expo-checkbox';
-import AddToCartMessage from "./AddToCartMessage";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/CartReducer";
 import { SelectList } from 'react-native-dropdown-select-list'
-import ProductAdds from "./ProductAddModal";
 import ProductAddsModal from "./ProductAddModal";
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -157,10 +155,12 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
             </View>
             <View style={styles.inputContainer}>
                 <Text>نص البطاقة - اكتب إهدائك هنا ( + 6.00 ر.س )</Text>
-                <TextInput style={{ ...styles.input, height: 150 }} multiline={true}
+                <TextInput style={{ ...styles.input, height: 150, textAlignVertical: 'top'}} multiline={true}
                     value={formValue.cardText}
-                    onChangeText={e => setFormValue(prev => ({ ...prev, cardText: e }))
-                    } />
+                    onChangeText={e => setFormValue(prev => ({ ...prev, cardText: e }))}
+                    numberOfLines={10}
+                    
+                 />
             </View>
             <View style={{ ...styles.inputContainer, ...styles.checkboxContainer }}>
                 <Text style={{ marginHorizontal: 10, marginVertical: 10 }}>لا اريد نحديد العنوان (فريق الدعم سيتواصل مع المستلم)</Text>
@@ -189,6 +189,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                     defaultOption={data[0]}
                     placeholder={" "}
                     search={false}
+                    boxStyles={{flexDirection: "row-reverse"}}
                 />
                 {(giftSelect === 'كروت اهداء' || giftSelect === '1') && <Pressable
                     onPress={() => setGiftsModal(true)}

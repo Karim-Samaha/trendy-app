@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import React, { useLayoutEffect, useEffect, useContext, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons, AntDesign } from "@expo/vector-icons";
 import axios from "axios";
 import { UserType } from "../UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,6 +16,10 @@ import { config } from "./config";
 import { useDispatch } from "react-redux";
 import { handleLogin } from "../redux/userReducer";
 import _axios from "../Utils/axios";
+import AntDesign from '@expo/vector-icons/AntDesign';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import StaticLinks from "../components/StaticLinks";
 
 const Login = () => {
     const { userId, setUserId } = useContext(UserType);
@@ -77,7 +80,7 @@ const Login = () => {
         await AsyncStorage.removeItem("authToken");
         navigation.replace("Login");
     };
-    const [method, setMethod] = useState("email");
+    const [method, setMethod] = useState("");
     const [otpSent, setOtpSent] = useState(false);
     const [error, setError] = useState("");
     const [loginForm, setLoginInForm] = useState({
@@ -93,7 +96,7 @@ const Login = () => {
             password: credentials.password
         })
         await _axios.post(`${config.backendUrl}/auth/login`, {
-            email: credentials.username,
+            email: credentials.username.toLocaleLowerCase(),
             password: credentials.password
         }).then(async (res) => {
             console.log(res)
@@ -154,19 +157,17 @@ const Login = () => {
         <ScrollView style={{ padding: 10, flex: 1, backgroundColor: "white" }}>
             <View
                 style={{
-                    flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    gap: 10,
-                    marginTop: 12,
                 }}
             >
                 <Image
                     style={{
-                        width: 250, height: 100, resizeMode: "cover", borderRadius: 11, marginTop: 150,
+                        width: 250, height: 100, resizeMode: "cover", borderRadius: 11, marginTop: 100,
                     }}
                     source={require('../assets/logo.png')} />
             </View>
+
             {method === 'email' && <View style={styles.container}>
                 {otpSent ? <>
                     <View style={styles.inputContainer}>
@@ -190,22 +191,21 @@ const Login = () => {
                             fontWeight: "bold", textAlign: "center", color: "#fff"
                         }}>تسجيل الدخول</Text>
                     </Pressable>
+
                 </> : <>
                     <View style={styles.inputContainer}>
+                        <Pressable onPress={() => setMethod("")}>
+                            <AntDesign name="back" size={24} color="black" />
+                        </Pressable>
                         <Text>البريد الالكتروني</Text>
                         <TextInput style={styles.input} value={loginForm.username}
                             onChangeText={(e) => setLoginInForm((prev) => ({ ...prev, username: e }))} />
                         {error && <Text style={{ color: "red", paddingVertical: 10, fontSize: 16 }}>{error}</Text>}
 
                     </View>
+
                     <Pressable
-                        style={{
-                            padding: 10,
-                            backgroundColor: "#55a8b9",
-                            borderRadius: 18,
-                            width: "95%",
-                            flex: 1,
-                        }}
+                        style={styles.mainBtn}
                         onPress={handleOtpRequest}
 
                     >
@@ -216,14 +216,52 @@ const Login = () => {
                 </>}
             </View>}
             {method === 'phone' && <View style={styles.container}>
-                <View style={styles.inputContainer}>
-                    <Text>رقم الهاتف</Text>
-                    <TextInput style={styles.input} />
-                </View>
-                <View style={styles.inputContainer}>
-                    <Text>رمز التحقق</Text>
-                    <TextInput style={styles.input} />
-                </View></View>}
+                {otpSent ? <>
+                    <View style={styles.inputContainer}>
+                        <Text >تم ارسال رمز التحقق الي {loginForm.username}</Text>
+                        <TextInput style={styles.input} value={loginForm.password}
+                            onChangeText={(e) => setLoginInForm((prev) => ({ ...prev, password: e }))} />
+                        {error && <Text style={{ color: "red", paddingVertical: 10, fontSize: 16 }}>{error}</Text>}
+                    </View>
+                    <Pressable
+                        style={{
+                            padding: 10,
+                            backgroundColor: "#55a8b9",
+                            borderRadius: 18,
+                            width: "95%",
+                            flex: 1,
+                        }}
+                        onPress={handleSignIn}
+
+                    >
+                        <Text style={{
+                            fontWeight: "bold", textAlign: "center", color: "#fff"
+                        }}>تسجيل الدخول</Text>
+                    </Pressable>
+
+                </> : <>
+                    <View style={styles.inputContainer}>
+                        <Pressable onPress={() => setMethod("")}>
+                            <AntDesign name="back" size={24} color="black" />
+                        </Pressable>
+                        <Text>رقم الجوال</Text>
+                        <TextInput style={styles.input} value={loginForm.username} placeholder="966"
+                            onChangeText={(e) => setLoginInForm((prev) => ({ ...prev, username: e }))} />
+                        {error && <Text style={{ color: "red", paddingVertical: 10, fontSize: 16 }}>{error}</Text>}
+
+                    </View>
+
+                    <Pressable
+                        style={styles.mainBtn}
+                        onPress={handleOtpRequest}
+
+                    >
+                        <Text style={{
+                            fontWeight: "bold", textAlign: "center", color: "#fff"
+                        }}>ارسال رمز التحقق</Text>
+                    </Pressable>
+                </>}
+            </View>}
             {!method && <>
                 <View
                     style={{
@@ -232,6 +270,7 @@ const Login = () => {
                         justifyContent: "center",
                         gap: 10,
                         marginTop: 12,
+
                     }}
                 >
                     <Pressable
@@ -257,6 +296,7 @@ const Login = () => {
                         alignItems: "center",
                         gap: 10,
                         marginTop: 12,
+
                     }}
                 >
                     <Pressable
@@ -274,7 +314,12 @@ const Login = () => {
                         }}>تسجيل الدخول عبر الهاتف</Text>
                     </Pressable>
 
-                </View></>}
+
+                </View>
+                <View style={{ marginTop: 25, width: "100%", alignItems: "center" }}>
+                    <StaticLinks style={{marginTop: 10}}/>
+                </View>
+            </>}
 
 
         </ScrollView>
@@ -302,5 +347,12 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 10,
         padding: 10
+    },
+    mainBtn: {
+        padding: 10,
+        backgroundColor: "#55a8b9",
+        borderRadius: 18,
+        width: "95%",
+        flex: 1,
     }
 });

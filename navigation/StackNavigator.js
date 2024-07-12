@@ -15,7 +15,6 @@ import AddressScreen from "../screens/AddressScreen";
 import CartScreen from "../screens/CartScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import ConfirmationScreen from "../screens/ConfirmationScreen";
-import OrderScreen from "../screens/OrderScreen";
 import Categories from "../screens/Categories";
 import SubCategorie from "../screens/SubCategory";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,6 +26,11 @@ import Payment from "../screens/Payment";
 import AccountInfo from "../screens/AccountInfo";
 import Favorite from "../screens/Favorite";
 import SearchScreen from "../screens/Search";
+import SplashScreen from "../screens/SplashScreen";
+import Terms from "../screens/Terms";
+import RefundPolicy from "../screens/RefundPolicy";
+import CustomerService from "../screens/CustomerService";
+import Licence from "../screens/Licence";
 const StackNavigator = () => {
 
   const { login } = useSelector((state) => state.user)
@@ -140,6 +144,11 @@ const StackNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+      <Stack.Screen
+          name="Splash"
+          component={SplashScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="Login"
           component={BottomTabs}
@@ -220,12 +229,6 @@ const StackNavigator = () => {
             title: 'الطلبات السابقة',
             headerTintColor: "#fff",
           }} />
-
-        <Stack.Screen
-          name="Order"
-          component={OrderScreen}
-          options={{ headerShown: false }}
-        />
         <Stack.Screen
           name="Payment"
           component={Payment}
@@ -263,6 +266,58 @@ const StackNavigator = () => {
             title: 'قائمتي',
             headerTintColor: "#fff",
           }} />
+          <Stack.Screen
+          name="Terms"
+          component={Terms}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: 'الشروط والأحكام',
+            headerTintColor: "#fff",
+          }}
+        />
+          <Stack.Screen
+          name="RefundPolicy"
+          component={RefundPolicy}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: 'سياسة الاستبدال والاسترجاع',
+            headerTintColor: "#fff",
+          }}
+        />
+           <Stack.Screen
+          name="CustomerService"
+          component={CustomerService}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: 'خدمة العملاء والشكاوى والاقتراحات',
+            headerTintColor: "#fff",
+          }}
+        />
+           <Stack.Screen
+          name="Licence"
+          component={Licence}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: 'التراخيص',
+            headerTintColor: "#fff",
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

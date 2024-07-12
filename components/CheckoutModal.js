@@ -34,7 +34,7 @@ const CheckoutPayments = {
 }
 
 
-const PaymentDialog = ({ show, close, amount, vat, couponResponse }) => {
+const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType, ShippingInfo }) => {
     const [method, setMethod] = useState("CC")
     const [loading, setLoading] = useState(false)
     const cart = useSelector((state) => state.cart.cart);
@@ -75,8 +75,8 @@ const PaymentDialog = ({ show, close, amount, vat, couponResponse }) => {
                 source: "null",
                 userId: parsedUser?._id,
                 couponResponse: couponResponse,
-                ShippingType: 'Trendy Rose',
-                ShippingInfo: {},
+                ShippingType: ShippingType || 'Trendy Rose',
+                ShippingInfo: ShippingType === 'استلام من المتجر' ? ShippingInfo : {},
                 vat: +vat,
                 userNote: "",
                 pointsUsed: 0,
@@ -127,8 +127,8 @@ const PaymentDialog = ({ show, close, amount, vat, couponResponse }) => {
                         ...couponResponse,
                         deductedAmount: +renderTotalPrice?.deductedAmount,
                     }),
-                    ShippingType: 'Trendy Rose',
-                    ShippingInfo: {},
+                    ShippingType: ShippingType || 'Trendy Rose',
+                    ShippingInfo: ShippingType === 'استلام من المتجر' ? ShippingInfo : {},
                     userNote: "",
                     pointsUsed: 0,
                 },

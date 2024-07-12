@@ -47,6 +47,8 @@ const SubCategorie = () => {
     const [currentSubId, setCurrentSubId] = useState("")
     const [subCategories, setSubCategories] = useState([])
     const [imageHasError, setImageHasError] = useState(false)
+    const [ctgInfo, setCtgInfo] = useState({})
+
     const [limit, setLimit] = useState(12)
     const requestMore = () => {
         setLimit(prev => prev + 10)
@@ -64,6 +66,8 @@ const SubCategorie = () => {
     const fetchSubCategory = async () => {
         const categoryId = await route.params?.item?._id
         const response = await axios.get(`${config.backendUrl}/subcategory?ctg=${categoryId}&limit=${limit}`)
+        console.log("!!!")
+
         setSubCategories(response.data.data.reverse())
     }
 
@@ -95,7 +99,6 @@ const SubCategorie = () => {
         navigation.setOptions({
             title: route.params.item?.name,
         })
-
     }, [navigation])
 
     return (
@@ -172,8 +175,8 @@ const SubCategorie = () => {
                                 }}
                                     onContentSizeChange={scrollToEnd}
                                     ref={sectionRef} >
-                                    {subCategories.map((item) => {
-                                        if (item.name.trim() === route.params.item?.name.trim()) {
+                                    {subCategories.length > 1 ?subCategories.map((item) => {
+                                        if (item?.name?.trim() === route?.params.item?.name.trim()) {
                                             return null
                                         }
                                         return <Pressable
@@ -191,9 +194,9 @@ const SubCategorie = () => {
                                             >{item.name}</Text>
 
                                         </Pressable>
-                                    })}
+                                    }) : null}
                                 </ScrollView></> : null}
-                        <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-around", paddingTop: 10, }}>
+                        <View style={{ flexDirection:"row-reverse", flexWrap: "wrap", justifyContent: "space-between", paddingTop: 10, }}>
                             {products.length > 0 ? products.map((item) => {
                                 return <Product item={item} key={item?._id} containerStyle={{ width: 160, height: 140 }} twoCell={true} />
                             }) : products.length === 0 && productLoaded ?

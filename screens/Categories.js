@@ -6,23 +6,12 @@ import {
     Platform,
     ScrollView,
     Pressable,
-    TextInput,
     Image,
-    Button,
 } from "react-native";
-import React, { useState, useEffect, useCallback, useContext, useRef } from "react";
-import { Feather } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
-import { SliderBox } from "react-native-image-slider-box";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
-import ProductItem from "../components/ProductItem";
-import DropDownPicker from "react-native-dropdown-picker";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { BottomModal, SlideAnimation, ModalContent } from "react-native-modals";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserType } from "../UserContext";
 import jwt_decode from "jwt-decode";
@@ -52,7 +41,6 @@ const Categories = () => {
     }, []);
 
 
-    const cart = useSelector((state) => state.cart.cart);
     const [modalVisible, setModalVisible] = useState(false);
     useEffect(() => {
         if (userId) {
@@ -99,8 +87,8 @@ const Categories = () => {
                    
                 }}>
                     <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingBottom: 80 }}>
-                        <Text style={{ fontSize: 18, fontWeight: "bold", color: "#55a8b9", paddingTop: 30 }}>كل التصنيفات</Text>
-                        <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", paddingTop: 30 }}>
+                        <Text style={{ fontSize: 18, fontWeight: "bold", color: "#55a8b9" }}>كل التصنيفات</Text>
+                        <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", paddingTop: 20 }}>
                             {list.map((item, index) => (
                                 <Pressable
                                     key={index}

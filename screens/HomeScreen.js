@@ -43,21 +43,22 @@ const HomeScreen = () => {
   const sectionOneRef = useRef();
   const sectionTwoRef = useRef();
   const sectionThreeRef = useRef();
+  const sectionFourRef = useRef();
+  const sectionFiveRef = useRef();
 
   const scrollToEnd = (ref) => {
     categoryRef.current?.scrollToEnd({ animated: false });
     sectionOneRef.current?.scrollToEnd({ animated: false });
     sectionTwoRef.current?.scrollToEnd({ animated: false });
     sectionThreeRef.current?.scrollToEnd({ animated: false });
-
+    sectionFourRef.current?.scrollToEnd({ animated: false });
+    sectionFiveRef.current?.scrollToEnd({ animated: false });
   };
   const [list, setList] = useState([])
   const [listImgError, setListImgError] = useState([])
   const navigation = useNavigation();
   const [addresses, setAddresses] = useState([]);
   const { userId, setUserId } = useContext(UserType);
-  const [selectedAddress, setSelectedAdress] = useState("");
-  const dispatch = useDispatch();
 
 
   const fetchCategory = async () => {
@@ -68,10 +69,10 @@ const HomeScreen = () => {
       console.log("error message", error);
     }
   };
-  const fetchSections = async (order) => {
+  const fetchSections = async (order, count, name) => {
     try {
-      const response = await axios.get(`${config.backendUrl}/subcategory?isHomeSection=${order}`);
-      setSections(prev => ({ ...prev, [order]: { productsList: response.data.data[0]?.productList.filter((item) => item?.active), categoryName: response.data.data[0].name } }));
+      const response = await axios.get(`${config.backendUrl}/homepage-sections?order=${order}`);
+      setSections(prev => ({ ...prev, [count]: { productsList: response.data.data.subCategories[0]?.productList.filter((item) => item?.active), categoryName: name } }));
     } catch (error) {
       console.log("error message", error);
     }
@@ -81,7 +82,7 @@ const HomeScreen = () => {
       const response = await axios.get(`${config.backendUrl}/banners`);
       setImages((prev) => ({
         ...prev, banners: response.data.data.filter((item) => item.type === 'BANNER'),
-        heros: response.data.data.filter((item) => item.type === 'HERO_IMG'),
+        heros: response.data.data.filter((item) => item.type === 'HERO_IMG' && item.active),
       }))
       console.log("!!!!!!!!!")
       console.log(response.data)
@@ -89,13 +90,29 @@ const HomeScreen = () => {
       console.log("error message", error);
     }
   }
+  async function getHomePageSectionsSettings() {
+    const sectionsSettings = await axios
+      .get(`${config.backendUrl}/homepage-sections-settings`)
+      .then((res) => res.data)
+      .catch((err) => console.log(err));
+    const sectionsCount = await sectionsSettings?.data?.homePageSettings.sectionsCount || 3
+    const sectionsInfo = await sectionsSettings?.cateoriesInfo;
+    console.log({ sectionsInfo })
+    Promise.all([sectionsInfo.map((section, i) => fetchSections(section?._id, i + 1, section?.name))])
+    if (!res) {
+      throw new Error("Failed to fetch data");
+    }
+
+    return res;
+  }
   useEffect(() => {
   }, [images])
   useEffect(() => {
     Promise.all([fetchCategory(),
-    fetchSections(1),
-    fetchSections(2),
-    fetchSections(3),
+    // fetchSections(1),
+    // fetchSections(2),
+    // fetchSections(3),
+    getHomePageSectionsSettings(),
     fetchBanners(),])
   }, []);
 
@@ -124,16 +141,20 @@ const HomeScreen = () => {
       console.log("error", error);
     }
   };
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     const token = await AsyncStorage.getItem("authToken");
-  //     const decodedToken = jwt_decode(token);
-  //     const userId = decodedToken.userId;
-  //     setUserId(userId);
-  //   };
+  const handleBannersLinks = (route) => {
+    const categoryId = route.split("/")[2]
+    navigation.navigate("SubCategories", {
+      item: { _id: categoryId, name: "التصنيفات" },
 
-  //   fetchUser();
-  // }, []);
+    })
+  }
+  const scrollViewStyle = (list) => {
+    if (list.length > 3) {
+      return { flexDirection: "row-reverse" }
+    } else {
+      return { flexDirection: "row-reverse", minWidth: "100%" }
+    }
+  }
   return (
     <>
       <SafeAreaView
@@ -152,11 +173,12 @@ const HomeScreen = () => {
         }}>
           {images?.heros.length > 0 ? <SliderBox
             images={images.heros.map((item) => `${config.backendBase}${item?.imageSrc}`)}
+            onCurrentImagePressed={i => handleBannersLinks(images.heros[i]?.route)}
             autoPlay
             circleLoop
             dotColor={"#13274F"}
             inactiveDotColor="#90A4AE"
-            ImageComponentStyle={{ width: "100%" }}
+            ImageComponentStyle={{ width: "96%", borderRadius: 11 }}
           /> : null}
           <View style={{ direction: "rtl" }}>
             <Text style={{ paddingBottom: 5, paddingHorizontal: 10, marginTop: 10, fontSize: 20, fontWeight: "bold", direction: "rtl", color: "#55a8b9" }}>
@@ -228,11 +250,10 @@ const HomeScreen = () => {
                 {sections["1"]?.categoryName}
               </Text>
 
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
-                flexDirection: "row-reverse"
-              }}
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={scrollViewStyle(sections["1"]?.productsList)}
                 onContentSizeChange={scrollToEnd}
-                ref={sectionOneRef}>
+                ref={sectionOneRef}
+              >
                 {sections["1"]?.productsList?.map((item, index) => (
                   <Product item={item} key={item.id} />
                 ))}
@@ -241,8 +262,10 @@ const HomeScreen = () => {
 
             {images?.banners.length > 0 &&
               <>
-                <Image src={`${config.backendBase}${images?.banners[0].imageSrc}`}
-                  style={{ width: "100%", height: 200, marginVertical: 15 }} />
+                <Pressable onPress={() => handleBannersLinks(images?.banners[0]?.route)}>
+                  <Image src={`${config.backendBase}${images?.banners[0].imageSrc}`}
+                    style={styles.bannerImg} />
+                </Pressable>
               </>
             }
           </View>
@@ -252,9 +275,7 @@ const HomeScreen = () => {
                 {sections["2"]?.categoryName}
               </Text>
 
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
-                flexDirection: "row-reverse"
-              }}
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={scrollViewStyle(sections["2"]?.productsList)}
                 onContentSizeChange={scrollToEnd}
                 ref={sectionTwoRef}>
                 {sections["2"]?.productsList?.map((item, index) => (
@@ -264,8 +285,10 @@ const HomeScreen = () => {
             </> : null}
             {images?.banners.length > 1 &&
               <>
-                <Image src={`${config.backendBase}${images?.banners[1].imageSrc}`}
-                  style={{ height: 200, marginVertical: 15 }} />
+                <Pressable onPress={() => handleBannersLinks(images?.banners[1]?.route)}>
+                  <Image src={`${config.backendBase}${images?.banners[1].imageSrc}`}
+                    style={styles.bannerImg} />
+                </Pressable>
               </>
             }
           </View>
@@ -275,9 +298,7 @@ const HomeScreen = () => {
                 {sections["3"]?.categoryName}
               </Text>
 
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
-                flexDirection: "row-reverse"
-              }}
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={scrollViewStyle(sections["3"]?.productsList)}
                 onContentSizeChange={scrollToEnd}
                 ref={sectionThreeRef}>
                 {sections["3"]?.productsList?.map((item, index) => (
@@ -286,15 +307,40 @@ const HomeScreen = () => {
               </ScrollView>
             </> : null}
           </View>
+          {sections["4"]?.productsList?.length > 0 ? <>
+            <View style={{ marginTop: -80 }}>
+              <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold", direction: "rtl", color: "#55a8b9" }}>
+                {sections["4"]?.categoryName}
+              </Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={scrollViewStyle(sections["4"]?.productsList)}
+                onContentSizeChange={scrollToEnd}
+                ref={sectionFourRef}>
+                {sections["4"]?.productsList?.map((item, index) => (
+                  <Product item={item} key={item.id} />
+                ))}
+              </ScrollView>
 
-          <Text
-            style={{
-              height: 1,
-              borderColor: "#D0D0D0",
-              borderWidth: 2,
-              marginTop: 15,
-            }}
-          />
+            </View>
+
+          </> : null}
+          {sections["5"]?.productsList?.length > 0 ? <>
+            <View style={{ paddingBottom: 80 }}>
+              <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold", direction: "rtl", color: "#55a8b9" }}>
+                {sections["4"]?.categoryName}
+              </Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={scrollViewStyle(sections["5"]?.productsList)}
+                onContentSizeChange={scrollToEnd}
+                ref={sectionFiveRef}>
+                {sections["5"]?.productsList?.map((item, index) => (
+                  <Product item={item} key={item.id} />
+                ))}
+              </ScrollView>
+
+            </View>
+
+          </> : null}
+
+
         </ScrollView>
       </SafeAreaView >
 
@@ -305,4 +351,12 @@ const HomeScreen = () => {
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  bannerImg: {
+    width: "96%",
+    height: 170,
+    marginVertical: 15,
+    marginHorizontal: "2%",
+    borderRadius: 11
+  }
+});
