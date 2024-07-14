@@ -30,7 +30,7 @@ const Product = ({ item, containerStyle, twoCell, handleAddToCart }) => {
         }}
     >
         <Image
-            style={{ width: "100%", height: containerStyle?.width || 120, resizeMode: "contain", borderRadius: 11 }}
+            style={{ width: "100%", height: containerStyle?.width || 120, resizeMode: "contain", borderRadius: 11, backgroundColor: "#ccaa91" }}
             source={{
                 uri: imageHasError ? "https://picsum.photos/200/300" :
                     `${config.assetsUrl}/${item?.image}`
@@ -38,11 +38,13 @@ const Product = ({ item, containerStyle, twoCell, handleAddToCart }) => {
             onError={() => setImageHasError(true)}
 
         />
-        <Text numberOfLines={1} style={{ fontWeight: "bold", fontSize: 16 }}>{item.name.length > 20 ? `${item.name.substring(0, 19)}...` : item.name}</Text>
+        <Text numberOfLines={1} style={{
+            fontSize: 12, fontFamily: "CairoMed",
+        }}>{item.name.length > 20 ? `${item.name.substring(0, 20)}...` : item.name}</Text>
         <View>
-            {item.priceBefore && <Text style={{ fontWeight: "bold", fontSize: 11, }}>سعر قبل الخصم : <Text style={{ textDecorationLine: 'line-through', textDecorationStyle: 'solid', color: "#ff1111" }}>{item.priceBefore}</Text></Text>
+            {item.priceBefore && <Text style={{ fontSize: 9, fontFamily: "CairoMed" }}>سعر قبل الخصم : <Text style={{ textDecorationLine: 'line-through', textDecorationStyle: 'solid', color: "#ff1111" }}>{item.priceBefore}</Text></Text>
             }
-            <Text style={{ fontWeight: "bold", fontSize: 16 }}>السعر : {item.price} ر.س</Text>
+            <Text style={{ fontSize: 14, fontFamily: "CairoBold" }}>السعر : {item.price} ر.س</Text>
 
         </View>
         {item?.priceBefore && <View
@@ -69,20 +71,23 @@ const Product = ({ item, containerStyle, twoCell, handleAddToCart }) => {
                 خصم {100 - (item.price / item.priceBefore * 100).toFixed(0)} %
             </Text>
         </View>}
-        {handleAddToCart ? <Pressable style={styles.mainBtn} onPress={() => handleAddToCart(item)}>
-            <Text style={{ color: "#fff" }} >اضف الي السلة</Text>
-        </Pressable> : <Pressable style={styles.mainBtn} onPress={() => navigation.navigate("Info", {
-            id: item.id,
-            title: item.title,
-            price: item?.price,
-            carouselImages: item.carouselImages,
-            color: item?.color,
-            size: item?.size,
-            oldPrice: item?.oldPrice,
-            item: item,
-        })}>
-            <Text style={{ color: "#fff", fontSize: 13 }} >اضف الي السلة</Text>
-        </Pressable>}
+        {handleAddToCart ? 
+        <Pressable style={styles.mainBtn} onPress={() => handleAddToCart(item)}>
+            <Text style={{ color: "#fff", fontFamily: "CairoMed" }} >اضف الي السلة</Text>
+        </Pressable> : null
+        //  <Pressable style={styles.mainBtn} onPress={() => navigation.navigate("Info", {
+        //     id: item.id,
+        //     title: item.title,
+        //     price: item?.price,
+        //     carouselImages: item.carouselImages,
+        //     color: item?.color,
+        //     size: item?.size,
+        //     oldPrice: item?.oldPrice,
+        //     item: item,
+        // })}>
+        //     <Text style={{ color: "#fff", fontSize: 12, fontFamily: "CairoMed" }} >اضف الي السلة</Text>
+        // </Pressable>
+        }
 
         <View>
 

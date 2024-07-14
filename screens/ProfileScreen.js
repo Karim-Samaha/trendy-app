@@ -36,14 +36,7 @@ const ProfileScreen = () => {
     checkIsLogedIn()
   }, [])
   const navigation = useNavigation();
-  // useLayoutEffect(() => {
-  //   navigation.setOptions({
-  //     headerTitle: "",
-  //     headerStyle: {
-  //       backgroundColor: "#00CED1",
-  //     },
-  //   });
-  // }, []);
+
   const dispatch = useDispatch();
   const signOut = () => {
     dispatch(handleLogout())
@@ -53,27 +46,9 @@ const ProfileScreen = () => {
 
 
 
-  // useEffect(() => {
-  //   const fetchOrders = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `http://localhost:8000/orders/${userId}`
-  //       );
-  //       const orders = response.data.orders;
-  //       setOrders(orders);
-
-  //       setLoading(false);
-  //     } catch (error) {
-  //       console.log("error", error);
-  //     }
-  //   };
-
-  //   fetchOrders();
-  // }, []);
   return (
     <>
-      <Search />
-      <ScrollView style={{ padding: 0, flex: 1, backgroundColor: "white", paddingTop: 80 }}>
+      <ScrollView style={{ padding: 0, flex: 1, backgroundColor: "white", paddingTop: 20 }}>
         <View style={{ padding: 10 }}>
 
           <View
@@ -92,7 +67,7 @@ const ProfileScreen = () => {
                 flex: 1,
               }}
             >
-              <Text style={{ fontWeight: "bold", textAlign: "right" }}>
+              <Text style={{ textAlign: "right", fontFamily: "CairoBold" }}>
                 {user_?.name || user_?.email || user_?.phone}
 
               </Text>
@@ -113,7 +88,7 @@ const ProfileScreen = () => {
               <View style={{ flexDirection: "row-reverse" }}>
                 <FontAwesome5 name="history" size={24} color="#55a8b9" />
 
-                <Text style={{ fontWeight: "bold", fontSize: 18, marginHorizontal: 10 }}>
+                <Text style={{ fontSize: 14, marginHorizontal: 10, fontFamily: "CairoBold" }}>
                   طلباتي
 
                 </Text>
@@ -139,7 +114,7 @@ const ProfileScreen = () => {
             >
               <View style={{ flexDirection: "row-reverse" }}>
                 <MaterialIcons name="manage-accounts" size={24} color="#55a8b9" />
-                <Text style={{ fontWeight: "bold", fontSize: 18, marginHorizontal: 10 }}>حسابي</Text>
+                <Text style={{ fontSize: 14, marginHorizontal: 10, fontFamily: "CairoBold" }}>حسابي</Text>
               </View>
             </Pressable>
           </View>
@@ -169,7 +144,7 @@ const ProfileScreen = () => {
             >
               <View style={{ flexDirection: "row-reverse" }}>
                 <MaterialIcons name="favorite" size={24} color="#55a8b9" />
-                <Text style={{ fontWeight: "bold", fontSize: 18, marginHorizontal: 10 }}>قائمتي</Text>
+                <Text style={{  fontSize: 14, marginHorizontal: 10, fontFamily: "CairoBold" }}>قائمتي</Text>
               </View>
             </Pressable>
             <StaticLinks />
@@ -190,7 +165,7 @@ const ProfileScreen = () => {
             >
               <View style={{ flexDirection: "row-reverse" }}>
                 <SimpleLineIcons name="logout" size={22} color="black" />
-                <Text style={{ fontWeight: "bold", fontSize: 16, color: "#fff", marginHorizontal: 10 }}>تسجيل الخروج</Text>
+                <Text style={{ fontFamily:"CairoBold", fontSize: 13, color: "#fff", marginHorizontal: 10 }}>تسجيل الخروج</Text>
               </View>
             </Pressable>
           </View>

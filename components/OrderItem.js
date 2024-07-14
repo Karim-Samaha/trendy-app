@@ -35,20 +35,20 @@ const OrderItem = ({ item, user }) => {
         key={item?._id}
     >
         <View style={styles.orderHeader}>
-            <Text>
-                الرقم المرجعي : <Text style={{ fontWeight: "bold" }}>{item?._id}</Text>
+            <Text style={{ fontFamily: "CairoMed" }}>
+                الرقم المرجعي : <Text style={{ fontFamily: "CairoBold" }}>{item?._id}</Text>
             </Text>
             <Pressable style={styles.rate} onPress={openModal}>
                 <Text style={{
                     color: "#5C71E5",
-                    fontWeight: "bold"
+                    fontFamily: "CairoMed"
                 }}>تقيم</Text>
             </Pressable>
-            <Text style={{ marginTop: 10 }}>
-                التاريخ : <Text style={{ fontWeight: "bold" }}>{item?.createdAt.split("T")[0]}</Text>
+            <Text style={{ marginTop: 10, fontFamily: "CairoMed" }}>
+                التاريخ : <Text style={{ fontFamily: "CairoBold" }}>{item?.createdAt.split("T")[0]}</Text>
             </Text>
-            <Text style={{ marginTop: 10 }}>
-                السعر : <Text style={{ fontWeight: "bold" }}>{item?.amount / 100}رس</Text>
+            <Text style={{ marginTop: 10, fontFamily: "CairoMed" }}>
+                السعر : <Text style={{ fontFamily: "CairoBold" }}>{item?.amount / 100}رس</Text>
             </Text>
             <View style={{
                 width: 150, height: 48, backgroundColor: item.orderStatus === 'DELEIVERD' ? "green" : "#faefe3",
@@ -56,8 +56,8 @@ const OrderItem = ({ item, user }) => {
                 borderRadius: 11
             }}>
                 <Text style={{
-                    fontWeight: "bold",
-                    fontSize: 18,
+                    fontFamily: "CairoBold",
+                    fontSize: 15,
                     color: item.orderStatus === 'DELEIVERD' ? "#fff" : "#55a8b9", textAlign: "center"
                 }}>
                     {status[item.orderStatus]}</Text>
@@ -71,12 +71,12 @@ const OrderItem = ({ item, user }) => {
                 />
                 <View style={{ paddingHorizontal: 20, paddingTop: 20, flexShrink: 1 }}>
                     <Text style={{ fontSize: 16, }}>{purchaseItem.name}</Text>
-                    <Text style={{ textAlign: "right" }}>الكمية : <Text style={{ fontWeight: "bold" }}>{purchaseItem.quantity}</Text></Text>
-                    <Text style={{ textAlign: "right" }}>السعر : <Text style={{ fontWeight: "bold" }}>{purchaseItem.price}رس</Text></Text>
-                    <Text style={{ textAlign: "right" }}>طريقة الشحن : <Text style={{ fontWeight: "bold" }}>{item.ShippingType}</Text></Text>
-                    <Text style={{ textAlign: "right" }}>بيانات المستلم  : <Text style={{ fontWeight: "bold" }}>
+                    <Text style={{ textAlign: "right", fontFamily: "CairoMed", fontSize: 11 }}>الكمية : <Text style={{ fontFamily: "CairoBold" }}>{purchaseItem.quantity}</Text></Text>
+                    <Text style={{ textAlign: "right", fontFamily: "CairoMed", fontSize: 11 }}>السعر : <Text style={{ fontFamily: "CairoBold" }}>{purchaseItem.price}رس</Text></Text>
+                    <Text style={{ textAlign: "right", fontFamily: "CairoMed", fontSize: 11 }}>طريقة الشحن : <Text style={{ fontFamily: "CairoBold" }}>{item.ShippingType}</Text></Text>
+                    <Text style={{ textAlign: "right", fontFamily: "CairoMed", fontSize: 11 }}>بيانات المستلم  : <Text style={{ fontFamily: "CairoBold" }}>
                         {purchaseItem?.formInfo?.sentTo || item.ShippingInfo?.name || user?.name || user?.email || ""}</Text></Text>
-                    <Text style={{ textAlign: "right" }}>عنوان الشحن : <Text style={{ fontWeight: "bold" }}> {purchaseItem?.formInfo?.address ||
+                    <Text style={{ textAlign: "right", fontFamily: "CairoMed", fontSize: 11 }}>عنوان الشحن : <Text style={{ fontFamily: "CairoBold" }}> {purchaseItem?.formInfo?.address ||
                         "لم يتم تحديد العنوان (سيقوم الدعم بالتواصل مع المستلم)"}</Text></Text>
                     <View style={styles.extra}><Text> التوصيل
                         ( + 0.00 ر.س )</Text></View>
@@ -84,9 +84,9 @@ const OrderItem = ({ item, user }) => {
                         وسيلة الدفع : <Text style={{ fontWeight: "bold" }}>{item.source}</Text>
                     </Text></View>
                     {purchaseItem.formInfo?.cardText.length > 0 ? <View style={styles.extra}><Text> نص بطاقة
-                        <Text style={{ fontWeight: "bold" }}>( + 6.00 ر.س )</Text></Text></View> : null}
+                        <Text style={{ fontFamily: "CairoBold" }}>( + 6.00 ر.س )</Text></Text></View> : null}
                     {purchaseItem?.selectedCard?.price ? <View style={styles.extra}><Text> اضافات الورود
-                        <Text style={{ fontWeight: "bold" }}>( + {purchaseItem?.selectedCard?.price} ر.س )</Text></Text></View> : null}
+                        <Text style={{ fontFamily: "CairoBold" }}>( + {purchaseItem?.selectedCard?.price} ر.س )</Text></Text></View> : null}
                 </View>
             </View>
         })}
@@ -129,6 +129,7 @@ const styles = StyleSheet.create({
         width: 220,
         height: 40,
         marginTop: 5,
+        fontFamily: "CairoMed",
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#F8FAFC",

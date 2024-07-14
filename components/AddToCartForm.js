@@ -139,38 +139,56 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
 
     return (
         <View style={styles.container}>
+            {formType === 'GIFT' && <View style={styles.inputContainer}>
+                <Text style={styles.label}>اسم المرسل</Text>
+                <TextInput style={styles.input}
+                    value={formValue.sentFrom}
+                    onChangeText={e => {
+                        setFormValue(prev => ({ ...prev, sentFrom: e }))
+                    }
+                    } />
+            </View>}
+            {formType === 'GIFT' && <View style={styles.inputContainer}>
+                <Text style={styles.label}>اسم المرسل اليه</Text>
+                <TextInput style={styles.input}
+                    value={formValue.sentTo}
+                    onChangeText={e => {
+                        setFormValue(prev => ({ ...prev, sentTo: e }))
+                    }
+                    } />
+            </View>}
             <View style={styles.inputContainer}>
-                <Text>تاريخ التوصيل (متاح من 2 الظهر الي 11م)</Text>
+                <Text style={styles.label}>تاريخ التوصيل (متاح من 2 الظهر الي 11م)</Text>
                 <TextInput style={styles.input} value={formValue.deliveryDate}
                     ref={dateRef}
                     onFocus={() => setDatePickerVisibility(true)} onBlur={() => setDatePickerVisibility(false)} />
                 {errors.deliveryDate && <Text style={styles.error}>يجد تحديد تاريخ التوصيل</Text>}
             </View>
             <View style={styles.inputContainer}>
-                <Text>وقت التوصيل ( من 2 الظهر الي 11م)</Text>
+                <Text style={styles.label}>وقت التوصيل ( من 2 الظهر الي 11م)</Text>
                 <TextInput style={styles.input} value={formValue.time}
                     ref={timeRef}
                     onFocus={() => setIsTimeVisible(true)} onBlur={() => setIsTimeVisible(false)} />
                 {errors.time && <Text style={styles.error}>يجد تحديد وقت التوصيل</Text>}
             </View>
             <View style={styles.inputContainer}>
-                <Text>نص البطاقة - اكتب إهدائك هنا ( + 6.00 ر.س )</Text>
-                <TextInput style={{ ...styles.input, height: 150, textAlignVertical: 'top'}} multiline={true}
+                <Text style={styles.label}>نص البطاقة - اكتب إهدائك هنا ( + 6.00 ر.س )</Text>
+                <TextInput style={{ ...styles.input, height: 150, textAlignVertical: 'top' }} multiline={true}
                     value={formValue.cardText}
                     onChangeText={e => setFormValue(prev => ({ ...prev, cardText: e }))}
                     numberOfLines={10}
-                    
-                 />
+
+                />
             </View>
             <View style={{ ...styles.inputContainer, ...styles.checkboxContainer }}>
-                <Text style={{ marginHorizontal: 10, marginVertical: 10 }}>لا اريد نحديد العنوان (فريق الدعم سيتواصل مع المستلم)</Text>
+                <Text style={{ marginHorizontal: 10, marginVertical: 10, ...styles.label, fontSize: 12 }}>لا اريد نحديد العنوان (فريق الدعم سيتواصل مع المستلم)</Text>
                 <Checkbox value={!formValue.addressSelected}
                     onValueChange={(e) => setFormValue(prev => ({ ...prev, addressSelected: !e }))}
                 />
             </View>
 
             {formValue.addressSelected && <View style={styles.inputContainer}>
-                <Text>العنوان</Text>
+                <Text style={styles.label}>العنوان</Text>
                 <TextInput style={styles.input}
                     value={formValue.address}
                     onChangeText={e => {
@@ -181,7 +199,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                 {errors.address && formValue.addressSelected && < Text style={styles.error}>يجد تحديد العنوان</Text>}
             </View>}
             <View style={styles.inputContainer}>
-                <Text>اضافات الورود</Text>
+                <Text style={styles.label}>اضافات الورود</Text>
                 <SelectList
                     setSelected={(val) => setGiftSelected(val)}
                     data={data}
@@ -189,8 +207,17 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                     defaultOption={data[0]}
                     placeholder={" "}
                     search={false}
-                    boxStyles={{flexDirection: "row-reverse"}}
+                    boxStyles={{ flexDirection: "row-reverse", fontFamily: "CairoMed" }}
                 />
+                {formType === 'GIFT' && <View style={styles.inputContainer}>
+                    <Text style={styles.label}>ارفاق رابط (فيديو او صوت)</Text>
+                    <TextInput style={styles.input}
+                        value={formValue.giftLink}
+                        onChangeText={e => {
+                            setFormValue(prev => ({ ...prev, giftLink: e }))
+                        }
+                        } />
+                </View>}
                 {(giftSelect === 'كروت اهداء' || giftSelect === '1') && <Pressable
                     onPress={() => setGiftsModal(true)}
                     style={{
@@ -206,7 +233,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                     }}
                 >
                     <View>
-                        <Text style={{ color: "#fff" }}>اختيار كروت الاهداء</Text>
+                        <Text style={{ color: "#fff", ...styles.label }}>اختيار كروت الاهداء</Text>
                     </View>
                 </Pressable>}
                 {giftSelect === 'شيكولاتة بلجيكية' && <Pressable
@@ -224,7 +251,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                     }}
                 >
                     <View>
-                        <Text style={{ color: "#fff" }}>اختيار شيكولاتة</Text>
+                        <Text style={{ color: "#fff", ...styles.label }}>اختيار شيكولاتة</Text>
                     </View>
                 </Pressable>}
                 {giftSelect === 'بالونات' && <Pressable
@@ -242,25 +269,25 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                     }}
                 >
                     <View>
-                        <Text style={{ color: "#fff" }}>اختيار بالونات</Text>
+                        <Text style={{ color: "#fff", ...styles.label }}>اختيار بالونات</Text>
                     </View>
                 </Pressable>}
                 <ProductAddsModal show={giftsModal} close={() => setGiftsModal(false)} category={giftSelect} handleSelectAdd={handleSelectAdd} />
                 {selectedAdds.length > 0 ? <View style={styles.addsContainer}>
                     {selectedAdds.map((item) => {
                         return <View style={styles.addsItem} key={item?._id}>
-                            <Text>{item?.name}</Text>
+                            <Text style={{ ...styles.label, fontSize: 12 }}>{item?.name}</Text>
                             <View style={styles.addsController}>
                                 <Pressable style={{ marginHorizontal: 10 }} onPress={() => handleSelectAddQty(item?._id, "add")}>
                                     <Feather name="plus" size={24} color="black" />
                                 </Pressable>
-                                <Text>{item?.quantity}</Text>
+                                <Text style={styles.label}>{item?.quantity}</Text>
                                 <Pressable style={{ marginHorizontal: 10 }} onPress={() => handleSelectAddQty(item?._id, "deduct")}>
                                     <AntDesign name="minus" size={24} color="black" />
                                 </Pressable>
                             </View>
                             <Pressable onPress={() => deleteAdd(item?._id)}>
-                                <Text style={{ color: "red" }}>مسح</Text>
+                                <Text style={{ color: "red", ...styles.label }}>مسح</Text>
                             </Pressable>
                         </View>
                     })}
@@ -281,7 +308,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                 }}
             >
                 <View>
-                    <Text style={{ color: "#fff" }}>اضف الي السلة</Text>
+                    <Text style={{ color: "#fff", ...styles.label }}>اضف الي السلة</Text>
                 </View>
             </Pressable>
             }
@@ -299,7 +326,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                     }}
                 >
                     <View>
-                        <Text style={{ color: "#fff" }}>شراء كهديه</Text>
+                        <Text style={{ color: "#fff", ...styles.label }}>شراء كهديه</Text>
                     </View>
                 </Pressable>
             }
@@ -349,12 +376,16 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 10,
         padding: 10,
-        textAlign: "right"
+        textAlign: "right",
+        fontFamily: "CairoMed"
     },
     checkboxContainer: {
         alignItems: "center",
         justifyContent: "flex-end",
         flexDirection: "row"
+    },
+    label: {
+        fontFamily: "CairoMed"
     },
     error: {
         color: "red",

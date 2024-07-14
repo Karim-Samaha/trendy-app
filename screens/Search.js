@@ -32,11 +32,7 @@ const SearchScreen = () => {
 
     const sectionRef = useRef();
 
-    const scrollToEnd = (ref) => {
-        sectionRef.current.scrollToEnd({ animated: false });
 
-
-    };
     const [products, setProducts] = useState([]);
     const [productLoaded, setProductLoaded] = useState(false)
     const [subCategories, setSubCategories] = useState([])
@@ -49,7 +45,7 @@ const SearchScreen = () => {
     const fetchProductsSearch = async () => {
         const keyword = await route.params?.search
         console.log(keyword)
-        const response = await axios.get(`${config.backendUrl}/products/search/${keyword}`)
+        const response = await axios.get(`${config.backendUrl}/products/search/${keyword}?channel=web`)
         setProducts(response.data.data.reverse())
         setProductLoaded(true)
     }
@@ -74,7 +70,7 @@ const SearchScreen = () => {
                     paddingTop: 80,
                 }}>
                     <View style={{ paddingHorizontal: 10, paddingVertical: 20 }}>
-                        <Text>نتائج البحث : <Text style={{ fontWeight: "bold" }}>{route.params?.search}</Text></Text>
+                        <Text style={{fontFamily: "CairoMed", fontSize: 13}}>نتائج البحث : <Text style={{ fontFamily: "CairoBold", fontSize: 13 }}>{route.params?.search}</Text></Text>
                         <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-around", paddingTop: 10, paddingBottom: 80 }}>
                             {products.length > 0 ? products.map((item) => {
                                 return <Product item={item} key={item?._id} containerStyle={{ width: 160, height: 140 }} twoCell={true} />

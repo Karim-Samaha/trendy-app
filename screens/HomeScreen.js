@@ -11,29 +11,20 @@ import {
   Button,
 } from "react-native";
 import React, { useState, useEffect, useCallback, useContext, useRef } from "react";
-import { Feather } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
 import { SliderBox } from "react-native-image-slider-box";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { BottomModal, SlideAnimation, ModalContent } from "react-native-modals";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserType } from "../UserContext";
-import jwt_decode from "jwt-decode";
-import { addToCart } from "../redux/CartReducer";
+
 import { config } from "./config";
 import Product from "../components/Product";
 import Search from "../components/Search";
+
+
+
 const HomeScreen = () => {
-  // const images = [
-  //   "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/wb9ms.jpeg",
-  //   "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/dznig.png",
-  //   "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/wb9ms.jpeg",
-  // ];
+
   const [sections, setSections] = useState({})
   const [images, setImages] = useState({
     banners: [],
@@ -57,8 +48,9 @@ const HomeScreen = () => {
   const [list, setList] = useState([])
   const [listImgError, setListImgError] = useState([])
   const navigation = useNavigation();
-  const [addresses, setAddresses] = useState([]);
-  const { userId, setUserId } = useContext(UserType);
+  const [, setAddresses] = useState([]);
+  const { userId, } = useContext(UserType);
+
 
 
   const fetchCategory = async () => {
@@ -122,7 +114,6 @@ const HomeScreen = () => {
   }, [sections])
 
 
-  const cart = useSelector((state) => state.cart.cart);
   const [modalVisible, setModalVisible] = useState(false);
   useEffect(() => {
     if (userId) {
@@ -155,6 +146,7 @@ const HomeScreen = () => {
       return { flexDirection: "row-reverse", minWidth: "100%" }
     }
   }
+
   return (
     <>
       <SafeAreaView
@@ -178,10 +170,10 @@ const HomeScreen = () => {
             circleLoop
             dotColor={"#13274F"}
             inactiveDotColor="#90A4AE"
-            ImageComponentStyle={{ width: "96%", borderRadius: 11 }}
+            ImageComponentStyle={{ width: "94%", borderRadius: 11, height: 180 }}
           /> : null}
           <View style={{ direction: "rtl" }}>
-            <Text style={{ paddingBottom: 5, paddingHorizontal: 10, marginTop: 10, fontSize: 20, fontWeight: "bold", direction: "rtl", color: "#55a8b9" }}>
+            <Text style={styles.ctgHeader}>
               التصنيفات
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
@@ -227,6 +219,7 @@ const HomeScreen = () => {
                       textAlign: "center",
                       fontSize: 16,
                       fontWeight: "600",
+                      fontFamily:"CairoMed",
                       marginTop: 5,
                     }}
                   >
@@ -246,7 +239,7 @@ const HomeScreen = () => {
           />
           <View>
             {sections["1"]?.productsList?.length > 0 ? <>
-              <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold", direction: "rtl", color: "#55a8b9" }}>
+              <Text style={styles.ctgHeader}>
                 {sections["1"]?.categoryName}
               </Text>
 
@@ -271,7 +264,7 @@ const HomeScreen = () => {
           </View>
           <View>
             {sections["2"]?.productsList?.length > 0 ? <>
-              <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold", direction: "rtl", color: "#55a8b9" }}>
+              <Text style={styles.ctgHeader}>
                 {sections["2"]?.categoryName}
               </Text>
 
@@ -294,7 +287,7 @@ const HomeScreen = () => {
           </View>
           <View style={{ paddingBottom: 80 }}>
             {sections["3"]?.productsList?.length > 0 ? <>
-              <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold", direction: "rtl", color: "#55a8b9" }}>
+              <Text style={styles.ctgHeader}>
                 {sections["3"]?.categoryName}
               </Text>
 
@@ -309,7 +302,7 @@ const HomeScreen = () => {
           </View>
           {sections["4"]?.productsList?.length > 0 ? <>
             <View style={{ marginTop: -80 }}>
-              <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold", direction: "rtl", color: "#55a8b9" }}>
+              <Text style={styles.ctgHeader}>
                 {sections["4"]?.categoryName}
               </Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={scrollViewStyle(sections["4"]?.productsList)}
@@ -325,8 +318,8 @@ const HomeScreen = () => {
           </> : null}
           {sections["5"]?.productsList?.length > 0 ? <>
             <View style={{ paddingBottom: 80 }}>
-              <Text style={{ padding: 10, fontSize: 18, fontWeight: "bold", direction: "rtl", color: "#55a8b9" }}>
-                {sections["4"]?.categoryName}
+              <Text style={styles.ctgHeader}>
+                {sections["5"]?.categoryName}
               </Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={scrollViewStyle(sections["5"]?.productsList)}
                 onContentSizeChange={scrollToEnd}
@@ -358,5 +351,14 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     marginHorizontal: "2%",
     borderRadius: 11
-  }
+  },
+  ctgHeader: {
+    paddingBottom: 5,
+    paddingHorizontal: 10,
+    marginTop: 10,
+    fontSize: 20,
+    fontFamily: "CairoBold",
+   
+    color: "#55a8b9",
+  },
 });

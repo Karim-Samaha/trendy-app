@@ -83,11 +83,10 @@ const Categories = () => {
 
                 <ScrollView style={{
                     direction: "rtl",
-                    paddingTop: 80,
+                    paddingTop: 60,
                    
                 }}>
                     <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingBottom: 80 }}>
-                        <Text style={{ fontSize: 18, fontWeight: "bold", color: "#55a8b9" }}>كل التصنيفات</Text>
                         <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", paddingTop: 20 }}>
                             {list.map((item, index) => (
                                 <Pressable
@@ -125,9 +124,9 @@ const Categories = () => {
                                     <Text
                                         style={{
                                             textAlign: "center",
-                                            fontSize: 16,
-                                            fontWeight: "600",
+                                            fontSize: 14,
                                             marginTop: 5,
+                                            fontFamily:"CairoMed"
                                         }}
                                     >
                                         {item?.name}

@@ -3,6 +3,8 @@ import {
     Image,
     Modal,
 
+    Pressable,
+
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -137,7 +139,7 @@ const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType,
             )
             .then((res) => {
                 close()
-                navigation.navigate("OrderHistory")
+                navigation.navigate("OrderHistory", { callback: "purchase" })
             })
             .catch((err) => console.log(err));
     };
@@ -183,24 +185,25 @@ const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType,
                     {method === 'TRANSFER' &&
                         <View style={styles.bankInfoContainer}>
                             <Text style={{ ...styles.boldText, marginBottom: 10 }}>بينات الحساب المصرفي</Text>
-                            <Text>اسم المصرف : <Text style={styles.boldText}>مصرف الراجحي</Text></Text>
-                            <Text>اسم المالك : <Text style={styles.boldText}>TRENDY ROSE</Text></Text>
-                            <Text>رقم الحساب : <Text style={styles.boldText}>996000010006080868434</Text></Text>
-                            <Text>الأيبان : <Text style={styles.boldText}>SA1280000996000010006080868434</Text></Text>
-                            <Text>السويفت : <Text style={styles.boldText}>RJHISARI</Text></Text>
+                            <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>اسم المصرف : <Text style={styles.boldText}>مصرف الراجحي</Text></Text>
+                            <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>اسم المالك : <Text style={styles.boldText}>TRENDY ROSE</Text></Text>
+                            <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>رقم الحساب : <Text style={styles.boldText}>996000010006080868434</Text></Text>
+                            <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>الأيبان : <Text style={styles.boldText}>SA1280000996000010006080868434</Text></Text>
+                            <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>السويفت : <Text style={styles.boldText}>RJHISARI</Text></Text>
                         </View>
                     }
                     <View style={styles.bankInfoContainer}>
                         <Text style={{ ...styles.boldText, marginBottom: 10 }}>سياسة الاستبدال والاسترجاع</Text>
-                        <Text style={{ fontSize: 10 }}>
+                        <Text style={{ fontSize: 9, fontFamily: "CairoMed" }}>
                             سياسة الإستبدال والإسترجاع: يحق للعميل الاستبدال قبل البدء بتجهيز المنتج ، لكن بعد خروج الطلب للتوصيل لا يمكن الاستبدال أو الاسترجاع وفقاً لطبيعة المنتج و الخدمة المقدمة. في حال وجود خلل أو تلف بعد التوصيل فيحق للعميل انطلاقاً من مبدأ الثقة المتبادلة إستبدال المنتج او الحصول على كامل القيمه المدفوعه. آلية ارجاع المبالغ: يتم ارجاع المبلغ بنفس طريقة الدفع التي تمت .
                         </Text>
                     </View>
                     <View style={styles.noteSection}>
                         <Text style={styles.noteSectionText}>بالضغط على اختيار "ادفع الاّن" فأنت توافق على
-                            <TouchableOpacity onPress={() => null} style={styles.noteWrapper}>
-                                <Text style={styles.note}>شروط الإستخدام</Text>
-                            </TouchableOpacity>الخاصة بموقع ترندي</Text>
+                        </Text>
+                        <Pressable onPress={() => null} style={styles.noteWrapper}>
+                            <Text style={styles.note}>شروط الإستخدام</Text>
+                        </Pressable>
                     </View>
                     <View style={styles.section}>
                         {loading ? (
@@ -247,9 +250,9 @@ const styles = StyleSheet.create({
 
     },
     title: {
-        fontWeight: "600",
-        fontSize: 17,
-        color: "#000"
+        fontSize: 14,
+        color: "#000",
+        fontFamily: "CairoBold"
     },
     methodsWrapper: {
         width: "100%",
@@ -282,8 +285,8 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: "white",
-        fontWeight: "600",
-        textAlign: "center"
+        textAlign: "center",
+        fontFamily: "CairoMed"
     },
     img: {
         width: "100%",
@@ -307,19 +310,22 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         flexDirection: "row-reverse",
         flexWrap: "wrap",
-        textAlign: "center"
-
+        textAlign: "center",
     },
     noteWrapper: {
         paddingLeft: 4,
         paddingRight: 4,
-
     },
     note: {
         color: 'blue',
+        fontFamily: "CairoMed",
+        fontSize: 11
+
     },
     noteSectionText: {
         color: `#000`,
+        fontFamily: "CairoMed",
+        fontSize: 12,
     },
     bankInfoContainer: {
         width: "100%",
@@ -330,6 +336,7 @@ const styles = StyleSheet.create({
         borderRadius: 10
     },
     boldText: {
-        fontWeight: "bold"
+        fontFamily: "CairoBold",
+        fontSize: 13
     }
 })

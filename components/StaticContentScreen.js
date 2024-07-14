@@ -52,12 +52,12 @@ const styles = StyleSheet.create({
     },
     headerText: {
         fontSize: 22,
-        fontWeight: "bold",
-        marginTop: 25
+        marginTop: 25,
+        fontFamily: "CairoBold"
     },
     contentText: {
         padding: 10,
-        fontSize: 15,
-        fontWeight: "400"
+        fontSize: 13,
+        fontFamily: "CairoMed"
     }
 });

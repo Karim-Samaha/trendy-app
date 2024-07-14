@@ -114,45 +114,9 @@ const SubCategorie = () => {
 
                 <ScrollView style={{
                     direction: "rtl",
-                    paddingTop: 80
+                    paddingTop: 60
                 }}>
                     <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingBottom: 120 }}>
-                        {/* <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", paddingTop: 30 }}>
-                            <Pressable
-                                style={styles.ctgContainer}
-                            >
-                                <Image
-                                    style={{ width: 160, height: 140, resizeMode: "cover", borderRadius: 11 }}
-                                    source={{
-                                        uri: imageHasError ? "https://picsum.photos/200/300" :
-                                            `${config.backendBase}${route.params.item.image}`
-                                    }}
-                                    onError={() => setImageHasError(true)}
-
-                                />
-
-                                <Text
-                                    style={styles.ctgName}
-                                >
-                                    {route.params.item?.name}
-                                </Text>
-
-                            </Pressable>
-
-                        </View> */}
-                        {/* <Text style={{
-                            textAlign: "center",
-                            fontSize: 16,
-                            fontWeight: "600",
-                            marginTop: 5,
-                            marginBottom: 10,
-                            textAlign: "right",
-                            paddingHorizontal: 10
-                        }}
-
-                        >
-                            {route.params.item?.description}
-                        </Text> */}
                         {subCategories.length > 0 ?
                             <>
                                 {subCategories.length > 1 && <Text style={{

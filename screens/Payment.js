@@ -10,7 +10,7 @@ const Payment = () => {
     const navigation = useNavigation();
     const route = useRoute();
     return <WebView
-        source={{ uri: `https://trendy-rose-backend-1d3339f8bb01.herokuapp.com/test?token=${route.params?.user?.accessToken}&amount=${route.params?.amount}&mobileSessionId=${route.params?.mobileSessionId}` }}
+        source={{ uri: `https://trendy-rose-backend-1d3339f8bb01.herokuapp.com/payment?token=${route.params?.user?.accessToken}&amount=${route.params?.amount}&mobileSessionId=${route.params?.mobileSessionId}` }}
         // source={{ uri: `https://trendy-rose-ea018d58bf02.herokuapp.com/test-success?id=338b22b0-3121-48ed-8eb6-68b7d3b31f1f&status=paid&amount=1000&message=APPROVED` }}
         javaScriptEnabled={true}
         domStorageEnabled={true}
@@ -29,7 +29,7 @@ const Payment = () => {
             </View>
         )}
         onNavigationStateChange={(navState) => {
-            if (navState.url.includes('test-success') || navState.url.includes('message=APPROVED')) {
+            if (navState.url.includes('payment-success') || navState.url.includes('message=APPROVED')) {
                 // const Params = getQueryParams(navState.url, 'id');
                 // const id = Params.id;
                 const getQueryParam = (url, param) => {
@@ -47,7 +47,6 @@ const Payment = () => {
                 const id = getQueryParam(navState.url, 'id');
 
                 console.log({ id })
-                // console.log({ Params })
 
                 axios
                     .get(
@@ -55,7 +54,7 @@ const Payment = () => {
                     )
                     .then((response) => {
                         if (response.data?.data?.status === 'paid') {
-                            navigation.navigate("OrderHistory")
+                            navigation.navigate("OrderHistory", {callback: "purchase"})
                         }
                     })
                     .catch((err) => console.error(err));

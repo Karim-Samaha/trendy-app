@@ -131,22 +131,26 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     label: {
-        fontSize: 18,
-        fontWeight: 'bold',
+        fontSize: 16,
+        fontFamily: "CairoBold",
         marginBottom: 8,
     },
     subLabel: {
         fontSize: 16,
         marginTop: 8,
         marginBottom: 4,
+        fontFamily: "CairoMed"
+
     },
     input: {
         borderWidth: 1,
         borderColor: '#ddd',
         borderRadius: 8,
         padding: 10,
-        fontSize: 16,
+        fontSize: 14,
         textAlign: 'right',
+        fontFamily: "CairoMed"
+
     },
     starsContainer: {
         flexDirection: 'row-reverse',
@@ -165,16 +169,18 @@ const styles = StyleSheet.create({
     },
     submitButtonText: {
         color: 'white',
-        fontSize: 18,
+        fontSize: 14,
+        fontFamily: "CairoBold"
+
     },
     success: {
         alignItems: "center",
         marginTop: 50
     },
     successText: {
-        fontWeight: "bold",
         color: "green",
         fontSize: 22,
-        marginTop: 50
+        marginTop: 50,
+        fontFamily: "CairoMed"
     }
 });

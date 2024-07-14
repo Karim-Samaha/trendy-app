@@ -80,10 +80,10 @@ const StoreDeleiverForm = ({ storeDeleviryData, setStoreDeleviryData }) => {
                 {errors.deliveryDate && <Text style={styles.error}>يجد تحديد تاريخ التوصيل</Text>}
             </View>
             {!storeDeleviryData.valid && <Pressable style={styles.button} onPress={validate} >
-                <Text style={{ color: "#fff" }}>تأكيد البيانات</Text>
+                <Text style={{ color: "#fff", fontFamily: "CairoMed" }}>تأكيد البيانات</Text>
             </Pressable>}
             {storeDeleviryData.valid && <Pressable style={styles.button} onPress={() => setStoreDeleviryData((prev) => ({ ...prev, valid: false }))} >
-                <Text style={{ color: "#fff" }}>تعديل البيانات</Text>
+                <Text style={{ color: "#fff", fontFamily: "CairoMed" }}>تعديل البيانات</Text>
             </Pressable>}
             {
                 isDatePickerVisible && <DateTimePicker
@@ -115,8 +115,9 @@ const styles = StyleSheet.create({
     },
     label: {
         marginBottom: 5,
-        fontSize: 16,
+        fontSize: 13,
         color: '#333',
+        fontFamily: "CairoBold"
     },
     input: {
         height: 40,
@@ -124,7 +125,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         paddingHorizontal: 10,
-        textAlign: "right"
+        textAlign: "right",
+        fontFamily: "CairoMed"
+
     },
     buttonContainer: {
         alignItems: 'center',
@@ -139,14 +142,16 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: '#fff',
-        fontSize: 16,
+        fontSize: 13,
+        fontFamily: "CairoBold"
+
     },
     error: {
         color: "red",
         marginTop: 5,
         marginHorizontal: 8,
-        fontSize: 16,
-        fontWeight: "bold",
+        fontSize: 12,
+        fontFamily: "CairoBold"
     },
 });
 

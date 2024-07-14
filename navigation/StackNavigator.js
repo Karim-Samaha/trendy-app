@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "../screens/LoginScreen";
@@ -31,6 +31,15 @@ import Terms from "../screens/Terms";
 import RefundPolicy from "../screens/RefundPolicy";
 import CustomerService from "../screens/CustomerService";
 import Licence from "../screens/Licence";
+import * as Font from 'expo-font';
+
+const fetchFonts = () => {
+  return Font.loadAsync({
+    'CairoBold': require('../assets/fonts/Cairo-Bold.ttf'),
+    'CairoMed': require('../assets/fonts/Cairo-Medium.ttf'),
+  });
+};
+
 const StackNavigator = () => {
 
   const { login } = useSelector((state) => state.user)
@@ -46,86 +55,38 @@ const StackNavigator = () => {
       }
     }
   }
+  const [fontsLoaded, setFontsLoaded] = React.useState(false);
+
   useEffect(() => {
     checkIsLogedIn()
   }, [])
+  const loadFonts = useCallback(async () => {
+    await fetchFonts();
+    setFontsLoaded(true);
+  }, [])
+  useEffect(() => {
+    loadFonts()
+  }, [])
+
+  if (!fontsLoaded) return null
   function BottomTabs() {
     return (
-      <Tab.Navigator>
-        <Tab.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            tabBarLabel: "الرئيسية",
-            tabBarLabelStyle: { color: "#008E97", fontWeight: "bold" },
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: '#55a8b9',
-            },
-            headerTitleAlign: 'center',
-            title: 'الرئيسية',
-            headerTintColor: "#fff",
-            tabBarIcon: ({ focused }) =>
-              focused ? (
-                <Entypo name="home" size={24} color="#008E97" />
-              ) : (
-                <AntDesign name="home" size={24} color="black" />
-              ),
-          }}
-        />
-        <Tab.Screen
-          name="Categories"
-          component={Categories}
-          options={{
-            tabBarLabel: "التصنيفات",
-            tabBarLabelStyle: { color: "#008E97", fontWeight: "bold" },
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: '#55a8b9',
-            },
-            headerTitleAlign: 'center',
-            title: 'التصنيفات',
-            headerTintColor: "#fff",
-            tabBarIcon: ({ focused }) =>
-              focused ? (
-                <Entypo name="home" size={24} color="#008E97" />
-              ) : (
-                <AntDesign name="home" size={24} color="black" />
-              ),
-          }}
-        />
-
-        <Tab.Screen
-          name="Profile"
-          component={login ? ProfileScreen : Login}
-          options={{
-            tabBarLabel: "حسابي",
-            tabBarLabelStyle: { color: "#008E97", fontWeight: "bold" },
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: '#55a8b9',
-            },
-            headerTitleAlign: 'center',
-            title: login ? "حسابي" : "تسجيل الدخول",
-            headerTintColor: "#fff",
-            tabBarIcon: ({ focused }) =>
-              focused ? (
-                <Ionicons name="person" size={24} color="#008E97" />
-              ) : (
-                <Ionicons name="person-outline" size={24} color="black" />
-              ),
-          }}
-        />
-
+      <Tab.Navigator initialRouteName={'Home'}>
         <Tab.Screen
           name="Cart"
           component={CartScreen}
           options={{
             tabBarLabel: "السلة",
-            tabBarLabelStyle: { color: "#008E97", fontWeight: "bold" },
+            tabBarLabelStyle: {
+              color: "#008E97", fontFamily: "CairoBold",
+            },
+            headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
             headerShown: true,
             headerStyle: {
               backgroundColor: '#55a8b9',
+
             },
             headerTitleAlign: 'center',
             title: 'العربة',
@@ -138,31 +99,120 @@ const StackNavigator = () => {
               ),
           }}
         />
+        <Tab.Screen
+          name="Profile"
+          component={login ? ProfileScreen : Login}
+          options={{
+            tabBarLabel: "حسابي",
+            tabBarLabelStyle: {
+              color: "#008E97", fontFamily: "CairoBold",
+            }, headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+              fontFamily: "CairoBold",
+            },
+            headerTitleAlign: 'center',
+            title: login ? "حسابي" : "تسجيل الدخول",
+            headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
+            headerTintColor: "#fff",
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Ionicons name="person" size={24} color="#008E97" />
+              ) : (
+                <Ionicons name="person-outline" size={24} color="black" />
+              ),
+          }}
+        />
+        <Tab.Screen
+          name="Categories"
+          component={Categories}
+          options={{
+            tabBarLabel: "التصنيفات",
+            tabBarLabelStyle: {
+              color: "#008E97", fontFamily: "CairoBold",
+            }, headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleAlign: 'center',
+            title: 'التصنيفات',
+            headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
+            headerTintColor: "#fff",
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Entypo name="home" size={24} color="#008E97" />
+              ) : (
+                <AntDesign name="home" size={24} color="black" />
+              ),
+          }}
+        />
+        <Tab.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            tabBarLabel: "الرئيسية",
+            tabBarLabelStyle: {
+              color: "#008E97", fontFamily: "CairoBold",
+            }, headerShown: true,
+            headerStyle: {
+              backgroundColor: '#55a8b9',
+            },
+            headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
+            headerTitleAlign: 'center',
+            title: 'الرئيسية',
+            headerTintColor: "#fff",
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Entypo name="home" size={24} color="#008E97" />
+              ) : (
+                <AntDesign name="home" size={24} color="black" />
+              ),
+          }}
+        />
       </Tab.Navigator>
     );
   }
   return (
     <NavigationContainer>
       <Stack.Navigator>
-      <Stack.Screen
+        {/* <Stack.Screen
           name="Splash"
           component={SplashScreen}
           options={{ headerShown: false }}
-        />
+        /> */}
         <Stack.Screen
           name="Login"
           component={BottomTabs}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: false, headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
+          }}
         />
         <Stack.Screen
           name="Register"
           component={RegisterScreen}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: false, headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
+          }}
         />
         <Stack.Screen
           name="Main"
           component={BottomTabs}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: false, headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
+          }}
+
         />
         <Stack.Screen
           name="SubCategories"
@@ -171,6 +221,9 @@ const StackNavigator = () => {
             headerShown: true,
             headerStyle: {
               backgroundColor: '#55a8b9',
+            },
+            headerTitleStyle: {
+              fontFamily: "CairoMed"
             },
             headerTitleAlign: 'center',
             title: 'التصنيفات',
@@ -185,6 +238,9 @@ const StackNavigator = () => {
             headerStyle: {
               backgroundColor: '#55a8b9',
             },
+            headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
             headerTitleAlign: 'center',
             title: 'نتائج البحث',
             headerTintColor: "#fff",
@@ -198,6 +254,9 @@ const StackNavigator = () => {
             headerStyle: {
               backgroundColor: '#55a8b9',
             },
+            headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
             headerTitleAlign: 'center',
             title: 'تفاصيل المنتج',
             headerTintColor: "#fff",
@@ -205,17 +264,29 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Address"
           component={AddAddressScreen}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: false, headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
+          }}
         />
         <Stack.Screen
           name="Add"
           component={AddressScreen}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: false, headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
+          }}
         />
         <Stack.Screen
           name="Confirm"
           component={ConfirmationScreen}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: false, headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
+          }}
         />
         <Stack.Screen
           name="OrderHistory"
@@ -224,6 +295,9 @@ const StackNavigator = () => {
             headerShown: true,
             headerStyle: {
               backgroundColor: '#55a8b9',
+            },
+            headerTitleStyle: {
+              fontFamily: "CairoMed"
             },
             headerTitleAlign: 'center',
             title: 'الطلبات السابقة',
@@ -237,6 +311,9 @@ const StackNavigator = () => {
             headerStyle: {
               backgroundColor: '#55a8b9',
             },
+            headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
             headerTitleAlign: 'center',
             title: 'الدفع',
             headerTintColor: "#fff",
@@ -248,6 +325,9 @@ const StackNavigator = () => {
             headerShown: true,
             headerStyle: {
               backgroundColor: '#55a8b9',
+            },
+            headerTitleStyle: {
+              fontFamily: "CairoMed"
             },
             headerTitleAlign: 'center',
             title: 'بيانات الحساب',
@@ -262,11 +342,14 @@ const StackNavigator = () => {
             headerStyle: {
               backgroundColor: '#55a8b9',
             },
+            headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
             headerTitleAlign: 'center',
             title: 'قائمتي',
             headerTintColor: "#fff",
           }} />
-          <Stack.Screen
+        <Stack.Screen
           name="Terms"
           component={Terms}
           options={{
@@ -274,12 +357,15 @@ const StackNavigator = () => {
             headerStyle: {
               backgroundColor: '#55a8b9',
             },
+            headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
             headerTitleAlign: 'center',
             title: 'الشروط والأحكام',
             headerTintColor: "#fff",
           }}
         />
-          <Stack.Screen
+        <Stack.Screen
           name="RefundPolicy"
           component={RefundPolicy}
           options={{
@@ -287,12 +373,15 @@ const StackNavigator = () => {
             headerStyle: {
               backgroundColor: '#55a8b9',
             },
+            headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
             headerTitleAlign: 'center',
             title: 'سياسة الاستبدال والاسترجاع',
             headerTintColor: "#fff",
           }}
         />
-           <Stack.Screen
+        <Stack.Screen
           name="CustomerService"
           component={CustomerService}
           options={{
@@ -300,18 +389,24 @@ const StackNavigator = () => {
             headerStyle: {
               backgroundColor: '#55a8b9',
             },
+            headerTitleStyle: {
+              fontFamily: "CairoMed"
+            },
             headerTitleAlign: 'center',
             title: 'خدمة العملاء والشكاوى والاقتراحات',
             headerTintColor: "#fff",
           }}
         />
-           <Stack.Screen
+        <Stack.Screen
           name="Licence"
           component={Licence}
           options={{
             headerShown: true,
             headerStyle: {
               backgroundColor: '#55a8b9',
+            },
+            headerTitleStyle: {
+              fontFamily: "CairoMed"
             },
             headerTitleAlign: 'center',
             title: 'التراخيص',

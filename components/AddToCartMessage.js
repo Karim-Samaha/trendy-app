@@ -1,17 +1,18 @@
-import { View, StyleSheet, Text, Image } from "react-native"
+import { View, StyleSheet, Text, Image, Pressable } from "react-native"
 import { config } from "../screens/config"
+import { useNavigation } from "@react-navigation/native"
 const AddToCartMessage = ({ product }) => {
-    console.log({product})
-    return <View style={styles.container}>
-        <Text style={styles.header}>تم اضافة المنتج الي السلة</Text>
-        <View style={styles.productContainer}>
-            <Image
-                style={{ width: 50, height: 50, resizeMode: "cover", borderRadius: 11, marginHorizontal: 10 }}
-                source={{ uri: `${config.assetsUrl}/${product.item.image}` }}
-            />
-            <Text>{product.item?.name}</Text>
-        </View>
-    </View>
+    const navigation = useNavigation()
+    return <Pressable onPress={() => navigation.navigate("Cart")} style={styles.container}>
+            <Text style={styles.header}>تم اضافة المنتج الي السلة</Text>
+            <View style={styles.productContainer}>
+                <Image
+                    style={{ width: 50, height: 50, resizeMode: "cover", borderRadius: 11, marginHorizontal: 10 }}
+                    source={{ uri: `${config.assetsUrl}/${product.item.image}` }}
+                />
+                <Text style={{fontFamily: "CairoMed"}}>{product.item?.name}</Text>
+            </View>
+    </Pressable>
 }
 
 export default AddToCartMessage
@@ -43,8 +44,8 @@ const styles = StyleSheet.create({
         borderColor: "silver",
         borderBottomWidth: 1,
         padding: 5,
-        fontWeight: "bold",
-        fontSize: 18
+        fontSize: 16,
+        fontFamily: "CairoBold"
     },
     productContainer: {
         flexDirection: "row-reverse",

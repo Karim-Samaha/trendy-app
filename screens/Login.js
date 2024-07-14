@@ -8,7 +8,7 @@ import {
     TextInput
 } from "react-native";
 import React, { useLayoutEffect, useEffect, useContext, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { UserType } from "../UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -23,40 +23,8 @@ import StaticLinks from "../components/StaticLinks";
 
 const Login = () => {
     const { userId, setUserId } = useContext(UserType);
-    const [orders, setOrders] = useState([
-        {
-            id: "1",
-            products: [{
-                title:
-                    "منتج 1",
-                offer: "72%",
-                oldPrice: 7500,
-                price: 4500,
-                image:
-                    "https://trendy-rose-ea018d58bf02.herokuapp.com/public/imgs/فازات ورد.jpeg",
-                carouselImages: [
-                    "https://m.media-amazon.com/images/I/61a2y1FCAJL._SX679_.jpg",
-                    "https://m.media-amazon.com/images/I/71DOcYgHWFL._SX679_.jpg",
-                    "https://m.media-amazon.com/images/I/71LhLZGHrlL._SX679_.jpg",
-                    "https://m.media-amazon.com/images/I/61Rgefy4ndL._SX679_.jpg",
-                ],
-                color: "Green",
-                size: "Normal",
-            }]
-        }
-    ]);
-    const [loading, setLoading] = useState(false);
+    const route = useRoute()
     const navigation = useNavigation();
-    // useLayoutEffect(() => {
-    //     navigation.setOptions({
-    //         headerTitle: "",
-    //         headerStyle: {
-    //             backgroundColor: "#00CED1",
-    //         },
-
-
-    //     });
-    // }, []);
     const [user, setUser] = useState();
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -99,12 +67,14 @@ const Login = () => {
             email: credentials.username.toLocaleLowerCase(),
             password: credentials.password
         }).then(async (res) => {
-            console.log(res)
-
             if (await res.data?.accessToken) {
                 await AsyncStorage.setItem("user", JSON.stringify(res.data));
                 await dispatch(handleLogin())
-                navigation.navigate("Home")
+                if (route.params?.callbackScreen) {
+                    navigation.navigate('Cart')
+                } else {
+                    navigation.navigate("Home")
+                }
             } else {
                 let apiResults = res?.error
                 console.log(res)
@@ -171,10 +141,10 @@ const Login = () => {
             {method === 'email' && <View style={styles.container}>
                 {otpSent ? <>
                     <View style={styles.inputContainer}>
-                        <Text >تم ارسال رمز التحقق الي {loginForm.username}</Text>
+                        <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>تم ارسال رمز التحقق الي {loginForm.username}</Text>
                         <TextInput style={styles.input} value={loginForm.password}
                             onChangeText={(e) => setLoginInForm((prev) => ({ ...prev, password: e }))} />
-                        {error && <Text style={{ color: "red", paddingVertical: 10, fontSize: 16 }}>{error}</Text>}
+                        {error && <Text style={styles.error}>{error}</Text>}
                     </View>
                     <Pressable
                         style={{
@@ -188,7 +158,7 @@ const Login = () => {
 
                     >
                         <Text style={{
-                            fontWeight: "bold", textAlign: "center", color: "#fff"
+                            fontFamily: "CairoBold", fontSize: 13, textAlign: "center", color: "#fff"
                         }}>تسجيل الدخول</Text>
                     </Pressable>
 
@@ -197,10 +167,13 @@ const Login = () => {
                         <Pressable onPress={() => setMethod("")}>
                             <AntDesign name="back" size={24} color="black" />
                         </Pressable>
-                        <Text>البريد الالكتروني</Text>
+                        <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>البريد الالكتروني</Text>
                         <TextInput style={styles.input} value={loginForm.username}
-                            onChangeText={(e) => setLoginInForm((prev) => ({ ...prev, username: e }))} />
-                        {error && <Text style={{ color: "red", paddingVertical: 10, fontSize: 16 }}>{error}</Text>}
+                            onChangeText={(e) => {
+                                setLoginInForm((prev) => ({ ...prev, username: e }))
+                                setError("")
+                            }} />
+                        {error && <Text style={styles.error}>{error}</Text>}
 
                     </View>
 
@@ -210,7 +183,7 @@ const Login = () => {
 
                     >
                         <Text style={{
-                            fontWeight: "bold", textAlign: "center", color: "#fff"
+                            fontFamily: "CairoBold", fontSize: 13, textAlign: "center", color: "#fff"
                         }}>ارسال رمز التحقق</Text>
                     </Pressable>
                 </>}
@@ -218,10 +191,13 @@ const Login = () => {
             {method === 'phone' && <View style={styles.container}>
                 {otpSent ? <>
                     <View style={styles.inputContainer}>
-                        <Text >تم ارسال رمز التحقق الي {loginForm.username}</Text>
+                        <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>تم ارسال رمز التحقق الي {loginForm.username}</Text>
                         <TextInput style={styles.input} value={loginForm.password}
-                            onChangeText={(e) => setLoginInForm((prev) => ({ ...prev, password: e }))} />
-                        {error && <Text style={{ color: "red", paddingVertical: 10, fontSize: 16 }}>{error}</Text>}
+                            onChangeText={(e) => {
+                                setLoginInForm((prev) => ({ ...prev, password: e }))
+                                setError("")
+                            }} />
+                        {error && <Text style={styles.error}>{error}</Text>}
                     </View>
                     <Pressable
                         style={{
@@ -235,7 +211,7 @@ const Login = () => {
 
                     >
                         <Text style={{
-                            fontWeight: "bold", textAlign: "center", color: "#fff"
+                            fontFamily: "CairoBold", fontSize: 13, textAlign: "center", color: "#fff"
                         }}>تسجيل الدخول</Text>
                     </Pressable>
 
@@ -246,8 +222,11 @@ const Login = () => {
                         </Pressable>
                         <Text>رقم الجوال</Text>
                         <TextInput style={styles.input} value={loginForm.username} placeholder="966"
-                            onChangeText={(e) => setLoginInForm((prev) => ({ ...prev, username: e }))} />
-                        {error && <Text style={{ color: "red", paddingVertical: 10, fontSize: 16 }}>{error}</Text>}
+                            onChangeText={(e) => {
+                                setLoginInForm((prev) => ({ ...prev, username: e }))
+                                setError("")
+                            }} />
+                        {error && <Text style={styles.error}>{error}</Text>}
 
                     </View>
 
@@ -257,7 +236,7 @@ const Login = () => {
 
                     >
                         <Text style={{
-                            fontWeight: "bold", textAlign: "center", color: "#fff"
+                            fontFamily: "CairoBold", fontSize: 13, textAlign: "center", color: "#fff"
                         }}>ارسال رمز التحقق</Text>
                     </Pressable>
                 </>}
@@ -285,7 +264,7 @@ const Login = () => {
 
                     >
                         <Text style={{
-                            fontWeight: "bold", textAlign: "center", color: "#fff"
+                            textAlign: "center", color: "#fff", fontFamily: "CairoBold", fontSize: 13
                         }}>تسجيل الدخول عبر البريد الالكتروني</Text>
                     </Pressable>
 
@@ -310,14 +289,14 @@ const Login = () => {
                         onPress={() => setMethod("phone")}
                     >
                         <Text style={{
-                            fontWeight: "bold", textAlign: "center", color: "#fff"
+                            fontFamily: "CairoBold", fontSize: 13, textAlign: "center", color: "#fff"
                         }}>تسجيل الدخول عبر الهاتف</Text>
                     </Pressable>
 
 
                 </View>
                 <View style={{ marginTop: 25, width: "100%", alignItems: "center" }}>
-                    <StaticLinks style={{marginTop: 10}}/>
+                    <StaticLinks style={{ marginTop: 10 }} />
                 </View>
             </>}
 
@@ -346,7 +325,9 @@ const styles = StyleSheet.create({
         borderRadius: 11,
         marginTop: 10,
         marginBottom: 10,
-        padding: 10
+        padding: 10,
+        fontFamily: "CairoMed",
+        fontSize: 13
     },
     mainBtn: {
         padding: 10,
@@ -354,5 +335,11 @@ const styles = StyleSheet.create({
         borderRadius: 18,
         width: "95%",
         flex: 1,
+    },
+    error: {
+        color: "red",
+        fontSize: 14,
+        fontFamily: "CairoBold",
+        marginBottom: 12
     }
 });

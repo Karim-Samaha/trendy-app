@@ -57,12 +57,10 @@ const ProductInfoScreen = () => {
       flexDirection: "row-reverse",
       direction: "rtl",
       fontSize: 15,
-
     },
     span: {
       flexDirection: "row-reverse",
       textAlign: "right",
-
     },
     div: {
       flexDirection: "row-reverse",
@@ -160,7 +158,7 @@ const ProductInfoScreen = () => {
       >
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <ImageBackground
-            style={{ width, height, marginTop: 0, resizeMode: "contain" }}
+            style={{ width, height, marginTop: 0, resizeMode: "contain", backgroundColor:"#ccaa91" }}
             source={{ uri: `${config.assetsUrl}/${route.params.item.image}` }}
           >
             <View
@@ -188,8 +186,8 @@ const ProductInfoScreen = () => {
                     style={{
                       color: "white",
                       textAlign: "center",
-                      fontWeight: "600",
-                      fontSize: 12,
+                      fontSize: 7,
+                      fontFamily: "CairoBold" 
                     }}
                   >
                     {(100 - (route.params.item?.price / route.params.item?.priceBefore) * 100).toFixed(0)}% خصم
@@ -242,25 +240,24 @@ const ProductInfoScreen = () => {
             {route?.params?.title}
           </Text>
           <View style={{ flexDirection: 'row-reverse', alignItems: "center", marginBottom: 10 }}>
-            <Text style={{ fontWeight: "bold", fontSize: 16 }}>{route?.params.item?.name}</Text>
-
+            <Text style={{ fontSize: 14, fontFamily: "CairoBold" }}>{route?.params.item?.name}</Text>
           </View>
           <View>
             {route?.params?.item?.priceBefore &&
-              <Text style={{ fontWeight: "bold", fontSize: 16, marginVertical: 8 }}>
+              <Text style={{ fontFamily: "CairoBold", fontSize: 13, marginVertical: 8 }}>
                 سعر قبل الخصم :
-                <Text style={{ textDecorationLine: 'line-through', textDecorationStyle: 'solid', color: "red" }}>
+                <Text style={{ textDecorationLine: 'line-through', textDecorationStyle: 'solid', color: "red", fontFamily: "CairoMed" }}>
                   {route?.params.item.priceBefore} رس
                 </Text>
               </Text>
             }
             <View style={{ flexDirection: 'row-reverse', alignItems: "center" }}>
-              <Text style={{ fontWeight: "bold", fontSize: 16 }}>السعر :</Text>
+              <Text style={{ fontFamily: "CairoBold", fontSize: 13 }}>السعر :</Text>
               <View style={{
                 borderWidth: 2, borderColor: "#55a8b9", paddingVertical: 5, paddingHorizontal: 15,
                 marginHorizontal: 10, borderRadius: 10
               }}>
-                <Text style={{ fontWeight: "bold", color: "#55a8b9" }}>{route?.params.price} رس</Text>
+                <Text style={{ color: "#55a8b9",fontFamily: "CairoMed" }}>{route?.params.price} رس</Text>
               </View>
             </View>
           </View>
@@ -268,26 +265,26 @@ const ProductInfoScreen = () => {
         <Text style={{ height: 1, borderColor: "#D0D0D0", borderWidth: 1 }} />
         <View style={{ ...styles.feature, backgroundColor: "#FDF2F2" }}>
           <FontAwesome5 name="shipping-fast" size={24} color="black" />
-          <Text style={{ color: "#000", marginHorizontal: 10 }}>
+          <Text style={{ color: "#000", marginHorizontal: 10, fontFamily: "CairoMed", fontSize: 12 }}>
             شحن مجاني داخل الرياض
           </Text>
         </View>
         <View style={{ ...styles.feature, backgroundColor: "#F0F9FF" }}>
           <Entypo name="address" size={24} color="black" />
-          <Text style={{ color: "#000", marginHorizontal: 10 }}>
+          <Text style={{ color: "#000", marginHorizontal: 10,fontFamily: "CairoMed", fontSize: 12 }}>
             لست بحاجة لمعرفة العنوان
             (فريقنا سيفعل ذلك نيابة عنك)
           </Text>
         </View>
         <View style={{ ...styles.feature, backgroundColor: "#EFFBF4" }}>
           <AntDesign name="earth" size={24} color="black" />
-          <Text style={{ color: "#000", marginHorizontal: 10 }}>
+          <Text style={{ color: "#000", marginHorizontal: 10,fontFamily: "CairoMed", fontSize: 12 }}>
             أجود أنواع الزهور
           </Text>
         </View>
         <View style={{ ...styles.feature, backgroundColor: "#FFFBEB" }}>
           <FontAwesome6 name="money-bill-transfer" size={24} color="black" />
-          <Text style={{ color: "#000", marginHorizontal: 10 }}>
+          <Text style={{ color: "#000", marginHorizontal: 10, fontFamily: "CairoMed", fontSize: 12 }}>
             اشتري الان و اربح نقاط ترندي
           </Text>
         </View>
@@ -306,7 +303,7 @@ const ProductInfoScreen = () => {
           style={styles.mainBtn}
         >
           <View>
-            <Text style={{ color: "#fff" }}>اضف الي السلة</Text>
+            <Text style={{ color: "#fff", fontFamily: "CairoMed" }}>اضف الي السلة</Text>
           </View>
         </Pressable>}
 
@@ -315,7 +312,7 @@ const ProductInfoScreen = () => {
 
           style={styles.mainBtn}
         >
-          <Text style={{ color: "#fff" }}>شراء كهديه</Text>
+          <Text style={{ color: "#fff", fontFamily: "CairoMed"  }}>شراء كهديه</Text>
         </Pressable>}
         {formType && <AddToCartForm formType={formType} product={route.params} setAddedToCart={setAddedToCart} />}
 
@@ -326,7 +323,7 @@ const ProductInfoScreen = () => {
           }}>
             <View style={styles.revHeader}>
               <MaterialIcons name="reviews" size={24} color="gold" style={{ marginHorizontal: 10 }} />
-              <Text style={{ fontWeight: "bold", fontSize: 18, color: "#fff" }}>تقيمات عملائنا:</Text>
+              <Text style={{  fontSize: 14, color: "#fff", fontFamily: "CairoMed"  }}>تقيمات عملائنا:</Text>
             </View>
             <View style={{
               flex: 1,
@@ -343,10 +340,10 @@ const ProductInfoScreen = () => {
                 {reviews.map((item) => {
                   return <View key={item?._id} style={styles.reviewsItem}>
                     <FontAwesome name="user" size={24} color="#55a8b9" />
-                    <Text>
+                    <Text style={{fontFamily: "CairoMed", fontSize: 10}}>
                       {item?.name}
                     </Text>
-                    <Text style={{ fontWeight: "bold", marginVertical: 10 }}>
+                    <Text style={{ fontFamily: "CairoMed", fontSize: 10, marginVertical: 10 }}>
                       {item?.productReview}
                     </Text>
                   </View>
@@ -358,10 +355,10 @@ const ProductInfoScreen = () => {
           : reviews && reviews.length === 0 ? <>
             <View style={styles.revHeader}>
               <MaterialIcons name="reviews" size={24} color="gold" style={{ marginHorizontal: 10 }} />
-              <Text style={{ fontWeight: "bold", fontSize: 18 }}>تقيمات عملائنا:</Text>
+              <Text style={{ fontFamily: "CairoBold",  fontSize: 14 }}>تقيمات عملائنا:</Text>
             </View>
             <View style={styles.reviewContent}>
-              <Text style={{ fontSize: 15, color: "#55A8B9", textAlign: "center", marginVertical: 20, fontWeight: "bold" }}>لا يوجد تقييمات حتى اللحظة</Text>
+              <Text style={{ fontSize: 15, color: "#55A8B9", textAlign: "center", marginVertical: 20, fontFamily: "CairoMed" }}>لا يوجد تقييمات حتى اللحظة</Text>
             </View>
           </> : null}
 

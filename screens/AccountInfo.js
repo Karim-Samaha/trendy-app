@@ -23,7 +23,6 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Search from "../components/Search";
 
 const AccountInfo = () => {
-    const navigation = useNavigation();
     const [form, setForm] = useState({
         name: "",
         email: "",
@@ -85,7 +84,7 @@ const AccountInfo = () => {
                         <View style={styles.inputContainer}>
                             <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
                                 <MaterialCommunityIcons name="rename-box" size={24} color="silver" />
-                                <Text style={{ marginHorizontal: 10 }}>الأسم</Text>
+                                <Text style={{ marginHorizontal: 10, fontFamily: "CairoMed" }}>الأسم</Text>
                             </View>
                             <TextInput style={styles.input} value={form.name}
                                 onChangeText={(e) => setForm(prev => ({ ...prev, name: e }))}
@@ -94,7 +93,7 @@ const AccountInfo = () => {
                         <View style={styles.inputContainer}>
                             <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
                                 <MaterialIcons name="email" size={24} color="silver" />
-                                <Text style={{ marginHorizontal: 10 }}>البريد الالكتروني</Text>
+                                <Text style={{ marginHorizontal: 10, fontFamily: "CairoMed" }}>البريد الالكتروني</Text>
                             </View>
                             <TextInput style={styles.input} value={form.email}
                                 onChangeText={(e) => setForm(prev => ({ ...prev, email: e }))}
@@ -103,7 +102,7 @@ const AccountInfo = () => {
                         <View style={styles.inputContainer}>
                             <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
                                 <Entypo name="address" size={24} color="silver" />
-                                <Text style={{ marginHorizontal: 10 }}>العنوان</Text>
+                                <Text style={{ marginHorizontal: 10, fontFamily: "CairoMed" }}>العنوان</Text>
                             </View>
                             <TextInput style={styles.input} value={form.address}
                                 onChangeText={(e) => setForm(prev => ({ ...prev, address: e }))}
@@ -112,7 +111,7 @@ const AccountInfo = () => {
                         <View style={styles.inputContainer}>
                             <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
                                 <AntDesign name="phone" size={24} color="silver" />
-                                <Text style={{ marginHorizontal: 10 }}>الهاتف</Text>
+                                <Text style={{ marginHorizontal: 10, fontFamily: "CairoMed" }}>الهاتف</Text>
                             </View>
                             <TextInput style={styles.input} value={form.phone}
                                 onChangeText={(e) => setForm(prev => ({ ...prev, phone: e }))}
@@ -122,7 +121,7 @@ const AccountInfo = () => {
                     </View>
                     {updated?.status === "success" && <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse", marginVertical: 20 }}>
                         <AntDesign name="checkcircle" size={24} color="green" />
-                        <Text style={{ marginHorizontal: 10, color: "green", fontWeight: "bold" }}>الهاتف</Text>
+                        <Text style={{ marginHorizontal: 10, color: "green", fontWeight: "bold", fontFamily: "CairoMed" }}>الهاتف</Text>
                     </View>}
                     <Pressable
                         onPress={handleSubmit}
@@ -137,7 +136,7 @@ const AccountInfo = () => {
                         }}
                     >
                         <View>
-                            <Text style={{ color: "#fff" }}>حفظ</Text>
+                            <Text style={{ color: "#fff",fontFamily:"CairoBold" }}>حفظ</Text>
                         </View>
                     </Pressable>
 
@@ -166,6 +165,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 10,
         padding: 10,
-        textAlign: "right"
+        textAlign: "right",
+        fontFamily: "CairoMed"
     },
 });
