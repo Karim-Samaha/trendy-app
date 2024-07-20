@@ -172,6 +172,30 @@ const CartScreen = () => {
                   borderRadius: 7,
                 }}
               >
+               
+
+              
+
+                <Pressable
+                  onPress={() => increaseQuantity(item)}
+                  style={{
+                    backgroundColor: "#55a8b9",
+                    padding: 7,
+                    borderTopLeftRadius: 6,
+                    borderBottomLeftRadius: 6,
+                  }}
+                >
+                  <Feather name="plus" size={24} color="#fff" />
+                </Pressable>
+                <Pressable
+                  style={{
+                    backgroundColor: "white",
+                    paddingHorizontal: 18,
+                    paddingVertical: 6,
+                  }}
+                >
+                  <Text style={{ fontFamily: "CairoBold", marginBottom: 5 }}>{item?.quantity}</Text>
+                </Pressable>
                 {item?.quantity > 1 ? (
                   <Pressable
                     onPress={() => decreaseQuantity(item)}
@@ -197,28 +221,6 @@ const CartScreen = () => {
                     <AntDesign name="delete" size={24} color="red" />
                   </Pressable>
                 )}
-
-                <Pressable
-                  style={{
-                    backgroundColor: "white",
-                    paddingHorizontal: 18,
-                    paddingVertical: 6,
-                  }}
-                >
-                  <Text style={{ fontFamily: "CairoBold", marginBottom: 5 }}>{item?.quantity}</Text>
-                </Pressable>
-
-                <Pressable
-                  onPress={() => increaseQuantity(item)}
-                  style={{
-                    backgroundColor: "#55a8b9",
-                    padding: 7,
-                    borderTopLeftRadius: 6,
-                    borderBottomLeftRadius: 6,
-                  }}
-                >
-                  <Feather name="plus" size={24} color="#fff" />
-                </Pressable>
               </View>
               <Pressable
                 onPress={() => deleteItem(item)}
@@ -270,7 +272,7 @@ const CartScreen = () => {
       </View>
       <View style={styles.cartInfoRow}>
         <Text style={{ fontSize: 14, fontFamily: "CairoMed" }}>المجموع غير شامل الضريبة : </Text>
-        <Text style={{ fontSize: 16, fontWeight: "bold" }}>{renderTotalPrice.total} رس</Text>
+        <Text style={{ fontSize: 16, fontWeight: "bold" }}>{renderTotalPrice.totalBeforeVat} رس</Text>
       </View>
       {couponResponse?.precent &&
         <View style={styles.cartInfoRow}>
@@ -280,7 +282,7 @@ const CartScreen = () => {
       }
       <View style={styles.cartInfoRow}>
         <Text style={{ fontSize: 14, fontFamily: "CairoMed" }}>المجموع الخاضع للضريبة : </Text>
-        <Text style={{ fontSize: 14, fontFamily: "CairoBold" }}>{renderTotalPrice.amountToApplyVatInReceipt} رس</Text>
+        <Text style={{ fontSize: 14, fontFamily: "CairoBold" }}>{renderTotalPrice.totalBeforeVat} رس</Text>
       </View>
       <View style={styles.cartInfoRow}>
         <Text style={{ fontSize: 14, fontFamily: "CairoMed" }}>ضريبة القيمة المضافة (15%) : </Text>

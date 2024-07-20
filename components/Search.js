@@ -62,6 +62,7 @@ const Search = () => {
             }}
                 value={search}
                 onChangeText={(e) => setSearch(e)}
+                onSubmitEditing={search.length > 3 && handleSearch}
             />
             <TouchableOpacity style={{
                 position: "absolute", right: 5,

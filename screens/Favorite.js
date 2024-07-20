@@ -85,24 +85,20 @@ const Favorite = () => {
 
                 <ScrollView style={{
                     direction: "rtl",
-                    paddingTop: 80,
+                    paddingTop: 50,
                 }}>
 
 
 
                     <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingBottom: 80 }}>
-                        {/* <View style={{ flexDirection: "row-reverse", alignItems: "center", marginTop: 10 }}>
-                            <MaterialIcons name="favorite" size={24} color="#55a8b9" />
-                            <Text style={{ fontSize: 20, fontWeight: "bold", marginHorizontal: 10 }}>
-                                قائمتي
-                            </Text>
 
-                        </View> */}
-                        <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-around", paddingTop: 30, }}>
+                        <View style={{ flexDirection: "row-reverse", flexWrap: "wrap", justifyContent: products.length === 0 ? "center" : "space-between", paddingTop: 30, }}>
                             {products.length > 0 ? products.map((item) => {
-                                return <Product item={item} key={item?._id} twoCell={true} />
+                                return <Product item={item} key={item?._id} twoCell={true} containerStyle={{ width: 160, height: 140 }} />
                             }) : products.length === 0 && productLoaded ?
-                                <Text style={{ fontWeight: "bold", fontSize: 18, marginTop: 40 }}>لم يتم اضافة منتجات في القائمة</Text>
+                                <Text style={{  fontSize: 16, marginTop: 40, fontFamily: "CairoBold" }}>
+                                    لم يتم اضافة منتجات في القائمة
+                                    </Text>
                                 : null}
                         </View>
                     </View>

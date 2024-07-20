@@ -38,9 +38,12 @@ const Product = ({ item, containerStyle, twoCell, handleAddToCart }) => {
             onError={() => setImageHasError(true)}
 
         />
-        <Text numberOfLines={1} style={{
-            fontSize: 12, fontFamily: "CairoMed",
-        }}>{item.name.length > 20 ? `${item.name.substring(0, 20)}...` : item.name}</Text>
+        <View style={{ minHeight: 50 }}>
+            <Text numberOfLines={2} style={{
+                fontSize: 12, fontFamily: "CairoMed",
+            }}>
+                {item.name.length > 35 ? `${item.name.substring(0, 35)}...` : item.name}</Text>
+        </View>
         <View>
             {item.priceBefore && <Text style={{ fontSize: 9, fontFamily: "CairoMed" }}>سعر قبل الخصم : <Text style={{ textDecorationLine: 'line-through', textDecorationStyle: 'solid', color: "#ff1111" }}>{item.priceBefore}</Text></Text>
             }
@@ -71,22 +74,22 @@ const Product = ({ item, containerStyle, twoCell, handleAddToCart }) => {
                 خصم {100 - (item.price / item.priceBefore * 100).toFixed(0)} %
             </Text>
         </View>}
-        {handleAddToCart ? 
-        <Pressable style={styles.mainBtn} onPress={() => handleAddToCart(item)}>
-            <Text style={{ color: "#fff", fontFamily: "CairoMed" }} >اضف الي السلة</Text>
-        </Pressable> : null
-        //  <Pressable style={styles.mainBtn} onPress={() => navigation.navigate("Info", {
-        //     id: item.id,
-        //     title: item.title,
-        //     price: item?.price,
-        //     carouselImages: item.carouselImages,
-        //     color: item?.color,
-        //     size: item?.size,
-        //     oldPrice: item?.oldPrice,
-        //     item: item,
-        // })}>
-        //     <Text style={{ color: "#fff", fontSize: 12, fontFamily: "CairoMed" }} >اضف الي السلة</Text>
-        // </Pressable>
+        {handleAddToCart ?
+            <Pressable style={styles.mainBtn} onPress={() => handleAddToCart(item)}>
+                <Text style={{ color: "#fff", fontFamily: "CairoMed" }} >اضف الي السلة</Text>
+            </Pressable> : null
+            //  <Pressable style={styles.mainBtn} onPress={() => navigation.navigate("Info", {
+            //     id: item.id,
+            //     title: item.title,
+            //     price: item?.price,
+            //     carouselImages: item.carouselImages,
+            //     color: item?.color,
+            //     size: item?.size,
+            //     oldPrice: item?.oldPrice,
+            //     item: item,
+            // })}>
+            //     <Text style={{ color: "#fff", fontSize: 12, fontFamily: "CairoMed" }} >اضف الي السلة</Text>
+            // </Pressable>
         }
 
         <View>

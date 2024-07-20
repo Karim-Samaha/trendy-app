@@ -160,11 +160,11 @@ const SubCategorie = () => {
                                         </Pressable>
                                     }) : null}
                                 </ScrollView></> : null}
-                        <View style={{ flexDirection:"row-reverse", flexWrap: "wrap", justifyContent: "space-between", paddingTop: 10, }}>
+                        <View style={{ flexDirection:"row-reverse", flexWrap: "wrap", justifyContent: products.length == 0 ? "center" :  "space-between", paddingTop: 10, }}>
                             {products.length > 0 ? products.map((item) => {
                                 return <Product item={item} key={item?._id} containerStyle={{ width: 160, height: 140 }} twoCell={true} />
                             }) : products.length === 0 && productLoaded ?
-                                <Text style={{ fontWeight: "bold", fontSize: 18, marginTop: 40 }}>لا يوجد منتجات حاليا</Text>
+                                <Text style={{ fontWeight: "bold", fontSize: 18, marginTop: 40, }}>لا يوجد منتجات حاليا</Text>
                                 : null}
                         </View>
                         {productLoaded && products.length >= 8 && <View style={{ alignItems: "center" }}>

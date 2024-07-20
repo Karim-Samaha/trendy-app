@@ -29,6 +29,7 @@ export const renderTotalPrice_ = (
   let extraPurchase = 0;
   let deductedAmount = 0;
   let amountToApplyVatInReceipt = 0;
+  let totalBeforeVat = 0
 
   items.map((item) => {
     total += item.price * item.quantity;
@@ -48,12 +49,14 @@ export const renderTotalPrice_ = (
     deductedAmount = (total * couponPrecent) / 100;
     let amountToApplyVat = total - deductedAmount;
     vat = +((amountToApplyVat * 15) / 100);
+    totalBeforeVat = total - vat
     amountToApplyVatInReceipt = amountToApplyVat;
-    totalCheckout = amountToApplyVatInReceipt + vat;
+    totalCheckout = amountToApplyVatInReceipt;
   } else {
     vat = +((total * 15) / 100);
+    totalBeforeVat = total - vat
     amountToApplyVatInReceipt = total;
-    totalCheckout = amountToApplyVatInReceipt + vat;
+    totalCheckout = amountToApplyVatInReceipt;
   }
   if (pointsAmount && useUserPoints) {
     totalCheckout = totalCheckout - pointsAmount;
@@ -63,12 +66,14 @@ export const renderTotalPrice_ = (
   }
   return {
     total: total.toFixed(2),
+    totalBeforeVat: totalBeforeVat.toFixed(2),
     cards: cards.toFixed(2),
     giftCards: extraPurchase.toFixed(2),
     vat: vat.toFixed(2),
     fintalTotal: totalCheckout.toFixed(2),
     deductedAmount: deductedAmount.toFixed(2),
     amountToApplyVatInReceipt: amountToApplyVatInReceipt.toFixed(2),
+    
   };
 };
 
