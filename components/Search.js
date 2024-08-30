@@ -35,9 +35,6 @@ const Search = () => {
             zIndex: 999,
             left: 0,
             width: "100%",
-            // borderBottomStartRadius: 16,
-            // borderBottomEndRadius: 16,
-
         }}
     >
         <Pressable

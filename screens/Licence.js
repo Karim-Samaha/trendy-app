@@ -1,9 +1,8 @@
 import StaticContentScreen from "../components/StaticContentScreen"
-
+import { LicenceLocal } from "../constants/Locales"
 const Licence = () => {
-    return <StaticContentScreen title={"الشهادات المتعلقه بالمتجر"} content={
-        "رقم السجل التجاري 1010603970"
-    } secContent={"رقم الشهاده الضريبيه 310457496200003"}/>
+    return <StaticContentScreen title={LicenceLocal['ar'].title} content={LicenceLocal['ar'].content}
+     secContent={LicenceLocal['ar'].subContent}/>
 }
 
 export default Licence

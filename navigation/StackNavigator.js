@@ -2,19 +2,14 @@ import { StyleSheet, Text, View } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import LoginScreen from "../screens/LoginScreen";
-import RegisterScreen from "../screens/RegisterScreen";
 import HomeScreen from "../screens/HomeScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import ProductInfoScreen from "../screens/ProductInfoScreen";
-import AddAddressScreen from "../screens/AddAddressScreen";
-import AddressScreen from "../screens/AddressScreen";
 import CartScreen from "../screens/CartScreen";
 import ProfileScreen from "../screens/ProfileScreen";
-import ConfirmationScreen from "../screens/ConfirmationScreen";
 import Categories from "../screens/Categories";
 import SubCategorie from "../screens/SubCategory";
 import { useDispatch, useSelector } from "react-redux";
@@ -195,15 +190,7 @@ const StackNavigator = () => {
             },
           }}
         />
-        <Stack.Screen
-          name="Register"
-          component={RegisterScreen}
-          options={{
-            headerShown: false, headerTitleStyle: {
-              fontFamily: "CairoMed"
-            },
-          }}
-        />
+    
         <Stack.Screen
           name="Main"
           component={BottomTabs}
@@ -261,33 +248,9 @@ const StackNavigator = () => {
             title: 'تفاصيل المنتج',
             headerTintColor: "#fff",
           }} />
-        <Stack.Screen
-          name="Address"
-          component={AddAddressScreen}
-          options={{
-            headerShown: false, headerTitleStyle: {
-              fontFamily: "CairoMed"
-            },
-          }}
-        />
-        <Stack.Screen
-          name="Add"
-          component={AddressScreen}
-          options={{
-            headerShown: false, headerTitleStyle: {
-              fontFamily: "CairoMed"
-            },
-          }}
-        />
-        <Stack.Screen
-          name="Confirm"
-          component={ConfirmationScreen}
-          options={{
-            headerShown: false, headerTitleStyle: {
-              fontFamily: "CairoMed"
-            },
-          }}
-        />
+      
+      
+    
         <Stack.Screen
           name="OrderHistory"
           component={OrderHistory}

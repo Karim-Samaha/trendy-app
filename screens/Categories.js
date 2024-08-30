@@ -73,34 +73,17 @@ const Categories = () => {
     return (
         <>
             <SafeAreaView
-                style={{
-                    paddinTop: Platform.OS === "android" ? 40 : 0,
-                    flex: 1,
-                    backgroundColor: "white",
-                }}
+                style={styles.safeAreaView}
             >
                 <Search />
 
-                <ScrollView style={{
-                    direction: "rtl",
-                    paddingTop: 60,
-                   
-                }}>
-                    <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingBottom: 80 }}>
-                        <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", paddingTop: 20 }}>
+                <ScrollView style={styles.scrollView}>
+                    <View style={styles.container}>
+                        <View style={styles.listContainer}>
                             {list.map((item, index) => (
                                 <Pressable
                                     key={index}
-                                    style={{
-                                        width: "45%",
-                                        backgroundColor: "#f4f1df",
-                                        borderRadius: 11,
-                                        margin: 5,
-                                        height: 160,
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        marginBottom: 20,
-                                    }}
+                                    style={styles.categoryItemPress}
                                     onPress={() => navigation.navigate("SubCategories", {
                                         id: item.id,
                                         title: item.title,
@@ -113,21 +96,24 @@ const Categories = () => {
                                     })}
 
                                 >
-                                    <Image
-                                        style={{ width: 120, height: 100, resizeMode: "cover", borderRadius: 11 }}
+                                    {/* <Image
+                                        style={styles.categoryImg}
                                         source={{
                                             uri: listImgError.includes(item?._id) ? "https://picsum.photos/200/300"
                                                 : `${config.backendBase}${item.image}`
                                         }}
                                         onError={() => setListImgError((prev) => ([...prev, item?._id]))}
+                                    /> */}
+                                    
+                                    <Image
+                                        style={styles.categoryImg}
+                                        source={{
+                                            uri: `${config.backendBase}${item.image}`
+                                        }}
+                                        onError={() => setListImgError((prev) => ([...prev, item?._id]))}
                                     />
                                     <Text
-                                        style={{
-                                            textAlign: "center",
-                                            fontSize: 14,
-                                            marginTop: 5,
-                                            fontFamily:"CairoMed"
-                                        }}
+                                        style={styles.categoryText}
                                     >
                                         {item?.name}
                                     </Text>
@@ -150,4 +136,47 @@ const Categories = () => {
 
 export default Categories;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    safeAreaView: {
+        paddinTop: Platform.OS === "android" ? 40 : 0,
+        flex: 1,
+        backgroundColor: "white",
+    },
+    scrollView: {
+        direction: "rtl",
+        paddingTop: 60,
+    },
+    container: {
+        paddingHorizontal: 10,
+        paddingVertical: 20,
+        paddingBottom: 80
+    },
+    listContainer: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "center",
+        paddingTop: 20
+    },
+    categoryItemPress: {
+        width: "45%",
+        backgroundColor: "#f4f1df",
+        borderRadius: 11,
+        margin: 5,
+        height: 160,
+        justifyContent: "center",
+        alignItems: "center",
+        marginBottom: 20,
+    },
+    categoryImg: {
+        width: 120,
+        height: 100,
+        resizeMode: "cover",
+        borderRadius: 11
+    },
+    categoryText: {
+        textAlign: "center",
+        fontSize: 14,
+        marginTop: 5,
+        fontFamily: "CairoMed"
+    }
+});

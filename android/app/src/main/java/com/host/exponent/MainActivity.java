@@ -1,4 +1,4 @@
-package com.host.exponent;
+package com.trendy.trendyrosesa;
 
 import android.os.Build;
 import android.os.Bundle;

@@ -113,9 +113,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace 'com.host.exponent'
+    namespace 'com.trendy.trendyrosesa'
     defaultConfig {
-        applicationId 'com.host.exponent'
+        applicationId 'com.trendy.trendyrosesa'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

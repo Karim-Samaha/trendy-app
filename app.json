@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "trendy-rose",
-    "slug": "trendy-rose",
+    "slug": "trendy-rose-vfxzqqb-o9snfbpnp3k",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/app-logo.png",
@@ -19,7 +19,9 @@
         "foregroundImage": "./assets/app-logo.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.host.exponent"
+      "package": "com.trendy.trendyrosesa",
+      "bundleIdentifier": "com.trendy.trendyrosesa"
+
     },
     "web": {
       "favicon": "./assets/app-logo.png"
@@ -29,7 +31,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "cd69da7d-75bd-4dff-8b06-28ebb4675701"
+        "projectId": "69de9395-59be-44fe-b804-2ff32c994a58"
       }
     }
   }

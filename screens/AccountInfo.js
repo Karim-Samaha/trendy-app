@@ -6,11 +6,7 @@ import {
     Pressable,
     TextInput,
 } from "react-native";
-import React, { useEffect, useContext, useState, useCallback } from "react";
-import { Feather } from "@expo/vector-icons";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import axios from "axios";
-import { UserType } from "../UserContext";
+import React, { useEffect, useState } from "react";
 import _axios from "../Utils/axios";
 import { config } from "./config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -21,7 +17,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Search from "../components/Search";
-
+import { AccountLocales } from "../constants/Locales";
 const AccountInfo = () => {
     const [form, setForm] = useState({
         name: "",
@@ -74,44 +70,48 @@ const AccountInfo = () => {
         <>
             <Search />
             <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 0, paddingTop: 80 }}>
-                <View style={{ padding: 10 }}>
-                    <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
-                        بيانات الحساب
+                <View style={styles.container}>
+                    <Text style={styles.headerTxt}>
+                        {AccountLocales['ar'].accountDetails}
                         {`  `}
                         <FontAwesome5 name="info-circle" size={24} color="silver" />
                     </Text>
                     <View style={styles.formContainer}>
                         <View style={styles.inputContainer}>
-                            <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
+                            <View style={styles.inputHeaderContainer}>
                                 <MaterialCommunityIcons name="rename-box" size={24} color="silver" />
-                                <Text style={{ marginHorizontal: 10, fontFamily: "CairoMed" }}>الأسم</Text>
+                                <Text style={styles.inputlLabelTxt}>{AccountLocales['ar'].name}
+                                </Text>
                             </View>
                             <TextInput style={styles.input} value={form.name}
                                 onChangeText={(e) => setForm(prev => ({ ...prev, name: e }))}
                             />
                         </View>
                         <View style={styles.inputContainer}>
-                            <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
+                            <View style={styles.inputHeaderContainer}>
                                 <MaterialIcons name="email" size={24} color="silver" />
-                                <Text style={{ marginHorizontal: 10, fontFamily: "CairoMed" }}>البريد الالكتروني</Text>
+                                <Text style={styles.inputlLabelTxt}>{AccountLocales['ar'].email}
+                                </Text>
                             </View>
                             <TextInput style={styles.input} value={form.email}
                                 onChangeText={(e) => setForm(prev => ({ ...prev, email: e }))}
                             />
                         </View>
                         <View style={styles.inputContainer}>
-                            <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
+                            <View style={styles.inputHeaderContainer}>
                                 <Entypo name="address" size={24} color="silver" />
-                                <Text style={{ marginHorizontal: 10, fontFamily: "CairoMed" }}>العنوان</Text>
+                                <Text style={styles.inputlLabelTxt}>{AccountLocales['ar'].address}
+                                </Text>
                             </View>
                             <TextInput style={styles.input} value={form.address}
                                 onChangeText={(e) => setForm(prev => ({ ...prev, address: e }))}
                             />
                         </View>
                         <View style={styles.inputContainer}>
-                            <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse" }}>
+                            <View style={styles.inputHeaderContainer}>
                                 <AntDesign name="phone" size={24} color="silver" />
-                                <Text style={{ marginHorizontal: 10, fontFamily: "CairoMed" }}>الهاتف</Text>
+                                <Text style={styles.inputlLabelTxt}>{AccountLocales['ar'].phone}
+                                </Text>
                             </View>
                             <TextInput style={styles.input} value={form.phone}
                                 onChangeText={(e) => setForm(prev => ({ ...prev, phone: e }))}
@@ -119,24 +119,16 @@ const AccountInfo = () => {
                             />
                         </View>
                     </View>
-                    {updated?.status === "success" && <View style={{ display: "flex", alignItems: "center", flexDirection: "row-reverse", marginVertical: 20 }}>
+                    {updated?.status === "success" && <View style={styles.inputHeaderContainer}>
                         <AntDesign name="checkcircle" size={24} color="green" />
-                        <Text style={{ marginHorizontal: 10, color: "green", fontWeight: "bold", fontFamily: "CairoMed" }}>الهاتف</Text>
+                        <Text style={styles.successTxt}>{AccountLocales['ar'].phone}</Text>
                     </View>}
                     <Pressable
                         onPress={handleSubmit}
-                        style={{
-                            backgroundColor: "#55a8b9",
-                            padding: 10,
-                            borderRadius: 20,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            marginHorizontal: 10,
-                            marginVertical: 10,
-                        }}
+                        style={styles.submitBtn}
                     >
                         <View>
-                            <Text style={{ color: "#fff",fontFamily:"CairoBold" }}>حفظ</Text>
+                            <Text style={styles.submitBtnTxt}>{AccountLocales['ar'].save}</Text>
                         </View>
                     </Pressable>
 
@@ -168,4 +160,40 @@ const styles = StyleSheet.create({
         textAlign: "right",
         fontFamily: "CairoMed"
     },
+    container: {
+        padding: 10
+    },
+    headerTxt: {
+        fontSize: 20,
+        fontWeight: "bold",
+        marginTop: 10
+    },
+    inputHeaderContainer: {
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "row-reverse"
+    },
+    inputlLabelTxt: {
+        marginHorizontal: 10,
+        fontFamily: "CairoMed"
+    },
+    successTxt: {
+        marginHorizontal: 10,
+        color: "green",
+        fontWeight: "bold",
+        fontFamily: "CairoMed"
+    },
+    submitBtn: {
+        backgroundColor: "#55a8b9",
+        padding: 10,
+        borderRadius: 20,
+        justifyContent: "center",
+        alignItems: "center",
+        marginHorizontal: 10,
+        marginVertical: 10,
+    },
+    submitBtnTxt: {
+        color: "#fff",
+        fontFamily: "CairoBold"
+    }
 });

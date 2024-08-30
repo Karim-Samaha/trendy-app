@@ -5,27 +5,16 @@ import {
     SafeAreaView,
     Platform,
     ScrollView,
-    Pressable,
-    TextInput,
-    Image,
-    Button,
-    TouchableOpacity
+
 } from "react-native";
-import React, { useState, useEffect, useCallback, useContext, useRef } from "react";
-import { Feather } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserType } from "../UserContext";
-import jwt_decode from "jwt-decode";
+import { useRoute } from "@react-navigation/native";
+
 import { config } from "./config";
 import Product from "../components/Product";
 import Search from "../components/Search";
+import { searchLocals } from "../constants/Locales";
 
 const SearchScreen = () => {
     const route = useRoute();
@@ -58,33 +47,20 @@ const SearchScreen = () => {
     return (
         <>
             <SafeAreaView
-                style={{
-                    paddinTop: Platform.OS === "android" ? 40 : 0,
-                    flex: 1,
-                    backgroundColor: "white",
-                }}
+                style={styles.scrollView}
             >
                 <Search />
-                <ScrollView style={{
-                    direction: "rtl",
-                    paddingTop: 80,
-                }}>
-                    <View style={{ paddingHorizontal: 10, paddingVertical: 20 }}>
-                        <Text style={{fontFamily: "CairoMed", fontSize: 13}}>نتائج البحث : <Text style={{ fontFamily: "CairoBold", fontSize: 13 }}>{route.params?.search}</Text></Text>
-                        <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-around", paddingTop: 10, paddingBottom: 80 }}>
+                <ScrollView style={styles.productsScrollView}>
+                    <View style={styles.container}>
+                        <Text style={styles.medText}>{searchLocals['ar'].result}
+                            : <Text style={styles.boldText}>{route.params?.search}</Text></Text>
+                        <View style={styles.productsContainer}>
                             {products.length > 0 ? products.map((item) => {
                                 return <Product item={item} key={item?._id} containerStyle={{ width: 160, height: 140 }} twoCell={true} />
                             }) : products.length === 0 && productLoaded ?
-                                <Text style={{ fontWeight: "bold", fontSize: 18, marginTop: 40 }}>لا يوجد نتائج</Text>
+                                <Text style={styles.noResultsText}>{searchLocals['ar'].noResult}</Text>
                                 : null}
                         </View>
-                        {/* <View style={{ alignItems: "center" }}>
-                            <TouchableOpacity style={styles.moreBtn} onPress={requestMore}>
-                                <Text style={styles.moreText}>
-                                    عرض المزيد
-                                </Text>
-                            </TouchableOpacity>
-                        </View> */}
                     </View>
                 </ScrollView>
             </SafeAreaView >
@@ -96,6 +72,11 @@ const SearchScreen = () => {
 export default SearchScreen;
 
 const styles = StyleSheet.create({
+    scrollView: {
+        paddinTop: Platform.OS === "android" ? 40 : 0,
+        flex: 1,
+        backgroundColor: "white",
+    },
     moreBtn: {
         backgroundColor: "#55a8b9",
         paddingVertical: 10,
@@ -110,6 +91,33 @@ const styles = StyleSheet.create({
     moreText: {
         color: '#fff',
         fontWeight: "bold"
+    },
+    container: {
+        paddingHorizontal: 10,
+        paddingVertical: 20
+    },
+    medText: {
+        fontFamily: "CairoMed",
+        fontSize: 13
+    },
+    boldText: {
+        fontFamily: "CairoBold",
+        fontSize: 13
+    },
+    productsScrollView: {
+        direction: "rtl",
+        paddingTop: 80,
+    },
+    productsContainer: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-around",
+        paddingTop: 10,
+        paddingBottom: 80
+    },
+    noResultsText: {
+        fontWeight: "bold",
+        fontSize: 18,
+        marginTop: 40
     }
-
 });

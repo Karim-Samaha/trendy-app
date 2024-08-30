@@ -4,15 +4,11 @@ import {
     Text,
     View,
     ScrollView,
-    Pressable,
-    TextInput
+
 } from "react-native";
-import React, { useLayoutEffect, useEffect, useContext, useState } from "react";
+import React from "react";
 
 import _axios from "../Utils/axios";
-import AntDesign from '@expo/vector-icons/AntDesign';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const StaticContentScreen = ({ title, content, secContent }) => {
     return <ScrollView style={styles.container}>

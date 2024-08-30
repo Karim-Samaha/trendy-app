@@ -8,6 +8,7 @@ import {
 import { config } from "../screens/config";
 import { useState } from "react";
 import ReviewModal from "./ReviewModal";
+import { OrderItemLocal } from "../constants/Locales";
 const OrderItem = ({ item, user }) => {
     const [isModalVisible, setModalVisible] = useState(false);
     const openModal = () => {
@@ -23,42 +24,29 @@ const OrderItem = ({ item, user }) => {
         RETURNED: "مسترجع"
     }
     return <View
-        style={{
-            marginVertical: 10,
-            minHeight: 300,
-            borderBottomColor: "#F0F0F0",
-            borderWidth: 2,
-            borderLeftWidth: 0,
-            borderTopWidth: 0,
-            borderRightWidth: 0,
-        }}
+        style={styles.screenContainer}
         key={item?._id}
     >
         <View style={styles.orderHeader}>
             <Text style={{ fontFamily: "CairoMed" }}>
-                الرقم المرجعي : <Text style={{ fontFamily: "CairoBold" }}>{item?._id}</Text>
+                {OrderItemLocal['ar'].refNum} : <Text style={styles.boldTxt}>{item?._id}</Text>
             </Text>
             <Pressable style={styles.rate} onPress={openModal}>
-                <Text style={{
-                    color: "#5C71E5",
-                    fontFamily: "CairoMed"
-                }}>تقيم</Text>
+                <Text style={styles.rateText}>{OrderItemLocal['ar'].rate}</Text>
             </Pressable>
-            <Text style={{ marginTop: 10, fontFamily: "CairoMed" }}>
-                التاريخ : <Text style={{ fontFamily: "CairoBold" }}>{item?.createdAt.split("T")[0]}</Text>
+            <Text style={styles.midTxt}>
+                {OrderItemLocal['ar'].date} : <Text style={styles.boldTxt}>{item?.createdAt.split("T")[0]}</Text>
             </Text>
-            <Text style={{ marginTop: 10, fontFamily: "CairoMed" }}>
-                السعر : <Text style={{ fontFamily: "CairoBold" }}>{item?.amount / 100}رس</Text>
+            <Text style={styles.midTxt}>
+                {OrderItemLocal['ar'].price} : <Text style={styles.boldTxt}>{item?.amount / 100}رس</Text>
             </Text>
             <View style={{
-                width: 150, height: 48, backgroundColor: item.orderStatus === 'DELEIVERD' ? "green" : "#faefe3",
-                justifyContent: "center",
-                borderRadius: 11
+                ...styles.orderStatusContainer,
+                backgroundColor: item.orderStatus === 'DELEIVERD' ? "green" : "#faefe3",
             }}>
                 <Text style={{
-                    fontFamily: "CairoBold",
-                    fontSize: 15,
-                    color: item.orderStatus === 'DELEIVERD' ? "#fff" : "#55a8b9", textAlign: "center"
+                    ...styles.orderStatus,
+                    color: item.orderStatus === 'DELEIVERD' ? "#fff" : "#55a8b9",
                 }}>
                     {status[item.orderStatus]}</Text>
             </View>
@@ -66,27 +54,27 @@ const OrderItem = ({ item, user }) => {
         {item.purchaseBulk.map((purchaseItem, index) => {
             return <View style={styles.orderInfo} key={index}>
                 <Image
-                    style={{ width: 120, height: 120, resizeMode: "contain", borderRadius: 8 }}
+                    style={styles.image}
                     source={{ uri: `${config.assetsUrl}/${purchaseItem?.image}` }}
                 />
-                <View style={{ paddingHorizontal: 20, paddingTop: 20, flexShrink: 1 }}>
+                <View style={styles.infoContainer}>
                     <Text style={{ fontSize: 16, }}>{purchaseItem.name}</Text>
-                    <Text style={{ textAlign: "right", fontFamily: "CairoMed", fontSize: 11 }}>الكمية : <Text style={{ fontFamily: "CairoBold" }}>{purchaseItem.quantity}</Text></Text>
-                    <Text style={{ textAlign: "right", fontFamily: "CairoMed", fontSize: 11 }}>السعر : <Text style={{ fontFamily: "CairoBold" }}>{purchaseItem.price}رس</Text></Text>
-                    <Text style={{ textAlign: "right", fontFamily: "CairoMed", fontSize: 11 }}>طريقة الشحن : <Text style={{ fontFamily: "CairoBold" }}>{item.ShippingType}</Text></Text>
-                    <Text style={{ textAlign: "right", fontFamily: "CairoMed", fontSize: 11 }}>بيانات المستلم  : <Text style={{ fontFamily: "CairoBold" }}>
+                    <Text style={styles.orderInfo}>{OrderItemLocal['ar'].qty} : <Text style={styles.boldTxt}>{purchaseItem.quantity}</Text></Text>
+                    <Text style={styles.orderInfo}>{OrderItemLocal['ar'].price} : <Text style={styles.boldTxt}>{purchaseItem.price}رس</Text></Text>
+                    <Text style={styles.orderInfo}>{OrderItemLocal['ar'].shipping} : <Text style={styles.boldTxt}>{item.ShippingType}</Text></Text>
+                    <Text style={styles.orderInfo}>{OrderItemLocal['ar'].reciverName}  : <Text style={styles.boldTxt}>
                         {purchaseItem?.formInfo?.sentTo || item.ShippingInfo?.name || user?.name || user?.email || ""}</Text></Text>
-                    <Text style={{ textAlign: "right", fontFamily: "CairoMed", fontSize: 11 }}>عنوان الشحن : <Text style={{ fontFamily: "CairoBold" }}> {purchaseItem?.formInfo?.address ||
+                    <Text style={styles.orderInfo}>{OrderItemLocal['ar'].address} : <Text style={styles.boldTxt}> {purchaseItem?.formInfo?.address ||
                         "لم يتم تحديد العنوان (سيقوم الدعم بالتواصل مع المستلم)"}</Text></Text>
                     <View style={styles.extra}><Text> التوصيل
                         ( + 0.00 ر.س )</Text></View>
                     <View style={styles.extra}><Text>
                         وسيلة الدفع : <Text style={{ fontWeight: "bold" }}>{item.source}</Text>
                     </Text></View>
-                    {purchaseItem.formInfo?.cardText.length > 0 ? <View style={styles.extra}><Text> نص بطاقة
-                        <Text style={{ fontFamily: "CairoBold" }}>( + 6.00 ر.س )</Text></Text></View> : null}
-                    {purchaseItem?.selectedCard?.price ? <View style={styles.extra}><Text> اضافات الورود
-                        <Text style={{ fontFamily: "CairoBold" }}>( + {purchaseItem?.selectedCard?.price} ر.س )</Text></Text></View> : null}
+                    {purchaseItem.formInfo?.cardText.length > 0 ? <View style={styles.extra}><Text> {OrderItemLocal['ar'].cardText}
+                        <Text style={styles.boldTxt}>( + 6.00 ر.س )</Text></Text></View> : null}
+                    {purchaseItem?.selectedCard?.price ? <View style={styles.extra}><Text> {OrderItemLocal['ar'].adds}
+                        <Text style={styles.boldTxt}>( + {purchaseItem?.selectedCard?.price} ر.س )</Text></Text></View> : null}
                 </View>
             </View>
         })}
@@ -142,4 +130,50 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5,
     },
+    orderInfo: {
+        textAlign: "right",
+        fontFamily: "CairoMed",
+        fontSize: 11
+    },
+    boldTxt: {
+        fontFamily: "CairoBold"
+    },
+    midTxt: {
+        marginTop: 10,
+        fontFamily: "CairoMed"
+    },
+    infoContainer: {
+        paddingHorizontal: 20,
+        paddingTop: 20,
+        flexShrink: 1
+    },
+    orderStatus: {
+        fontFamily: "CairoBold",
+        fontSize: 15,
+        textAlign: "center"
+    },
+    orderStatusContainer: {
+        width: 150, height: 48,
+        justifyContent: "center",
+        borderRadius: 11,
+    },
+    image: {
+        width: 120,
+        height: 120,
+        resizeMode: "contain",
+        borderRadius: 8
+    },
+    rateText: {
+        color: "#5C71E5",
+        fontFamily: "CairoMed"
+    },
+    screenContainer: {
+        marginVertical: 10,
+        minHeight: 300,
+        borderBottomColor: "#F0F0F0",
+        borderWidth: 2,
+        borderLeftWidth: 0,
+        borderTopWidth: 0,
+        borderRightWidth: 0,
+    }
 });

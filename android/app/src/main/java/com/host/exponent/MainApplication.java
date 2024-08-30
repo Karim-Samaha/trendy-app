@@ -1,4 +1,4 @@
-package com.host.exponent;
+package com.trendy.trendyrosesa;
 
 import android.app.Application;
 import android.content.res.Configuration;

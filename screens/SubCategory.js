@@ -26,6 +26,7 @@ import jwt_decode from "jwt-decode";
 import { config } from "./config";
 import Product from "../components/Product";
 import Search from "../components/Search";
+import { subCategorisLocal } from "../constants/Locales";
 
 const SubCategorie = () => {
     const route = useRoute();
@@ -37,17 +38,12 @@ const SubCategorie = () => {
 
     const scrollToEnd = (ref) => {
         sectionRef.current.scrollToEnd({ animated: false });
-        //   sectionOneRef.current.scrollToEnd({ animated: false });
-        //   sectionTwoRef.current.scrollToEnd({ animated: false });
-        //   sectionThreeRef.current.scrollToEnd({ animated: false });
 
     };
     const [products, setProducts] = useState([]);
     const [productLoaded, setProductLoaded] = useState(false)
     const [currentSubId, setCurrentSubId] = useState("")
     const [subCategories, setSubCategories] = useState([])
-    const [imageHasError, setImageHasError] = useState(false)
-    const [ctgInfo, setCtgInfo] = useState({})
 
     const [limit, setLimit] = useState(12)
     const requestMore = () => {
@@ -102,83 +98,75 @@ const SubCategorie = () => {
     }, [navigation])
 
     return (
-        <>
-            <SafeAreaView
-                style={{
-                    paddinTop: Platform.OS === "android" ? 40 : 0,
-                    flex: 1,
-                    backgroundColor: "white",
-                }}
-            >
-                <Search />
+        <SafeAreaView
+            style={{
+                paddinTop: Platform.OS === "android" ? 40 : 0,
+                flex: 1,
+                backgroundColor: "white",
+            }}
+        >
+            <Search />
 
-                <ScrollView style={{
-                    direction: "rtl",
-                    paddingTop: 60
-                }}>
-                    <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingBottom: 120 }}>
-                        {subCategories.length > 0 ?
-                            <>
-                                {subCategories.length > 1 && <Text style={{
-                                    textAlign: "center",
-                                    fontSize: 18,
-                                    fontWeight: "bold",
-                                    marginTop: 5,
-                                    marginBottom: 10,
-                                    textAlign: "right",
-                                    paddingHorizontal: 10
-                                }}
+            <ScrollView style={{
+                direction: "rtl",
+                paddingTop: 60
+            }}>
+                <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingBottom: 120 }}>
+                    {subCategories.length > 0 ?
+                        <>
+                            {subCategories.length > 1 && <Text style={styles.subCtgHeader}
 
-                                >
-                                    التصنيفات الفرعية
-                                </Text>}
+                            >
+                                {subCategorisLocal['ar'].subCtg}
+                            </Text>}
 
-                                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
-                                    flexDirection: "row",
-                                    justifyContent: "flex-end",
-                                }}
-                                    onContentSizeChange={scrollToEnd}
-                                    ref={sectionRef} >
-                                    {subCategories.length > 1 ?subCategories.map((item) => {
-                                        if (item?.name?.trim() === route?.params.item?.name.trim()) {
-                                            return null
-                                        }
-                                        return <Pressable
-                                            style={{
-                                                ...styles.subCtgLabel, backgroundColor: currentSubId === item?._id ? "#55a8b9" : "white",
-                                                color: currentSubId === item?._id ? "#fff" : "000",
-                                            }}
-                                            key={item?._id}
-                                            onPress={() => handleSubCategorySelection(item?._id)}
-                                        >
-                                            <Text style={{
-                                                color: currentSubId === item?._id ? "#fff" : "#000",
-                                            }}
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
+                                flexDirection: "row",
+                                justifyContent: "flex-end",
+                            }}
+                                onContentSizeChange={scrollToEnd}
+                                ref={sectionRef} >
+                                {subCategories.length > 1 ? subCategories.map((item) => {
+                                    if (item?.name?.trim() === route?.params.item?.name.trim()) {
+                                        return null
+                                    }
+                                    return <Pressable
+                                        style={{
+                                            ...styles.subCtgLabel, backgroundColor: currentSubId === item?._id ? "#55a8b9" : "white",
+                                            color: currentSubId === item?._id ? "#fff" : "000",
+                                        }}
+                                        key={item?._id}
+                                        onPress={() => handleSubCategorySelection(item?._id)}
+                                    >
+                                        <Text style={{
+                                            color: currentSubId === item?._id ? "#fff" : "#000",
+                                        }}
 
-                                            >{item.name}</Text>
+                                        >{item.name}</Text>
 
-                                        </Pressable>
-                                    }) : null}
-                                </ScrollView></> : null}
-                        <View style={{ flexDirection:"row-reverse", flexWrap: "wrap", justifyContent: products.length == 0 ? "center" :  "space-between", paddingTop: 10, }}>
-                            {products.length > 0 ? products.map((item) => {
-                                return <Product item={item} key={item?._id} containerStyle={{ width: 160, height: 140 }} twoCell={true} />
-                            }) : products.length === 0 && productLoaded ?
-                                <Text style={{ fontWeight: "bold", fontSize: 18, marginTop: 40, }}>لا يوجد منتجات حاليا</Text>
-                                : null}
-                        </View>
-                        {productLoaded && products.length >= 8 && <View style={{ alignItems: "center" }}>
-                            <TouchableOpacity style={styles.moreBtn} onPress={requestMore}>
-                                <Text style={styles.moreText}>
-                                    عرض المزيد
-                                </Text>
-                            </TouchableOpacity>
-                        </View>}
+                                    </Pressable>
+                                }) : null}
+                            </ScrollView></> : null}
+                    <View style={{ flexDirection: "row-reverse", flexWrap: "wrap", justifyContent: products.length == 0 ? "center" : "space-between", paddingTop: 10, }}>
+                        {products.length > 0 ? products.map((item) => {
+                            return <Product item={item} key={item?._id} containerStyle={{ width: 160, height: 140 }} twoCell={true} />
+                        }) : products.length === 0 && productLoaded ?
+                            <Text style={{ fontWeight: "bold", fontSize: 18, marginTop: 40, }}>
+                                {subCategorisLocal['ar'].noProducts}
+                            </Text>
+                            : null}
                     </View>
-                </ScrollView>
-            </SafeAreaView >
+                    {productLoaded && products.length >= 8 && <View style={{ alignItems: "center" }}>
+                        <TouchableOpacity style={styles.moreBtn} onPress={requestMore}>
+                            <Text style={styles.moreText}>
+                                {subCategorisLocal['ar'].more}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>}
+                </View>
+            </ScrollView>
+        </SafeAreaView >
 
-        </>
     );
 };
 
@@ -225,6 +213,15 @@ const styles = StyleSheet.create({
     moreText: {
         color: '#fff',
         fontWeight: "bold"
+    },
+    subCtgHeader: {
+        textAlign: "center",
+        fontSize: 18,
+        fontWeight: "bold",
+        marginTop: 5,
+        marginBottom: 10,
+        textAlign: "right",
+        paddingHorizontal: 10
     }
 
 });

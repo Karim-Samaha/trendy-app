@@ -20,6 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import { config } from "../screens/config"
 import { getUser, renderTotalPrice_ } from "../Utils/helpers"
 import axios from "axios"
+import { PaymentLocal, RefundLocal } from "../constants/Locales"
 
 
 const ReadyUIPayments = {
@@ -162,7 +163,7 @@ const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType,
                 <View style={styles.wrapper}>
                     <View style={styles.header}>
                         <Text style={styles.title}>
-                            اختر وسيلة الدفع
+                            {PaymentLocal['ar'].methodSelect}
                         </Text>
                     </View>
                     <View style={styles.methodsWrapper}>
@@ -184,25 +185,23 @@ const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType,
                     </View>
                     {method === 'TRANSFER' &&
                         <View style={styles.bankInfoContainer}>
-                            <Text style={{ ...styles.boldText, marginBottom: 10 }}>بينات الحساب المصرفي</Text>
-                            <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>اسم المصرف : <Text style={styles.boldText}>مصرف الراجحي</Text></Text>
-                            <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>اسم المالك : <Text style={styles.boldText}>TRENDY ROSE</Text></Text>
-                            <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>رقم الحساب : <Text style={styles.boldText}>996000010006080868434</Text></Text>
-                            <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>الأيبان : <Text style={styles.boldText}>SA1280000996000010006080868434</Text></Text>
-                            <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>السويفت : <Text style={styles.boldText}>RJHISARI</Text></Text>
+                            <Text style={{ ...styles.boldText, marginBottom: 10 }}>{PaymentLocal['ar'].bankHeader}</Text>
+                            <Text style={styles.secText}>{PaymentLocal['ar'].bankName} : <Text style={styles.boldText}>مصرف الراجحي</Text></Text>
+                            <Text style={styles.secText}>{PaymentLocal['ar'].accountName} : <Text style={styles.boldText}>TRENDY ROSE</Text></Text>
+                            <Text style={styles.secText}>{PaymentLocal['ar'].accountNum} : <Text style={styles.boldText}>996000010006080868434</Text></Text>
+                            <Text style={styles.secText}>{PaymentLocal['ar'].iban} : <Text style={styles.boldText}>SA1280000996000010006080868434</Text></Text>
+                            <Text style={styles.secText}>{PaymentLocal['ar'].swift} : <Text style={styles.boldText}>RJHISARI</Text></Text>
                         </View>
                     }
                     <View style={styles.bankInfoContainer}>
-                        <Text style={{ ...styles.boldText, marginBottom: 10 }}>سياسة الاستبدال والاسترجاع</Text>
-                        <Text style={{ fontSize: 9, fontFamily: "CairoMed" }}>
-                            سياسة الإستبدال والإسترجاع: يحق للعميل الاستبدال قبل البدء بتجهيز المنتج ، لكن بعد خروج الطلب للتوصيل لا يمكن الاستبدال أو الاسترجاع وفقاً لطبيعة المنتج و الخدمة المقدمة. في حال وجود خلل أو تلف بعد التوصيل فيحق للعميل انطلاقاً من مبدأ الثقة المتبادلة إستبدال المنتج او الحصول على كامل القيمه المدفوعه. آلية ارجاع المبالغ: يتم ارجاع المبلغ بنفس طريقة الدفع التي تمت .
-                        </Text>
+                        <Text style={{ ...styles.boldText, marginBottom: 10 }}>{RefundLocal['ar'].title}</Text>
+                        <Text style={styles.bankContentTxt}>{RefundLocal['ar'].content}</Text>
                     </View>
                     <View style={styles.noteSection}>
-                        <Text style={styles.noteSectionText}>بالضغط على اختيار "ادفع الاّن" فأنت توافق على
+                        <Text style={styles.noteSectionText}>{PaymentLocal['ar'].note1}
                         </Text>
                         <Pressable onPress={() => null} style={styles.noteWrapper}>
-                            <Text style={styles.note}>شروط الإستخدام</Text>
+                            <Text style={styles.note}>{PaymentLocal['ar'].note2}</Text>
                         </Pressable>
                     </View>
                     <View style={styles.section}>
@@ -212,7 +211,7 @@ const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType,
                             <TouchableOpacity
                                 onPress={PayNow} style={styles.button}
                             >
-                                <Text style={styles.buttonText}>ادفع الآن</Text>
+                                <Text style={styles.buttonText}>{PaymentLocal['ar'].payNow}</Text>
                             </TouchableOpacity>
                         )}
                     </View>
@@ -338,5 +337,13 @@ const styles = StyleSheet.create({
     boldText: {
         fontFamily: "CairoBold",
         fontSize: 13
-    }
+    },
+    secText: {
+        fontFamily: "CairoMed",
+        fontSize: 13
+    },
+    bankContentTxt: { 
+        fontSize: 9, 
+        fontFamily: "CairoMed"
+     }
 })

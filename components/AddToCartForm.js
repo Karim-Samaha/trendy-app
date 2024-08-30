@@ -10,13 +10,16 @@ import { SelectList } from 'react-native-dropdown-select-list'
 import ProductAddsModal from "./ProductAddModal";
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import { ProductForm } from "../constants/Locales";
 
 // import DropDownPicker from 'react-native-dropdown-picker';
 
 const AddToCartForm = ({ formType, product, setAddedToCart }) => {
-    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(true);
     const [isTimeVisible, setIsTimeVisible] = useState(false);
     const [selectedAdds, setSelectedAdds] = useState([])
+    const [dateVal, setDateVal] = useState(new Date())
+    const [timeVal, setTimeVal] = useState(new Date())
     const dateRef = useRef()
     const timeRef = useRef()
     const showDatePicker = () => {
@@ -35,24 +38,49 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
         deliveryDate: "",
         time: "",
         cardText: "",
-        addressSelected: true,
+        addressSelected: false,
+        phone: "",
         address: "",
         giftAdd: "1",
         sentFrom: "",
         sentTo: "",
         giftLink: "",
     });
+
+    function isTimeInFuture(timeString, dateString) {
+        // Parse the time string
+        const [period, time] = timeString.split(":");
+        const [hours, minutes] = [parseInt(time, 10), parseInt(time.slice(-2), 10)];
+
+        // Parse the date string
+        const [year, month, day] = dateString.split("-").map(Number);
+
+        // Create a Date object for the provided date
+        const futureTime = new Date(year, month - 1, day);
+
+        if (period === "AM") {
+            futureTime.setHours(hours % 12, minutes, 0, 0);
+        } else if (period === "PM") {
+            futureTime.setHours((hours % 12) + 12, minutes, 0, 0);
+        }
+
+        // Get the current date and time
+        const now = new Date();
+        return futureTime > now;
+    }
     const [errors, setErrors] = useState({
         deliveryDate: false,
         address: false,
         time: false,
+        unvalidTime: false,
+        phone: false,
+        withGiftRequred: false,
     });
-    const handleDateConfirm = (date) => {
-        const formatedDate = new Date(date.nativeEvent.timestamp).toISOString().split("T")[0]
-        console.warn("A date has been picked: ", formatedDate.split("T")[0]);
-        setFormValue(prev => ({ ...prev, deliveryDate: formatedDate }))
+    const handleDateConfirm = async (date) => {
         setDatePickerVisibility(false)
-        dateRef.current.blur()
+        const formatedDate = new Date(date.nativeEvent.timestamp).toISOString().split("T")[0]
+        setDateVal(new Date(date.nativeEvent.timestamp))
+        setFormValue(prev => ({ ...prev, deliveryDate: formatedDate }))
         setErrors((prev) => ({ ...prev, deliveryDate: false }));
     };
     const handleTimeConfirm = (date) => {
@@ -67,7 +95,8 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
         setFormValue(prev => ({ ...prev, time: strTime }))
         setIsTimeVisible(false)
         timeRef.current.blur()
-        setErrors((prev) => ({ ...prev, time: false }));
+        setErrors((prev) => ({ ...prev, time: false, unvalidTime: false }));
+        setIsTimeVisible(false)
     };
     const dispatch = useDispatch()
     const addItemToCart = (item, formValue) => {
@@ -84,9 +113,16 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
     const validate = () => {
         let deliveryDate = true;
         let address = true;
+        let phone = true;
+        let unvalidTime = true;
+        let withGiftRequred = true;
         if (formValue.deliveryDate.length <= 0) {
             setErrors((prev) => ({ ...prev, deliveryDate: true }));
             deliveryDate = false;
+        }
+        if (formValue.phone.length <= 0) {
+            setErrors((prev) => ({ ...prev, phone: true }));
+            phone = false;
         }
         if (formValue.addressSelected && formValue.address.length <= 0) {
             setErrors((prev) => ({ ...prev, address: true }));
@@ -96,13 +132,22 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
             setErrors((prev) => ({ ...prev, time: true }));
             address = false;
         }
-        return deliveryDate && address;
+        if (giftSelect !== "1" && selectedAdds.length === 0) {
+            setErrors((prev) => ({ ...prev, withGiftRequred: true }));
+            withGiftRequred = false;
+        }
+        { console.log({ test: formValue.giftAdd }) }
+        if (!isTimeInFuture(formValue.time, formValue.deliveryDate)) {
+            setErrors((prev) => ({ ...prev, unvalidTime: true }));
+            unvalidTime = false;
+        }
+        return deliveryDate && phone && address && withGiftRequred && unvalidTime;
     };
     const validateAndAddToCart = async (item, formValue) => {
         let isValid = validate();
         if (isValid) addItemToCart(item, formValue);
     };
-    const [giftSelect, setGiftSelected] = useState("كروت اهداء");
+    const [giftSelect, setGiftSelected] = useState("بدون اضافات");
     const [giftsModal, setGiftsModal] = useState(false)
     const handleSelectAdd = (item) => {
         const isIncluded = selectedAdds.find((prev) => prev?._id === item?._id)
@@ -131,16 +176,21 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
         setSelectedAdds(newAdds)
     }
     const data = [
-        { key: '1', value: 'كروت اهداء' },
-        { key: '2', value: 'شيكولاتة بلجيكية' },
-        { key: '3', value: 'بالونات' },
+        { key: '1', value: 'بدون اضافات' },
+        { key: '2', value: 'كروت اهداء' },
+        { key: '3', value: 'شوكولاته بلجيكية' },
+        { key: '4', value: 'بالونات' },
+        { key: '5', value: 'تغريسات' },
+        { key: '6', value: 'قسائم شرائية' },
+
+
     ]
 
 
     return (
         <View style={styles.container}>
             {formType === 'GIFT' && <View style={styles.inputContainer}>
-                <Text style={styles.label}>اسم المرسل</Text>
+                <Text style={styles.label}>{ProductForm['ar'].senderName}</Text>
                 <TextInput style={styles.input}
                     value={formValue.sentFrom}
                     onChangeText={e => {
@@ -149,7 +199,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                     } />
             </View>}
             {formType === 'GIFT' && <View style={styles.inputContainer}>
-                <Text style={styles.label}>اسم المرسل اليه</Text>
+                <Text style={styles.label}>{ProductForm['ar'].reciverName}</Text>
                 <TextInput style={styles.input}
                     value={formValue.sentTo}
                     onChangeText={e => {
@@ -158,37 +208,59 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                     } />
             </View>}
             <View style={styles.inputContainer}>
-                <Text style={styles.label}>تاريخ التوصيل (متاح من 2 الظهر الي 11م)</Text>
+                <Text style={styles.label}>{ProductForm['ar'].date}</Text>
                 <TextInput style={styles.input} value={formValue.deliveryDate}
-                    ref={dateRef}
-                    onFocus={() => setDatePickerVisibility(true)} onBlur={() => setDatePickerVisibility(false)} />
-                {errors.deliveryDate && <Text style={styles.error}>يجد تحديد تاريخ التوصيل</Text>}
+                    ref={dateRef} editable={false}
+                />
+                <Pressable onPress={() => setDatePickerVisibility(true)}
+                    style={styles.editTimes}>
+                    <Text style={styles.editText}>{ProductForm['ar'].edit}</Text>
+                </Pressable>
+                {errors.deliveryDate && <Text style={styles.error}>{ProductForm['ar'].dateError}</Text>}
             </View>
             <View style={styles.inputContainer}>
-                <Text style={styles.label}>وقت التوصيل ( من 2 الظهر الي 11م)</Text>
-                <TextInput style={styles.input} value={formValue.time}
-                    ref={timeRef}
-                    onFocus={() => setIsTimeVisible(true)} onBlur={() => setIsTimeVisible(false)} />
-                {errors.time && <Text style={styles.error}>يجد تحديد وقت التوصيل</Text>}
+                <Text style={styles.label}>{ProductForm['ar'].time}</Text>
+                <TextInput style={{ ...styles.input, position: "relative" }} value={formValue.time}
+                    ref={timeRef} editable={false}
+                />
+                <Pressable onPress={() => setIsTimeVisible(true)}
+                    style={styles.editTimes}>
+                    <Text style={styles.editText}>{ProductForm['ar'].edit}</Text>
+                </Pressable>
+            </View>
+            {errors.time && <Text style={styles.error}>{ProductForm['ar'].timeError}</Text>}
+            {errors.unvalidTime && <Text style={styles.error}>{ProductForm['ar'].unvalidTimeError}</Text>}
+            <View style={styles.inputContainer}>
+                <Text style={styles.label}>{ProductForm['ar'].phone}</Text>
+                <TextInput style={{ ...styles.input, textAlignVertical: 'top' }} multiline={true}
+                    value={formValue.phone}
+                    keyboardType='numeric'
+                    onChangeText={e => {
+                        setErrors((prev) => ({ ...prev, phone: false }))
+                        setFormValue(prev => ({ ...prev, phone: e }))
+                    }}
+                />
+                {errors.phone && <Text style={styles.error}>{ProductForm['ar'].phoneError}</Text>}
             </View>
             <View style={styles.inputContainer}>
-                <Text style={styles.label}>نص البطاقة - اكتب إهدائك هنا ( + 6.00 ر.س )</Text>
+                <Text style={styles.label}>{ProductForm['ar'].cardText}</Text>
                 <TextInput style={{ ...styles.input, height: 150, textAlignVertical: 'top' }} multiline={true}
                     value={formValue.cardText}
                     onChangeText={e => setFormValue(prev => ({ ...prev, cardText: e }))}
                     numberOfLines={10}
-
                 />
             </View>
             <View style={{ ...styles.inputContainer, ...styles.checkboxContainer }}>
-                <Text style={{ marginHorizontal: 10, marginVertical: 10, ...styles.label, fontSize: 12 }}>لا اريد نحديد العنوان (فريق الدعم سيتواصل مع المستلم)</Text>
+                <Text style={{ marginHorizontal: 10, marginVertical: 10, ...styles.label, fontSize: 12 }}>
+                    {ProductForm['ar'].noAddressSelect}
+                </Text>
                 <Checkbox value={!formValue.addressSelected}
                     onValueChange={(e) => setFormValue(prev => ({ ...prev, addressSelected: !e }))}
                 />
             </View>
 
             {formValue.addressSelected && <View style={styles.inputContainer}>
-                <Text style={styles.label}>العنوان</Text>
+                <Text style={styles.label}>{ProductForm['ar'].address}</Text>
                 <TextInput style={styles.input}
                     value={formValue.address}
                     onChangeText={e => {
@@ -196,12 +268,19 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                         setErrors((prev) => ({ ...prev, address: false }));
                     }
                     } />
-                {errors.address && formValue.addressSelected && < Text style={styles.error}>يجد تحديد العنوان</Text>}
+                {errors.address && formValue.addressSelected && < Text style={styles.error}>
+                    {ProductForm['ar'].addressError}
+                </Text>}
             </View>}
             <View style={styles.inputContainer}>
-                <Text style={styles.label}>اضافات الورود</Text>
+                <Text style={styles.label}>
+                    {ProductForm['ar'].productAdds}
+                </Text>
                 <SelectList
-                    setSelected={(val) => setGiftSelected(val)}
+                    setSelected={(val) => {
+                        setErrors((prev) => ({ ...prev, withGiftRequred: false }))
+                        setGiftSelected(val)
+                    }}
                     data={data}
                     save="value"
                     defaultOption={data[0]}
@@ -209,8 +288,11 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                     search={false}
                     boxStyles={{ flexDirection: "row-reverse", fontFamily: "CairoMed" }}
                 />
+                {errors.withGiftRequred && <Text style={{ ...styles.error, marginTop: 10 }}>{ProductForm['ar'].giftRequiredError}</Text>}
                 {formType === 'GIFT' && <View style={styles.inputContainer}>
-                    <Text style={styles.label}>ارفاق رابط (فيديو او صوت)</Text>
+                    <Text style={styles.label}>
+                        {ProductForm['ar'].video}
+                    </Text>
                     <TextInput style={styles.input}
                         value={formValue.giftLink}
                         onChangeText={e => {
@@ -218,58 +300,46 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                         }
                         } />
                 </View>}
-                {(giftSelect === 'كروت اهداء' || giftSelect === '1') && <Pressable
+                {(giftSelect === 'كروت اهداء') && <Pressable
                     onPress={() => setGiftsModal(true)}
-                    style={{
-                        backgroundColor: "#55a8b9",
-                        padding: 10,
-                        borderRadius: 10,
-                        width: 150,
-                        marginLeft: "auto",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginHorizontal: 10,
-                        marginVertical: 10,
-                    }}
+                    style={styles.extraPurchaseBtn}
                 >
                     <View>
-                        <Text style={{ color: "#fff", ...styles.label }}>اختيار كروت الاهداء</Text>
+                        <Text style={{ color: "#fff", ...styles.label }}>
+                            {ProductForm['ar'].cardsSelect}
+                        </Text>
                     </View>
                 </Pressable>}
-                {giftSelect === 'شيكولاتة بلجيكية' && <Pressable
+                {giftSelect === 'شوكولاته بلجيكية' && <Pressable
                     onPress={() => setGiftsModal(true)}
-                    style={{
-                        backgroundColor: "#55a8b9",
-                        padding: 10,
-                        borderRadius: 10,
-                        width: 150,
-                        marginLeft: "auto",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginHorizontal: 10,
-                        marginVertical: 10,
-                    }}
+                    style={styles.extraPurchaseBtn}
                 >
                     <View>
-                        <Text style={{ color: "#fff", ...styles.label }}>اختيار شيكولاتة</Text>
+                        <Text style={{ color: "#fff", ...styles.label }}>{ProductForm['ar'].cheoSelect}</Text>
                     </View>
                 </Pressable>}
                 {giftSelect === 'بالونات' && <Pressable
                     onPress={() => setGiftsModal(true)}
-                    style={{
-                        backgroundColor: "#55a8b9",
-                        padding: 10,
-                        borderRadius: 10,
-                        width: 150,
-                        marginLeft: "auto",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginHorizontal: 10,
-                        marginVertical: 10,
-                    }}
+                    style={styles.extraPurchaseBtn}
                 >
                     <View>
-                        <Text style={{ color: "#fff", ...styles.label }}>اختيار بالونات</Text>
+                        <Text style={{ color: "#fff", ...styles.label }}>{ProductForm['ar'].ballonsSelect}</Text>
+                    </View>
+                </Pressable>}
+                {giftSelect === 'تغريسات' && <Pressable
+                    onPress={() => setGiftsModal(true)}
+                    style={styles.extraPurchaseBtn}
+                >
+                    <View>
+                        <Text style={{ color: "#fff", ...styles.label }}>{ProductForm['ar'].sticksSelect}</Text>
+                    </View>
+                </Pressable>}
+                {giftSelect === 'قسائم شرائية' && <Pressable
+                    onPress={() => setGiftsModal(true)}
+                    style={styles.extraPurchaseBtn}
+                >
+                    <View>
+                        <Text style={{ color: "#fff", ...styles.label }}>{ProductForm['ar'].giftCardSelect}</Text>
                     </View>
                 </Pressable>}
                 <ProductAddsModal show={giftsModal} close={() => setGiftsModal(false)} category={giftSelect} handleSelectAdd={handleSelectAdd} />
@@ -287,7 +357,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                                 </Pressable>
                             </View>
                             <Pressable onPress={() => deleteAdd(item?._id)}>
-                                <Text style={{ color: "red", ...styles.label }}>مسح</Text>
+                                <Text style={{ color: "red", ...styles.label }}>{ProductForm['ar'].delete}</Text>
                             </Pressable>
                         </View>
                     })}
@@ -297,58 +367,42 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
             </View>
             {formType === "NORMAL_ORDER" && <Pressable
                 onPress={() => validateAndAddToCart(product, formValue)}
-                style={{
-                    backgroundColor: "#55a8b9",
-                    padding: 10,
-                    borderRadius: 20,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginHorizontal: 10,
-                    marginVertical: 10,
-                }}
+                style={styles.extraPurchaseBtn}
             >
                 <View>
-                    <Text style={{ color: "#fff", ...styles.label }}>اضف الي السلة</Text>
+                    <Text style={{ color: "#fff", ...styles.label }}>
+                        {ProductForm['ar'].addToCart}
+                    </Text>
                 </View>
             </Pressable>
             }
             {
                 formType === "GIFT" && <Pressable
                     onPress={() => validateAndAddToCart(product, formValue)}
-                    style={{
-                        backgroundColor: "#55a8b9",
-                        padding: 10,
-                        borderRadius: 20,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginHorizontal: 10,
-                        marginVertical: 10,
-                    }}
+                    style={styles.extraPurchaseBtn}
                 >
                     <View>
-                        <Text style={{ color: "#fff", ...styles.label }}>شراء كهديه</Text>
+                        <Text style={{ color: "#fff", ...styles.label }}>
+                            {ProductForm['ar'].giftAdd}
+                        </Text>
                     </View>
                 </Pressable>
             }
-            {
-                isDatePickerVisible && <DateTimePicker
-                    isVisible={isDatePickerVisible}
-                    value={new Date()}
-                    minimumDate={new Date(2024, 5, 1)}
-                    mode="date"
-                    locale="ar"
-                    onChange={handleDateConfirm}
-                    onCancel={hideDatePicker}
-                />
-            }
+
+            {isDatePickerVisible && <DateTimePicker
+                value={dateVal}
+                mode="date"
+                locale="ar"
+                onChange={handleDateConfirm}
+            />}
+
 
             {
                 isTimeVisible && <DateTimePicker
-                    isVisible={isTimeVisible}
+                    isVisible={timeVal}
                     value={new Date()}
                     mode="time"
                     onChange={handleTimeConfirm}
-                    onCancel={hideTimePicker}
                 />
             }
         </View >
@@ -412,5 +466,32 @@ const styles = StyleSheet.create({
     addsController: {
         flexDirection: "row-reverse",
         marginVertical: 10
+    },
+    extraPurchaseBtn: {
+        backgroundColor: "#55a8b9",
+        padding: 10,
+        borderRadius: 10,
+        width: 150,
+        marginLeft: "auto",
+        justifyContent: "center",
+        alignItems: "center",
+        marginHorizontal: 10,
+        marginVertical: 10,
+    },
+    editTimes: {
+        position: "absolute",
+        backgroundColor: "#55a8b9",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        top: "41%",
+        height: 48,
+        paddingHorizontal: 20,
+        borderTopStartRadius: 11,
+        borderBottomStartRadius: 11
+    },
+    editText: {
+        fontFamily: "CairoBold",
+        color: "#fff"
     }
 });

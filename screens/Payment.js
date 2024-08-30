@@ -10,8 +10,7 @@ const Payment = () => {
     const navigation = useNavigation();
     const route = useRoute();
     return <WebView
-        source={{ uri: `https://trendy-rose-backend-1d3339f8bb01.herokuapp.com/payment?token=${route.params?.user?.accessToken}&amount=${route.params?.amount}&mobileSessionId=${route.params?.mobileSessionId}` }}
-        // source={{ uri: `https://trendy-rose-ea018d58bf02.herokuapp.com/test-success?id=338b22b0-3121-48ed-8eb6-68b7d3b31f1f&status=paid&amount=1000&message=APPROVED` }}
+        source={{ uri: `https://trendyback.trendyrosesa.com/payment?token=${route.params?.user?.accessToken}&amount=${route.params?.amount}&mobileSessionId=${route.params?.mobileSessionId}` }}
         javaScriptEnabled={true}
         domStorageEnabled={true}
         startInLoadingState={true}

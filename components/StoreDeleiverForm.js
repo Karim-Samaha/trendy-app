@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Pressable } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { storeDeleviryLocale } from '../constants/Locales';
 
 // Enable RTL layout direction
 
@@ -48,18 +49,18 @@ const StoreDeleiverForm = ({ storeDeleviryData, setStoreDeleviryData }) => {
     return (
         <View style={styles.container}>
             <View style={styles.inputContainer}>
-                <Text style={styles.label}>الاسم</Text>
+                <Text style={styles.label}>{storeDeleviryLocale['ar'].name}</Text>
                 <TextInput style={{ ...styles.input, backgroundColor: storeDeleviryData.valid ? "silver" : "#fff" }} placeholder="الاسم بالكامل" value={storeDeleviryData.name}
                     editable={!storeDeleviryData.valid}
                     onChangeText={(e) => {
                         setStoreDeleviryData(prev => ({ ...prev, name: e }))
                         setErrors((prev) => ({ ...prev, name: false }));
                     }} />
-                {errors.name && <Text style={styles.error}>يجب ادخال الاسم</Text>}
+                {errors.name && <Text style={styles.error}>{storeDeleviryLocale['ar'].nameError}</Text>}
 
             </View>
             <View style={styles.inputContainer}>
-                <Text style={styles.label}>رقم الهاتف</Text>
+                <Text style={styles.label}>{storeDeleviryLocale['ar'].phone}</Text>
                 <TextInput style={{ ...styles.input, backgroundColor: storeDeleviryData.valid ? "silver" : "#fff" }} placeholder="966****" keyboardType="phone-pad"
                     value={storeDeleviryData.phone}
                     editable={!storeDeleviryData.valid}
@@ -68,22 +69,22 @@ const StoreDeleiverForm = ({ storeDeleviryData, setStoreDeleviryData }) => {
                         setErrors((prev) => ({ ...prev, phone: false }));
                         console.log("!")
                     }} />
-                {errors.phone && <Text style={styles.error}>يجب ادخال رقم الهاتف</Text>}
+                {errors.phone && <Text style={styles.error}>{storeDeleviryLocale['ar'].phoneError}</Text>}
 
             </View>
             <View style={styles.inputContainer}>
-                <Text style={styles.label}>تاريخ الاستلام (متاح من 2 الظهر إلى 11 مساءً)</Text>
+                <Text style={styles.label}>{storeDeleviryLocale['ar'].date}</Text>
                 <TextInput style={{ ...styles.input, backgroundColor: storeDeleviryData.valid ? "silver" : "#fff" }} placeholder="تاريخ الاستلام من المتجر"
                     editable={!storeDeleviryData.valid}
                     value={storeDeleviryData.deliveryDate}
                     onFocus={() => setDatePickerVisibility(true)} onBlur={() => setDatePickerVisibility(false)} />
-                {errors.deliveryDate && <Text style={styles.error}>يجد تحديد تاريخ التوصيل</Text>}
+                {errors.deliveryDate && <Text style={styles.error}>{storeDeleviryLocale['ar'].dateError}</Text>}
             </View>
             {!storeDeleviryData.valid && <Pressable style={styles.button} onPress={validate} >
-                <Text style={{ color: "#fff", fontFamily: "CairoMed" }}>تأكيد البيانات</Text>
+                <Text style={{ color: "#fff", fontFamily: "CairoMed" }}>{storeDeleviryLocale['ar'].confirm}</Text>
             </Pressable>}
             {storeDeleviryData.valid && <Pressable style={styles.button} onPress={() => setStoreDeleviryData((prev) => ({ ...prev, valid: false }))} >
-                <Text style={{ color: "#fff", fontFamily: "CairoMed" }}>تعديل البيانات</Text>
+                <Text style={{ color: "#fff", fontFamily: "CairoMed" }}>{storeDeleviryLocale['ar'].edit}</Text>
             </Pressable>}
             {
                 isDatePickerVisible && <DateTimePicker

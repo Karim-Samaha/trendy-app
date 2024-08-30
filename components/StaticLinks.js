@@ -11,6 +11,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useNavigation } from "@react-navigation/native";
+import { StaticLinksLocale } from "../constants/Locales";
 
 
 const StaticLinks = ({ style }) => {
@@ -35,7 +36,7 @@ const StaticLinks = ({ style }) => {
         >
             <View style={{ flexDirection: "row-reverse" }}>
                 <MaterialIcons name="policy" size={24} color="#55a8b9" />
-                <Text style={{  fontSize: 14, marginHorizontal: 10, fontFamily: "CairoBold" }}>الشروط والأحكام</Text>
+                <Text style={{  fontSize: 14, marginHorizontal: 10, fontFamily: "CairoBold" }}>{StaticLinksLocale['ar'].terms}</Text>
             </View>
         </Pressable>
         <Pressable
@@ -55,7 +56,7 @@ const StaticLinks = ({ style }) => {
         >
             <View style={{ flexDirection: "row-reverse" }}>
                 <MaterialCommunityIcons name="credit-card-refund-outline" size={24} color="#55a8b9" />
-                <Text style={{  fontSize: 14, marginHorizontal: 10, fontFamily: "CairoBold" }}>سياسة الاستبدال والاسترجاع</Text>
+                <Text style={{  fontSize: 14, marginHorizontal: 10, fontFamily: "CairoBold" }}>{StaticLinksLocale['ar'].refund}</Text>
             </View>
         </Pressable>
         <Pressable
@@ -75,7 +76,7 @@ const StaticLinks = ({ style }) => {
         >
             <View style={{ flexDirection: "row-reverse" }}>
                 <AntDesign name="customerservice" size={24} color="#55a8b9" />
-                <Text style={{  fontSize: 14, marginHorizontal: 10, fontFamily: "CairoBold" }}>خدمة العملاء والشكاوى والاقتراحات</Text>
+                <Text style={{  fontSize: 14, marginHorizontal: 10, fontFamily: "CairoBold" }}>{StaticLinksLocale['ar'].customerService}</Text>
             </View>
         </Pressable>
         <Pressable
@@ -96,7 +97,7 @@ const StaticLinks = ({ style }) => {
         >
             <View style={{ flexDirection: "row-reverse" }}>
                 <MaterialCommunityIcons name="license" size={24} color="#55a8b9" />
-                <Text style={{ fontSize: 14, marginHorizontal: 10, fontFamily: "CairoBold" }}>التراخيص</Text>
+                <Text style={{ fontSize: 14, marginHorizontal: 10, fontFamily: "CairoBold" }}>{StaticLinksLocale['ar'].licences}</Text>
             </View>
         </Pressable>
     </>

@@ -1,9 +1,8 @@
 import StaticContentScreen from "../components/StaticContentScreen"
+import { RefundLocal } from "../constants/Locales"
 
 const RefundPolicy = () => {
-    return <StaticContentScreen title={"سياسة الاستبدال والاسترجاع"} content={
-        "سياسة الإستبدال والإسترجاع: يحق للعميل الاستبدال قبل البدء بتجهيز المنتج ، لكن بعد خروج الطلب للتوصيل لا يمكن الاستبدال أو الاسترجاع وفقاً لطبيعة المنتج و الخدمة المقدمة. في حال وجود خلل أو تلف بعد التوصيل فيحق للعميل انطلاقاً من مبدأ الثقة المتبادلة إستبدال المنتج او الحصول على كامل القيمه المدفوعه. آلية ارجاع المبالغ: يتم ارجاع المبلغ بنفس طريقة الدفع التي تمت ."
-    } />
+    return <StaticContentScreen title={RefundLocal['ar'].title} content={RefundLocal['ar'].content} />
 }
 
 export default RefundPolicy

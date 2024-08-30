@@ -6,18 +6,15 @@ import {
     TouchableOpacity,
     StyleSheet,
     Modal,
-    I18nManager,
-    FlatList
 } from 'react-native';
 import { config } from '../screens/config';
 import { getUser } from '../Utils/helpers';
 import _axios from '../Utils/axios';
 import { Feather } from "@expo/vector-icons";
+import { ReviewLocal } from '../constants/Locales';
 const ReviewModal = ({ isModalVisible, toggleModal, id }) => {
-    const [productRating, setProductRating] = useState(0);
-    const [siteRating, setSiteRating] = useState(0);
+
     const [submited, setSubmited] = useState(false);
-    console.log(id)
     const [formValue, setFormValue] = useState({
         productReview: "",
         storeReview: "",
@@ -70,36 +67,36 @@ const ReviewModal = ({ isModalVisible, toggleModal, id }) => {
             </TouchableOpacity>
             <View style={styles.success}>
                 <Feather name="check-circle" size={40} color="green" style={{ marginTop: 12 }} />
-                <Text style={styles.successText}>تم ارسال تقيمك</Text>
+                <Text style={styles.successText}>{ReviewLocal['ar'].success}</Text>
             </View>
         </View> : <View style={styles.modalContent}>
             <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
                 <Text style={styles.closeText}>×</Text>
             </TouchableOpacity>
             <View style={styles.formGroup}>
-                <Text style={styles.label}>رأيك عن المنتج</Text>
+                <Text style={styles.label}>{ReviewLocal['ar'].reviewProductHeader}</Text>
                 <TextInput
                     placeholder="تقييم المنتج"
                     style={styles.input}
                     onChangeText={e => textType('productReview', e)}
                     value={formValue.productReview}
                 />
-                <Text style={styles.subLabel}>قيم المنتج</Text>
+                <Text style={styles.subLabel}>{ReviewLocal['ar'].reviewProduct}</Text>
                 {renderStars(formValue.productRate, handleProductRate)}
             </View>
             <View style={styles.formGroup}>
-                <Text style={styles.label}>رأيك عن الموقع</Text>
+                <Text style={styles.label}>{ReviewLocal['ar'].storeReviewHeader}</Text>
                 <TextInput
                     placeholder="تقييم الموقع"
                     style={styles.input}
                     onChangeText={e => textType('storeReview', e)}
                     value={formValue.storeReview}
                 />
-                <Text style={styles.subLabel}>قيم الموقع</Text>
+                <Text style={styles.subLabel}>{ReviewLocal['ar'].reviewStore}</Text>
                 {renderStars(formValue.storeRate, handleStoreRate)}
             </View>
             <TouchableOpacity style={styles.submitButton} onPress={submitReview}>
-                <Text style={styles.submitButtonText}>إرسال التقييم</Text>
+                <Text style={styles.submitButtonText}>{ReviewLocal['ar'].submit}</Text>
             </TouchableOpacity>
         </View>}
     </Modal>

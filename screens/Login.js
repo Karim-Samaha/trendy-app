@@ -7,7 +7,7 @@ import {
     Pressable,
     TextInput
 } from "react-native";
-import React, { useLayoutEffect, useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { UserType } from "../UserContext";
@@ -17,10 +17,8 @@ import { useDispatch } from "react-redux";
 import { handleLogin } from "../redux/userReducer";
 import _axios from "../Utils/axios";
 import AntDesign from '@expo/vector-icons/AntDesign';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import StaticLinks from "../components/StaticLinks";
-
+import { LoginLocal } from "../constants/Locales";
 const Login = () => {
     const { userId, setUserId } = useContext(UserType);
     const route = useRoute()
@@ -51,21 +49,55 @@ const Login = () => {
     const [method, setMethod] = useState("");
     const [otpSent, setOtpSent] = useState(false);
     const [error, setError] = useState("");
+    const [isNewRegester, setIsNewRegester] = useState(false);
+    const [validResend, setValidResend] = useState(false);
+    const [resendTimer, setResendTimer] = useState(0);
+    const [resended, setResended] = useState(false);
+
     const [loginForm, setLoginInForm] = useState({
         username: "",
         password: "",
+        name: "",
+        phone: "",
     });
     const dispatch = useDispatch()
-
+    useEffect(() => {
+        if (!validResend) {
+            setResendTimer(30);
+            setTimeout(() => {
+                setValidResend(true);
+                setResended(false);
+            }, 30000);
+        }
+    }, [validResend]);
+    useEffect(() => {
+        if (resendTimer > 0) {
+            setTimeout(() => {
+                setResendTimer((prev) => prev - 1);
+            }, 1000);
+        }
+    }, [resendTimer]);
     const handleSignIn = async () => {
         let credentials = loginForm;
-        await console.log({
-            email: credentials.username,
-            password: credentials.password
-        })
+
+        let newUserNotValid =
+            (isNewRegester && !credentials.name) ||
+            (isNewRegester && method !== "phone" && !credentials.phone);
+        if (newUserNotValid) {
+            setError("يجد ادخال كل اليانات المطلوبة");
+            return;
+        }
+        if (loginForm.username.substring(0, 1) === "0") {
+            credentials.username = credentials.username.slice(1);
+        }
+        if (method === "phone" && loginForm.username.substring(0, 3) !== "966") {
+            credentials.username = `966${credentials.username}`;
+        }
         await _axios.post(`${config.backendUrl}/auth/login`, {
             email: credentials.username.toLocaleLowerCase(),
-            password: credentials.password
+            password: credentials.password,
+            name: credentials.name,
+            phone: credentials.phone
         }).then(async (res) => {
             if (await res.data?.accessToken) {
                 await AsyncStorage.setItem("user", JSON.stringify(res.data));
@@ -77,12 +109,12 @@ const Login = () => {
                 }
             } else {
                 let apiResults = res?.error
-                console.log(res)
                 if (apiResults.user?.error === "wrongCredintials") {
-                    setError("البيانات غير صحيحه");
+                    setError(LoginLocal['ar'].wrongInput);
                 }
             }
-        }).catch((err) => setError("البيانات غير صحيحه")
+        }).catch((err) => setError(LoginLocal['ar'].wrongInput)
+
         );
     };
     const validateEmail = (email) => {
@@ -95,71 +127,92 @@ const Login = () => {
             );
     };
     const handleOtpRequest = async () => {
-
-        let isEmailValid = validateEmail(loginForm.username);
-        if (!isEmailValid) setError("البيانات غير صحيحه");
-        if (isEmailValid) {
-            try {
-                if (loginForm.username === "karim.admin@admin.com") {
+        if (method === "phone") {
+            let phoneNum = loginForm.username;
+            if (phoneNum.substring(0, 1) === "0") {
+                phoneNum = phoneNum.slice(1);
+            }
+            await axios
+                .post(
+                    `${config.backendUrl}/auth/generate-phone-otp`,
+                    {
+                        phone: phoneNum,
+                    }
+                )
+                .then((res) => {
                     setOtpSent(true);
-                    setError("");
-                } else {
-                    await axios
-                        .post(
-                            `${config.backendUrl}/auth/generate-mail-otp`,
-                            {
-                                email: loginForm.username,
-                            }
-                        )
-                        .then((res) => {
-                            if (res.data?.status === "EMAIL_OTP_SENT") {
-                                setOtpSent(true);
-                                setError("");
-                            }
-                        });
+                    if (res.data?.isNewRegester) {
+                        setIsNewRegester(true);
+                    }
+                });
+        } else {
+            let isEmailValid = validateEmail(loginForm.username);
+            if (!isEmailValid) setError(LoginLocal['ar'].wrongInput);
+
+            if (isEmailValid) {
+                try {
+                    if (loginForm.username === "karim.admin@admin.com") {
+                        setOtpSent(true);
+                        setError("");
+                    } else {
+                        await axios
+                            .post(
+                                `${config.backendUrl}/auth/generate-mail-otp`,
+                                {
+                                    email: loginForm.username,
+                                }
+                            )
+                            .then((res) => {
+                                if (res.data?.status === "EMAIL_OTP_SENT") {
+                                    setOtpSent(true);
+                                    setError("");
+                                }
+                                if (res.data?.isNewRegester) {
+                                    setIsNewRegester(true);
+                                }
+                            });
+                    }
+                } catch (err) {
+                    setError(LoginLocal['ar'].somthingWentWrong);
                 }
-            } catch (err) {
-                setError("حدث حطأ ما");
             }
         }
+
     };
     return (
-        <ScrollView style={{ padding: 10, flex: 1, backgroundColor: "white" }}>
+        <ScrollView style={styles.scrollView}>
             <View
-                style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}
+                style={styles.headerView}
             >
                 <Image
-                    style={{
-                        width: 250, height: 100, resizeMode: "cover", borderRadius: 11, marginTop: 100,
-                    }}
+                    style={styles.logo}
                     source={require('../assets/logo.png')} />
             </View>
 
             {method === 'email' && <View style={styles.container}>
                 {otpSent ? <>
                     <View style={styles.inputContainer}>
-                        <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>تم ارسال رمز التحقق الي {loginForm.username}</Text>
-                        <TextInput style={styles.input} value={loginForm.password}
+                        <Pressable onPress={() => setMethod("")}>
+                            <AntDesign name="back" size={24} color="black" />
+                        </Pressable>
+                        <Text style={styles.firstText}>{LoginLocal['ar'].otpSentText} {loginForm.username}</Text>
+                        {isNewRegester && <>
+                            <TextInput style={styles.input} value={loginForm.phone} placeholder={LoginLocal['ar'].phone}
+                                onChangeText={(e) => setLoginInForm((prev) => ({ ...prev, phone: e }))} />
+                            <TextInput style={styles.input} value={loginForm.name} placeholder={LoginLocal['ar'].name}
+                                onChangeText={(e) => setLoginInForm((prev) => ({ ...prev, name: e }))} />
+                        </>}
+                        <TextInput style={styles.input} value={loginForm.password} placeholder={LoginLocal['ar'].otpPlaceHolder}
                             onChangeText={(e) => setLoginInForm((prev) => ({ ...prev, password: e }))} />
+
                         {error && <Text style={styles.error}>{error}</Text>}
                     </View>
                     <Pressable
-                        style={{
-                            padding: 10,
-                            backgroundColor: "#55a8b9",
-                            borderRadius: 18,
-                            width: "95%",
-                            flex: 1,
-                        }}
+                        style={styles.prymaryBtn}
                         onPress={handleSignIn}
 
                     >
-                        <Text style={{
-                            fontFamily: "CairoBold", fontSize: 13, textAlign: "center", color: "#fff"
-                        }}>تسجيل الدخول</Text>
+                        <Text style={styles.btnTxt}>{LoginLocal['ar'].login}</Text>
                     </Pressable>
 
                 </> : <>
@@ -167,7 +220,7 @@ const Login = () => {
                         <Pressable onPress={() => setMethod("")}>
                             <AntDesign name="back" size={24} color="black" />
                         </Pressable>
-                        <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>البريد الالكتروني</Text>
+                        <Text style={styles.firstText}>{LoginLocal['ar'].email}</Text>
                         <TextInput style={styles.input} value={loginForm.username}
                             onChangeText={(e) => {
                                 setLoginInForm((prev) => ({ ...prev, username: e }))
@@ -182,17 +235,22 @@ const Login = () => {
                         onPress={handleOtpRequest}
 
                     >
-                        <Text style={{
-                            fontFamily: "CairoBold", fontSize: 13, textAlign: "center", color: "#fff"
-                        }}>ارسال رمز التحقق</Text>
+                        <Text style={styles.btnTxt}>{LoginLocal['ar'].otpButton}</Text>
                     </Pressable>
                 </>}
             </View>}
             {method === 'phone' && <View style={styles.container}>
                 {otpSent ? <>
                     <View style={styles.inputContainer}>
-                        <Text style={{ fontFamily: "CairoMed", fontSize: 13 }}>تم ارسال رمز التحقق الي {loginForm.username}</Text>
-                        <TextInput style={styles.input} value={loginForm.password}
+                        <Pressable onPress={() => setMethod("")}>
+                            <AntDesign name="back" size={24} color="black" />
+                        </Pressable>
+                        <Text style={styles.firstText}>{LoginLocal['ar'].codeHasBeenSent} {loginForm.username}</Text>
+                        {isNewRegester && <>
+                            <TextInput style={styles.input} value={loginForm.name} placeholder={LoginLocal['ar'].name}
+                                onChangeText={(e) => setLoginInForm((prev) => ({ ...prev, name: e }))} />
+                        </>}
+                        <TextInput style={styles.input} value={loginForm.password} placeholder={LoginLocal['ar'].otpPlaceHolder}
                             onChangeText={(e) => {
                                 setLoginInForm((prev) => ({ ...prev, password: e }))
                                 setError("")
@@ -200,19 +258,11 @@ const Login = () => {
                         {error && <Text style={styles.error}>{error}</Text>}
                     </View>
                     <Pressable
-                        style={{
-                            padding: 10,
-                            backgroundColor: "#55a8b9",
-                            borderRadius: 18,
-                            width: "95%",
-                            flex: 1,
-                        }}
+                        style={styles.prymaryBtn}
                         onPress={handleSignIn}
 
                     >
-                        <Text style={{
-                            fontFamily: "CairoBold", fontSize: 13, textAlign: "center", color: "#fff"
-                        }}>تسجيل الدخول</Text>
+                        <Text style={styles.btnTxt}>{LoginLocal['ar'].login}</Text>
                     </Pressable>
 
                 </> : <>
@@ -220,7 +270,7 @@ const Login = () => {
                         <Pressable onPress={() => setMethod("")}>
                             <AntDesign name="back" size={24} color="black" />
                         </Pressable>
-                        <Text>رقم الجوال</Text>
+                        <Text>{LoginLocal['ar'].phone}</Text>
                         <TextInput style={styles.input} value={loginForm.username} placeholder="966"
                             onChangeText={(e) => {
                                 setLoginInForm((prev) => ({ ...prev, username: e }))
@@ -235,67 +285,36 @@ const Login = () => {
                         onPress={handleOtpRequest}
 
                     >
-                        <Text style={{
-                            fontFamily: "CairoBold", fontSize: 13, textAlign: "center", color: "#fff"
-                        }}>ارسال رمز التحقق</Text>
+                        <Text style={styles.btnTxt}>{LoginLocal['ar'].otpButton}</Text>
                     </Pressable>
                 </>}
             </View>}
             {!method && <>
                 <View
-                    style={{
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: 10,
-                        marginTop: 12,
-
-                    }}
+                    style={styles.secContainer}
                 >
                     <Pressable
-                        style={{
-                            padding: 10,
-                            backgroundColor: "#55a8b9",
-                            borderRadius: 18,
-                            width: "95%",
-                            flex: 1,
-                        }}
+                        style={styles.prymaryBtn}
                         onPress={() => setMethod("email")}
 
                     >
-                        <Text style={{
-                            textAlign: "center", color: "#fff", fontFamily: "CairoBold", fontSize: 13
-                        }}>تسجيل الدخول عبر البريد الالكتروني</Text>
+                        <Text style={styles.loginTxt}>{LoginLocal['ar'].loginViaEmail}</Text>
                     </Pressable>
 
                 </View>
                 <View
-                    style={{
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: 10,
-                        marginTop: 12,
-
-                    }}
+                    style={styles.secContainer}
                 >
                     <Pressable
-                        style={{
-                            padding: 10,
-                            backgroundColor: "#55a8b9",
-                            borderRadius: 18,
-                            width: "95%",
-                            flex: 1,
-                        }}
+                        style={styles.prymaryBtn}
                         onPress={() => setMethod("phone")}
                     >
-                        <Text style={{
-                            fontFamily: "CairoBold", fontSize: 13, textAlign: "center", color: "#fff"
-                        }}>تسجيل الدخول عبر الهاتف</Text>
+                        <Text style={styles.btnTxt}>{LoginLocal['ar'].loginViaPhone}</Text>
                     </Pressable>
 
 
                 </View>
-                <View style={{ marginTop: 25, width: "100%", alignItems: "center" }}>
+                <View style={styles.staticLinksContainer}>
                     <StaticLinks style={{ marginTop: 10 }} />
                 </View>
             </>}
@@ -308,6 +327,39 @@ const Login = () => {
 export default Login;
 
 const styles = StyleSheet.create({
+    scrollView: {
+        padding: 10,
+        flex: 1,
+        backgroundColor: "white"
+    },
+    headerView: {
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    logo: {
+        width: 250,
+        height: 100,
+        resizeMode: "cover",
+        borderRadius: 11,
+        marginTop: 100,
+    },
+    firstText: {
+        fontFamily: "CairoMed",
+        fontSize: 13
+    },
+    prymaryBtn: {
+        padding: 10,
+        backgroundColor: "#55a8b9",
+        borderRadius: 18,
+        width: "95%",
+        flex: 1,
+    },
+    btnTxt: {
+        fontFamily: "CairoBold",
+        fontSize: 13,
+        textAlign: "center",
+        color: "#fff"
+    },
     container: {
         flexDirection: "column",
         paddingHorizontal: 30,
@@ -327,7 +379,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         padding: 10,
         fontFamily: "CairoMed",
-        fontSize: 13
+        fontSize: 13,
+        textAlign: "right"
     },
     mainBtn: {
         padding: 10,
@@ -341,5 +394,23 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: "CairoBold",
         marginBottom: 12
+    },
+    secContainer: {
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 10,
+        marginTop: 12,
+    },
+    loginTxt: {
+        textAlign: "center",
+        color: "#fff",
+        fontFamily: "CairoBold",
+        fontSize: 13
+    },
+    staticLinksContainer: {
+        marginTop: 25,
+        width: "100%",
+        alignItems: "center"
     }
 });

@@ -17,15 +17,14 @@ import {
   incementQuantity,
   removeFromCart,
 } from "../redux/CartReducer";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { config } from "./config";
 import PaymentDialog from "../components/CheckoutModal";
 import { adjustNames, getUser, renderTotalPrice_ } from "../Utils/helpers";
-import Search from "../components/Search";
 import _axios from "../Utils/axios";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import StoreDeleiverForm from "../components/StoreDeleiverForm";
-
+import { CartLocales } from "../constants/Locales";
 const CartScreen = () => {
   const cart = useSelector((state) => state.cart.cart);
   const [checkoutModal, setCheckoutModal] = useState(false)
@@ -83,29 +82,21 @@ const CartScreen = () => {
   ];
   if (cart.length === 0) {
     return (
-      <ScrollView style={{ marginTop: 0, flex: 1, backgroundColor: "white" }}>
+      <ScrollView style={styles.screenScrollView}>
         <View
-          style={{
-            justifyContent: "center", width: "100%", height: 600,
-            justifyContent: "center", alignItems: "center",
-          }}>
+          style={styles.noProductsContainer}>
           <Text style={{ fontSize: 18, marginBottom: 30, fontFamily: "CairoBold" }}
-          >لا يوجد منتجات في عربة التسوق
+          >
+            {CartLocales['ar'].noProducts}
           </Text>
           <Pressable
             onPress={() => navigation.navigate("Home")}
-            style={{
-              backgroundColor: "#55a8b9",
-              padding: 10,
-              borderRadius: 20,
-              justifyContent: "center",
-              alignItems: "center",
-              marginHorizontal: 10,
-              width: "60%",
-            }}
+            style={styles.homeBtn}
           >
             <View>
-              <Text style={{ color: "#fff", fontFamily: "CairoMed" }}>التسوق</Text>
+              <Text style={styles.homeBtnText}>
+                {CartLocales['ar'].shopping}
+              </Text>
             </View>
           </Pressable>
         </View>
@@ -113,7 +104,7 @@ const CartScreen = () => {
     )
   }
   return (
-    <ScrollView style={{ marginTop: 0, flex: 1, backgroundColor: "white" }}>
+    <ScrollView style={styles.cartScrollView}>
       <View style={{ marginHorizontal: 10 }}>
         {cart?.map((item, index) => (
           <View
@@ -131,9 +122,7 @@ const CartScreen = () => {
                 />
               </View>
               <View style={{ marginRight: "5%", width: "50%" }} >
-                <Text numberOfLines={3} style={{
-                  textAlign: "right", fontFamily: "CairoBold", fontSize: 11
-                }}>
+                <Text numberOfLines={3} style={styles.productNameText}>
                   {item?.item?.name}
                 </Text>
 
@@ -142,7 +131,7 @@ const CartScreen = () => {
                 </Text>
                 {item?.selectedCard.length > 0 ? item?.selectedCard.map((add) => {
                   return <View style={styles.productAddsContainer} key={item?._id}>
-                    <Text style={{ fontFamily: "CairoBold", fontSize: 11 }}>اضافات الورود</Text>
+                    <Text style={styles.extraPurchaseHeader}>اضافات الورود</Text>
                     <Text style={styles.productAddText}>
                       {adjustNames(add?.name)}
                     </Text>
@@ -155,68 +144,33 @@ const CartScreen = () => {
               </View>
             </Pressable>
             <Pressable
-              style={{
-                marginTop: 15,
-                marginBottom: 10,
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 10,
-              }}
+              style={styles.itemPressable}
             >
               <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  paddingHorizontal: 10,
-                  paddingVertical: 5,
-                  borderRadius: 7,
-                }}
+                style={styles.itemView}
               >
-               
-
-              
-
                 <Pressable
                   onPress={() => increaseQuantity(item)}
-                  style={{
-                    backgroundColor: "#55a8b9",
-                    padding: 7,
-                    borderTopLeftRadius: 6,
-                    borderBottomLeftRadius: 6,
-                  }}
+                  style={styles.increase}
                 >
                   <Feather name="plus" size={24} color="#fff" />
                 </Pressable>
                 <Pressable
-                  style={{
-                    backgroundColor: "white",
-                    paddingHorizontal: 18,
-                    paddingVertical: 6,
-                  }}
+                  style={styles.whitePress}
                 >
-                  <Text style={{ fontFamily: "CairoBold", marginBottom: 5 }}>{item?.quantity}</Text>
+                  <Text style={styles.qty}>{item?.quantity}</Text>
                 </Pressable>
                 {item?.quantity > 1 ? (
                   <Pressable
                     onPress={() => decreaseQuantity(item)}
-                    style={{
-                      backgroundColor: "#55a8b9",
-                      padding: 7,
-                      borderTopLeftRadius: 6,
-                      borderBottomLeftRadius: 6,
-                    }}
+                    style={styles.decrease}
                   >
                     <AntDesign name="minus" size={24} color="#fff" />
                   </Pressable>
                 ) : (
                   <Pressable
                     onPress={() => deleteItem(item)}
-                    style={{
-                      backgroundColor: "#D8D8D8",
-                      padding: 7,
-                      borderTopLeftRadius: 6,
-                      borderBottomLeftRadius: 6,
-                    }}
+                    style={styles.delete}
                   >
                     <AntDesign name="delete" size={24} color="red" />
                   </Pressable>
@@ -224,16 +178,11 @@ const CartScreen = () => {
               </View>
               <Pressable
                 onPress={() => deleteItem(item)}
-                style={{
-                  backgroundColor: "white",
-                  paddingHorizontal: 8,
-                  paddingVertical: 10,
-                  borderRadius: 5,
-                  borderColor: "#C0C0C0",
-                  borderWidth: 0.6,
-                }}
+                style={styles.secDelete}
               >
-                <Text style={{ fontFamily: "CairoMed", fontSize: 12 }}>مسح</Text>
+                <Text style={styles.deleteTxt}>
+                  {CartLocales['ar'].delete}
+                </Text>
               </Pressable>
             </Pressable>
           </View>
@@ -242,28 +191,28 @@ const CartScreen = () => {
       <View style={styles.container}>
 
         {couponResponse?.redeemed ?
-          <View style={{ alignItems: "center", flexDirection: "row-reverse" }}>
+          <View style={styles.couponHeader}>
             <Feather name="check-circle" size={24} color="green" style={{ marginTop: 12 }} />
-            <Text style={styles.couponSuccess}>تم تفيعل كوبون خصم {couponResponse?.precent}%</Text>
+            <Text style={styles.couponSuccess}>{CartLocales['ar'].couponActivated} {couponResponse?.precent}%</Text>
           </View> : <>
-            <Text style={styles.label}>هل لديك كوبون خصم؟</Text>
+            <Text style={styles.label}>{CartLocales['ar'].couponTitle}</Text>
             <View style={styles.inputContainer}>
               <Pressable style={styles.button} onPress={validateCoupon}>
                 <Text style={styles.buttonText}>تفعيل</Text>
               </Pressable>
-              <TextInput style={styles.input} placeholder="كوبون خصم" value={coupon} onChangeText={(e) => setCoupon(e)} />
+              <TextInput style={styles.input} placeholder={CartLocales['ar'].couponPlaceHolder} value={coupon} onChangeText={(e) => setCoupon(e)} />
             </View>
             {couponResponse?.valid === false &&
               !couponResponse?.minimumAmount ?
-              <View style={{ alignItems: "center", flexDirection: "row-reverse" }}>
+              <View style={styles.couponHeader}>
                 <MaterialIcons name="error-outline" size={24} color="red" style={{ marginTop: 12 }} />
-                <Text style={styles.couponErr}>الكود خاطئ</Text>
+                <Text style={styles.couponErr}>{CartLocales['ar'].wrongCoupon}</Text>
               </View>
               : couponResponse?.valid === false &&
                 couponResponse?.minimumAmount ?
                 <View style={{ alignItems: "center", flexDirection: "row-reverse" }}>
                   <MaterialIcons name="error-outline" size={24} color="red" style={{ marginTop: 12 }} />
-                  <Text style={styles.couponErr}>الحد الادني لاستخدام الكوبون{" "}
+                  <Text style={styles.couponErr}>{CartLocales['ar'].minimumAmount}{" "}
                     {couponResponse?.minimumAmount} رس</Text>
                 </View>
                 : null}
@@ -271,34 +220,34 @@ const CartScreen = () => {
           </>}
       </View>
       <View style={styles.cartInfoRow}>
-        <Text style={{ fontSize: 14, fontFamily: "CairoMed" }}>المجموع غير شامل الضريبة : </Text>
-        <Text style={{ fontSize: 16, fontWeight: "bold" }}>{renderTotalPrice.totalBeforeVat} رس</Text>
+        <Text style={styles.lightBoldTxt}>{CartLocales['ar'].totalNoVat} : </Text>
+        <Text style={styles.boldTxt}>{renderTotalPrice.totalBeforeVat} رس</Text>
       </View>
       {couponResponse?.precent &&
         <View style={styles.cartInfoRow}>
-          <Text style={{ fontSize: 14, fontFamily: "CairoMed" }}>قسيمة التخفيض {couponResponse.precent}% : </Text>
-          <Text style={{ fontSize: 16, fontWeight: "bold" }}>{renderTotalPrice.deductedAmount} رس</Text>
+          <Text style={styles.lightBoldTxt}>{CartLocales['ar'].discount} {couponResponse.precent}% : </Text>
+          <Text style={styles.boldTxt}>{renderTotalPrice.deductedAmount} رس</Text>
         </View>
       }
       <View style={styles.cartInfoRow}>
-        <Text style={{ fontSize: 14, fontFamily: "CairoMed" }}>المجموع الخاضع للضريبة : </Text>
-        <Text style={{ fontSize: 14, fontFamily: "CairoBold" }}>{renderTotalPrice.totalBeforeVat} رس</Text>
+        <Text style={styles.seclightBoldTxt}>{CartLocales['ar'].totalToApplyVat} : </Text>
+        <Text style={styles.secboldTxt}>{renderTotalPrice.totalBeforeVat} رس</Text>
       </View>
       <View style={styles.cartInfoRow}>
-        <Text style={{ fontSize: 14, fontFamily: "CairoMed" }}>ضريبة القيمة المضافة (15%) : </Text>
-        <Text style={{ fontSize: 14, fontFamily: "CairoBold" }}>{renderTotalPrice.vat} رس</Text>
+        <Text style={styles.seclightBoldTxt}>{CartLocales['ar'].vatText} (15%) : </Text>
+        <Text style={styles.secboldTxt}>{renderTotalPrice.vat} رس</Text>
       </View>
       <View style={styles.cartInfoRow}>
-        <Text style={{ fontSize: 14, fontFamily: "CairoMed" }}>تكاليف الشحن : </Text>
-        <Text style={{ fontSize: 14, fontFamily: "CairoBold" }}>0 رس</Text>
+        <Text style={styles.seclightBoldTxt}>{CartLocales['ar'].shippingCost} : </Text>
+        <Text style={styles.secboldTxt}>0 رس</Text>
       </View>
       <View style={styles.cartInfoRow}>
-        <Text style={{ fontSize: 14, fontFamily: "CairoMed" }}>مجموع المنتجات شامل ضريبة القيمة المضافة : </Text>
-        <Text style={{ fontSize: 14, fontFamily: "CairoBold" }}>{renderTotalPrice.fintalTotal} رس</Text>
+        <Text style={styles.seclightBoldTxt}>{CartLocales['ar'].totalPlusVat}  : </Text>
+        <Text style={styles.secboldTxt}>{renderTotalPrice.fintalTotal} رس</Text>
       </View>
       <View style={styles.cartInfoRow}>
-        <Text style={{ fontSize: 14, fontFamily: "CairoMed" }}>مجموع الكلي : </Text>
-        <Text style={{ fontSize: 14, fontFamily: "CairoBold" }}>{renderTotalPrice.fintalTotal} رس</Text>
+        <Text style={styles.seclightBoldTxt}>{CartLocales['ar'].total}  : </Text>
+        <Text style={styles.secboldTxt}>{renderTotalPrice.fintalTotal} رس</Text>
       </View>
       {checkoutModal && <PaymentDialog show={true}
         close={() => setCheckoutModal(false)}
@@ -310,7 +259,7 @@ const CartScreen = () => {
       />}
 
       <View style={styles.shippingContainer}>
-        <Text style={styles.header}>اختيار شركة الشحن</Text>
+        <Text style={styles.header}>{CartLocales['ar'].shippingHeader} </Text>
         {options.map((option) => (
           <TouchableOpacity
             key={option.id}
@@ -336,51 +285,24 @@ const CartScreen = () => {
         (selectedOption !== '3' || selectedOption === '3' && storeDeleviryData.valid) &&
         <Pressable
           // onPress={() => navigation.navigate("Confirm")}
-          style={{
-            backgroundColor: "#55a8b9",
-            padding: 10,
-            borderRadius: 5,
-            justifyContent: "center",
-            alignItems: "center",
-            marginHorizontal: 10,
-            marginTop: 10,
-          }}
+          style={styles.checkoutBtn}
           onPress={() => setCheckoutModal(true)}
         >
-          <Text style={{
-            color: "#fff",
-            fontFamily: "CairoMed"
-          }}>اتمام الدفع</Text>
+          <Text style={styles.checkoutBtnTxt}>{CartLocales['ar'].completePayment} </Text>
         </Pressable> : <Pressable
           // onPress={() => navigation.navigate("Confirm")}
-          style={{
-            backgroundColor: "#55a8b9",
-            padding: 10,
-            borderRadius: 5,
-            justifyContent: "center",
-            alignItems: "center",
-            marginHorizontal: 10,
-            marginTop: 10,
-          }}
+          style={styles.checkoutBtn}
           onPress={() => navigation.navigate("Profile", {
             callbackScreen: 'Cart'
           })}
         >
           <Text style={{
-            color: "#fff",
-            fontFamily: "CairoMed",
-            fontSize: 13
-
-          }}>تسجيل الدخول لاتمام الدفع</Text>
+            ...styles.checkoutBtnTxt, fontSize: 13
+          }}>{CartLocales['ar'].loginForPayment} </Text>
         </Pressable>}
 
       <Text
-        style={{
-          height: 1,
-          borderColor: "#D0D0D0",
-          borderWidth: 1,
-          marginTop: 16,
-        }}
+        style={styles.selTxt}
       />
 
     </ScrollView>
@@ -529,6 +451,136 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     flexDirection: "row-reverse"
+  },
+  screenScrollView: {
+    marginTop: 0,
+    flex: 1,
+    backgroundColor: "white"
+  },
+  noProductsContainer: {
+    justifyContent: "center",
+    width: "100%",
+    height: 600,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  homeBtn: {
+    backgroundColor: "#55a8b9",
+    padding: 10,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 10,
+    width: "60%",
+  },
+  homeBtnText: {
+    color: "#fff",
+    fontFamily: "CairoMed"
+  },
+  cartScrollView: {
+    marginTop: 0,
+    flex: 1,
+    backgroundColor: "white"
+  },
+  productNameText: {
+    textAlign: "right",
+    fontFamily: "CairoBold",
+    fontSize: 11
+  },
+  extraPurchaseHeader: {
+    fontFamily: "CairoBold",
+    fontSize: 11
+  },
+  itemPressable: {
+    marginTop: 15,
+    marginBottom: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  itemView: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 7,
+  },
+  increase: {
+    backgroundColor: "#55a8b9",
+    padding: 7,
+    borderTopLeftRadius: 6,
+    borderBottomLeftRadius: 6,
+  },
+  whitePress: {
+    backgroundColor: "white",
+    paddingHorizontal: 18,
+    paddingVertical: 6,
+  },
+  qty: {
+    fontFamily: "CairoBold",
+    marginBottom: 5
+  },
+  decrease: {
+    backgroundColor: "#55a8b9",
+    padding: 7,
+    borderTopLeftRadius: 6,
+    borderBottomLeftRadius: 6,
+  },
+  delete: {
+    backgroundColor: "#D8D8D8",
+    padding: 7,
+    borderTopLeftRadius: 6,
+    borderBottomLeftRadius: 6,
+  },
+  secDelete: {
+    backgroundColor: "white",
+    paddingHorizontal: 8,
+    paddingVertical: 10,
+    borderRadius: 5,
+    borderColor: "#C0C0C0",
+    borderWidth: 0.6,
+  },
+  deleteTxt: {
+    fontFamily: "CairoMed",
+    fontSize: 12
+  },
+  couponHeader: {
+    alignItems: "center",
+    flexDirection: "row-reverse"
+  },
+  boldTxt: {
+    fontSize: 16,
+    fontWeight: "bold"
+  },
+  lightBoldTxt: {
+    fontSize: 14,
+    fontFamily: "CairoMed"
+  },
+  secboldTxt: {
+    fontSize: 14,
+    fontFamily: "CairoBold"
+  },
+  seclightBoldTxt: {
+    fontSize: 14,
+    fontFamily: "CairoMed"
+  },
+  checkoutBtn: {
+    backgroundColor: "#55a8b9",
+    padding: 10,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 10,
+    marginTop: 10,
+  },
+  checkoutBtnTxt: {
+    color: "#fff",
+    fontFamily: "CairoMed"
+  },
+  selTxt: {
+    height: 1,
+    borderColor: "#D0D0D0",
+    borderWidth: 1,
+    marginTop: 16,
   }
-
 });

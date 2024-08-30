@@ -19,6 +19,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import Search from "../components/Search";
 import StaticLinks from "../components/StaticLinks";
+import { ProfileLocals } from "../constants/Locales";
 
 const ProfileScreen = () => {
 
@@ -48,124 +49,69 @@ const ProfileScreen = () => {
 
   return (
     <>
-      <ScrollView style={{ padding: 0, flex: 1, backgroundColor: "white", paddingTop: 20 }}>
-        <View style={{ padding: 10 }}>
-
+      <ScrollView style={styles.mainScrollView}>
+        <View style={styles.container}>
           <View
-            style={{
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 10,
-              marginTop: 12,
-            }}
+            style={styles.formContainer}
           >
             <Pressable
-              style={{
-                padding: 10,
-
-                width: "95%",
-                flex: 1,
-              }}
+              style={styles.title}
             >
-              <Text style={{ textAlign: "right", fontFamily: "CairoBold" }}>
+              <Text style={styles.titleText}>
                 {user_?.name || user_?.email || user_?.phone}
-
               </Text>
             </Pressable>
             <Pressable
-              style={{
-                padding: 10,
-                borderColor: "#55a8b9",
-                borderWidth: 1,
-                borderRadius: 8,
-                width: "95%",
-                flex: 1,
-                height: 50,
-                justifyContent: "center"
-              }}
+              style={styles.linkPress}
               onPress={() => navigation.navigate("OrderHistory")}
             >
-              <View style={{ flexDirection: "row-reverse" }}>
+              <View style={styles.linkContentContainer}>
                 <FontAwesome5 name="history" size={24} color="#55a8b9" />
-
-                <Text style={{ fontSize: 14, marginHorizontal: 10, fontFamily: "CairoBold" }}>
-                  طلباتي
-
+                <Text style={styles.linkText}>
+                  {ProfileLocals['ar'].orders}
                 </Text>
               </View>
 
             </Pressable>
 
             <Pressable
-              style={{
-                padding: 10,
-                borderColor: "#55a8b9",
-                borderWidth: 1,
-                borderRadius: 8,
-                width: "95%",
-
-                flex: 1,
-                height: 50,
-                justifyContent: "center"
-
-              }}
+              style={styles.linkPress}
               onPress={() => navigation.navigate("Account")}
 
             >
-              <View style={{ flexDirection: "row-reverse" }}>
+              <View style={styles.linkContentContainer}>
                 <MaterialIcons name="manage-accounts" size={24} color="#55a8b9" />
-                <Text style={{ fontSize: 14, marginHorizontal: 10, fontFamily: "CairoBold" }}>حسابي</Text>
+                <Text style={styles.linkText}>
+                  {ProfileLocals['ar'].profile}
+                </Text>
               </View>
             </Pressable>
           </View>
 
           <View
-            style={{
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 10,
-              marginTop: 12,
-            }}
+            style={styles.viewContainer}
           >
             <Pressable
-              style={{
-                padding: 10,
-                borderColor: "#55a8b9",
-                borderWidth: 1,
-                borderRadius: 8,
-                width: "95%",
-                flex: 1,
-                height: 50,
-                justifyContent: "center"
-
-              }}
+              style={styles.linkPress}
               onPress={() => navigation.navigate("Favorite")}
-
             >
-              <View style={{ flexDirection: "row-reverse" }}>
+              <View style={styles.linkContentContainer}>
                 <MaterialIcons name="favorite" size={24} color="#55a8b9" />
-                <Text style={{  fontSize: 14, marginHorizontal: 10, fontFamily: "CairoBold" }}>قائمتي</Text>
+                <Text style={styles.linkText}>
+                  {ProfileLocals['ar'].favList}
+                </Text>
               </View>
             </Pressable>
             <StaticLinks />
             <Pressable
-              style={{
-                padding: 10,
-                borderColor: "#ff1111",
-                backgroundColor: "#ff1111",
-                borderWidth: 1,
-                borderRadius: 8,
-                width: "95%",
-                flex: 1,
-                height: 45,
-                justifyContent: "center"
-
-              }}
+              style={styles.signOut}
               onPress={signOut}
             >
-              <View style={{ flexDirection: "row-reverse" }}>
+              <View style={styles.linkContentContainer}>
                 <SimpleLineIcons name="logout" size={22} color="black" />
-                <Text style={{ fontFamily:"CairoBold", fontSize: 13, color: "#fff", marginHorizontal: 10 }}>تسجيل الخروج</Text>
+                <Text style={{ fontFamily: "CairoBold", fontSize: 13, color: "#fff", marginHorizontal: 10 }}>
+                  {ProfileLocals['ar'].logOut}
+                </Text>
               </View>
             </Pressable>
           </View>
@@ -178,4 +124,64 @@ const ProfileScreen = () => {
 
 export default ProfileScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  mainScrollView: {
+    padding: 0,
+    flex: 1,
+    backgroundColor: "white",
+    paddingTop: 20
+  },
+  container: {
+    padding: 10
+  },
+  formContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 10,
+    marginTop: 12,
+  },
+  title: {
+    padding: 10,
+    width: "95%",
+    flex: 1,
+  },
+  titleText: {
+    textAlign: "right",
+    fontFamily: "CairoBold"
+  },
+  linkPress: {
+    padding: 10,
+    borderColor: "#55a8b9",
+    borderWidth: 1,
+    borderRadius: 8,
+    width: "95%",
+    flex: 1,
+    height: 50,
+    justifyContent: "center"
+  },
+  signOut: {
+    padding: 10,
+    borderColor: "#ff1111",
+    backgroundColor: "#ff1111",
+    borderWidth: 1,
+    borderRadius: 8,
+    width: "95%",
+    flex: 1,
+    height: 45,
+    justifyContent: "center"
+  },
+  linkText: {
+    fontSize: 14,
+    marginHorizontal: 10,
+    fontFamily: "CairoBold"
+  },
+  linkContentContainer: {
+    flexDirection: "row-reverse"
+  },
+  viewContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 10,
+    marginTop: 12,
+  }
+});

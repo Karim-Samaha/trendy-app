@@ -4,14 +4,14 @@ import { useNavigation } from "@react-navigation/native"
 const AddToCartMessage = ({ product }) => {
     const navigation = useNavigation()
     return <Pressable onPress={() => navigation.navigate("Cart")} style={styles.container}>
-            <Text style={styles.header}>تم اضافة المنتج الي السلة</Text>
-            <View style={styles.productContainer}>
-                <Image
-                    style={{ width: 50, height: 50, resizeMode: "cover", borderRadius: 11, marginHorizontal: 10 }}
-                    source={{ uri: `${config.assetsUrl}/${product.item.image}` }}
-                />
-                <Text style={{fontFamily: "CairoMed"}}>{product.item?.name}</Text>
-            </View>
+        <Text style={styles.header}>تم اضافة المنتج الي السلة</Text>
+        <View style={styles.productContainer}>
+            <Image
+                style={styles.imgStyle}
+                source={{ uri: `${config.assetsUrl}/${product.item.image}` }}
+            />
+            <Text style={{ fontFamily: "CairoMed" }}>{product.item?.name}</Text>
+        </View>
     </Pressable>
 }
 
@@ -52,6 +52,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingHorizontal: 10,
         paddingVertical: 10,
+    },
+    imgStyle: {
+        width: 50,
+         height: 50,
+         resizeMode: "cover", 
+        borderRadius: 11,
+         marginHorizontal: 10
     }
 });
 

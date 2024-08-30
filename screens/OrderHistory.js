@@ -15,7 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import OrderItem from "../components/OrderItem";
 import { useDispatch } from "react-redux";
 import { cleanCart } from "../redux/CartReducer";
-
+import { OrderLocal } from "../constants/Locales";
 const OrderHistory = () => {
     const [pagination, setPagination] = useState({
         page: 1,
@@ -65,21 +65,16 @@ const OrderHistory = () => {
     }, [navigation])
 
     return (
-        <ScrollView style={{ marginTop: 0, flex: 1, backgroundColor: "white" }}>
+        <ScrollView style={styles.scrollView}>
 
-            <View style={{ padding: 10, flexDirection: "row", alignItems: "center", flexDirection: "row-reverse" }}>
-                {route.params?.callback ? <Text style={{ fontSize: 16, fontFamily:"CairoBold" }}>تم استلام طلبك بنجاح</Text>
-                    : <Text style={{ fontSize: 16, fontFamily:"CairoBold" }}>الطلبات السابقة</Text>
+            <View style={styles.headerContainer}>
+                {route.params?.callback ? <Text style={styles.headerText}>{OrderLocal['ar'].successOrder}</Text>
+                    : <Text style={styles.headerText}>{OrderLocal['ar'].header}</Text>
                 }
             </View>
 
             <Text
-                style={{
-                    height: 1,
-                    borderColor: "#D0D0D0",
-                    borderWidth: 1,
-                    marginTop: 16,
-                }}
+                style={styles.text}
             />
 
             <View style={{ marginHorizontal: 10 }}>
@@ -89,7 +84,7 @@ const OrderHistory = () => {
                     <OrderItem item={item} key={item?._id} user={user} />
                 )) : null}
                 {!route.params?.callback && <Pressable style={styles.more} onPress={hangleShowMore}>
-                    <Text style={{ fontSize: 18, fontWeight: "bold", color: "#fff" }}>عرض المزيد</Text>
+                    <Text style={styles.showMoreText}>{OrderLocal['ar'].showMore}</Text>
                 </Pressable>}
             </View>
         </ScrollView>
@@ -99,7 +94,11 @@ const OrderHistory = () => {
 export default OrderHistory;
 
 const styles = StyleSheet.create({
-
+    scrollView: {
+        marginTop: 0,
+        flex: 1,
+        backgroundColor: "white"
+    },
     more: {
         backgroundColor: "#55a8b9",
         padding: 10,
@@ -108,5 +107,26 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginHorizontal: 10,
         marginVertical: 10,
+    },
+    headerContainer: {
+        padding: 10,
+        flexDirection: "row",
+        alignItems: "center",
+        flexDirection: "row-reverse"
+    },
+    headerText: {
+        fontSize: 16,
+        fontFamily: "CairoBold"
+    },
+    text: {
+        height: 1,
+        borderColor: "#D0D0D0",
+        borderWidth: 1,
+        marginTop: 16,
+    },
+    showMoreText: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#fff"
     }
 });

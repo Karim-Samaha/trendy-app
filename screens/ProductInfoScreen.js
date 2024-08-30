@@ -29,6 +29,7 @@ import axios from "axios";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AddToCartMessage from "../components/AddToCartMessage";
 import RenderHTML from "react-native-render-html";
+import { ProductLocal, TrendyBenfLocal } from "../constants/Locales";
 
 const ProductInfoScreen = () => {
   const tagsStyles = {
@@ -150,61 +151,35 @@ const ProductInfoScreen = () => {
     }
   }, [addedToCart])
   return (
-    <View style={{ width: "100%", height: "100%" }}>
+    <View style={styles.screenContainer}>
       {addedToCart && <AddToCartMessage product={route.params} />}
       <ScrollView
-        style={{ marginTop: 0, flex: 1, backgroundColor: "white" }}
+        style={styles.mainScrollView}
         showsVerticalScrollIndicator={false}
       >
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <ImageBackground
-            style={{ width, height, marginTop: 0, resizeMode: "contain", backgroundColor:"#ccaa91" }}
+            style={{ ...styles.imageStyle, width, height }}
             source={{ uri: `${config.assetsUrl}/${route.params.item.image}` }}
           >
             <View
-              style={{
-                padding: 20,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
+              style={styles.infoContainer}
             >
 
               {route.params.item?.priceBefore &&
                 <View
-                  style={{
-                    width: 50,
-                    height: 50,
-                    borderRadius: 25,
-                    backgroundColor: "#55a8b9",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "row",
-                  }}
+                  style={styles.priceBeforeContainer}
                 >
                   <Text
-                    style={{
-                      color: "white",
-                      textAlign: "center",
-                      fontSize: 7,
-                      fontFamily: "CairoBold" 
-                    }}
+                    style={styles.priceBeforeText}
                   >
-                    {(100 - (route.params.item?.price / route.params.item?.priceBefore) * 100).toFixed(0)}% خصم
+                    {(100 - (route.params.item?.price / route.params.item?.priceBefore) * 100).toFixed(0)}% {ProductLocal['ar'].discount}
                   </Text>
                 </View>
               }
 
               <Pressable
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 20,
-                  backgroundColor: "#E0E0E0",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "row",
-                }}
+                style={styles.share}
                 onPress={onShare}
               >
                 <MaterialCommunityIcons
@@ -217,16 +192,7 @@ const ProductInfoScreen = () => {
 
             <Pressable
               style={{
-                width: 40,
-                height: 40,
-                borderRadius: 20,
-                backgroundColor: addedToFav ? "red" : "#E0E0E0",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "row",
-                marginTop: "auto",
-                marginLeft: 20,
-                marginBottom: 20,
+                ...styles.fav, backgroundColor: addedToFav ? "red" : "#E0E0E0",
               }}
               onPress={handleFav}
             >
@@ -235,57 +201,53 @@ const ProductInfoScreen = () => {
           </ImageBackground>
         </ScrollView>
 
-        <View style={{ padding: 10 }}>
-          <Text style={{ fontSize: 15, fontWeight: "500" }}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>
             {route?.params?.title}
           </Text>
-          <View style={{ flexDirection: 'row-reverse', alignItems: "center", marginBottom: 10 }}>
-            <Text style={{ fontSize: 14, fontFamily: "CairoBold" }}>{route?.params.item?.name}</Text>
+          <View style={styles.nameContainer}>
+            <Text style={styles.nameText}>{route?.params.item?.name}</Text>
           </View>
           <View>
             {route?.params?.item?.priceBefore &&
-              <Text style={{ fontFamily: "CairoBold", fontSize: 13, marginVertical: 8 }}>
-                سعر قبل الخصم :
-                <Text style={{ textDecorationLine: 'line-through', textDecorationStyle: 'solid', color: "red", fontFamily: "CairoMed" }}>
+              <Text style={styles.beforeText}>
+                {ProductLocal['ar'].priceBefore} :
+                <Text style={styles.beforeValue}>
                   {route?.params.item.priceBefore} رس
                 </Text>
               </Text>
             }
-            <View style={{ flexDirection: 'row-reverse', alignItems: "center" }}>
-              <Text style={{ fontFamily: "CairoBold", fontSize: 13 }}>السعر :</Text>
-              <View style={{
-                borderWidth: 2, borderColor: "#55a8b9", paddingVertical: 5, paddingHorizontal: 15,
-                marginHorizontal: 10, borderRadius: 10
-              }}>
-                <Text style={{ color: "#55a8b9",fontFamily: "CairoMed" }}>{route?.params.price} رس</Text>
+            <View style={styles.priceContainerView}>
+              <Text style={styles.priceText}>{ProductLocal['ar'].price} :</Text>
+              <View style={styles.priceViewContainerTwo}>
+                <Text style={styles.priceViewContainerTwoText}>{route?.params.price} رس</Text>
               </View>
             </View>
           </View>
         </View>
-        <Text style={{ height: 1, borderColor: "#D0D0D0", borderWidth: 1 }} />
+        <Text style={styles.line} />
         <View style={{ ...styles.feature, backgroundColor: "#FDF2F2" }}>
           <FontAwesome5 name="shipping-fast" size={24} color="black" />
-          <Text style={{ color: "#000", marginHorizontal: 10, fontFamily: "CairoMed", fontSize: 12 }}>
-            شحن مجاني داخل الرياض
+          <Text style={styles.infoText}>
+            {TrendyBenfLocal['ar'].header1}
           </Text>
         </View>
         <View style={{ ...styles.feature, backgroundColor: "#F0F9FF" }}>
           <Entypo name="address" size={24} color="black" />
-          <Text style={{ color: "#000", marginHorizontal: 10,fontFamily: "CairoMed", fontSize: 12 }}>
-            لست بحاجة لمعرفة العنوان
-            (فريقنا سيفعل ذلك نيابة عنك)
+          <Text style={styles.infoText}>
+            {TrendyBenfLocal['ar'].header2}
           </Text>
         </View>
         <View style={{ ...styles.feature, backgroundColor: "#EFFBF4" }}>
           <AntDesign name="earth" size={24} color="black" />
-          <Text style={{ color: "#000", marginHorizontal: 10,fontFamily: "CairoMed", fontSize: 12 }}>
-            أجود أنواع الزهور
+          <Text style={styles.infoText}>
+            {TrendyBenfLocal['ar'].header3}
           </Text>
         </View>
         <View style={{ ...styles.feature, backgroundColor: "#FFFBEB" }}>
           <FontAwesome6 name="money-bill-transfer" size={24} color="black" />
-          <Text style={{ color: "#000", marginHorizontal: 10, fontFamily: "CairoMed", fontSize: 12 }}>
-            اشتري الان و اربح نقاط ترندي
+          <Text style={styles.infoText}>
+            {TrendyBenfLocal['ar'].header4}
           </Text>
         </View>
         <View style={styles.descHeader}>
@@ -303,7 +265,7 @@ const ProductInfoScreen = () => {
           style={styles.mainBtn}
         >
           <View>
-            <Text style={{ color: "#fff", fontFamily: "CairoMed" }}>اضف الي السلة</Text>
+            <Text style={styles.addToCartText}>{ProductLocal['ar'].addToCart}</Text>
           </View>
         </Pressable>}
 
@@ -312,25 +274,17 @@ const ProductInfoScreen = () => {
 
           style={styles.mainBtn}
         >
-          <Text style={{ color: "#fff", fontFamily: "CairoMed"  }}>شراء كهديه</Text>
+          <Text style={styles.addToCartText}>{ProductLocal['ar'].butAsGift}</Text>
         </Pressable>}
         {formType && <AddToCartForm formType={formType} product={route.params} setAddedToCart={setAddedToCart} />}
 
         {reviews && reviews.length > 0 ?
-          <View style={{
-            backgroundColor: "#55a8b9",
-            marginTop: 10
-          }}>
+          <View style={styles.revContainer}>
             <View style={styles.revHeader}>
               <MaterialIcons name="reviews" size={24} color="gold" style={{ marginHorizontal: 10 }} />
-              <Text style={{  fontSize: 14, color: "#fff", fontFamily: "CairoMed"  }}>تقيمات عملائنا:</Text>
+              <Text style={styles.revHeaderText}>{ProductLocal['ar'].ourRviews}:</Text>
             </View>
-            <View style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              padding: 10
-            }}>
+            <View style={styles.reviewsContainer}>
               <ScrollView horizontal inverted showsHorizontalScrollIndicator={false} contentContainerStyle={{
                 flexDirection: "row-reverse",
               }}
@@ -340,10 +294,10 @@ const ProductInfoScreen = () => {
                 {reviews.map((item) => {
                   return <View key={item?._id} style={styles.reviewsItem}>
                     <FontAwesome name="user" size={24} color="#55a8b9" />
-                    <Text style={{fontFamily: "CairoMed", fontSize: 10}}>
+                    <Text style={styles.reviewItemText}>
                       {item?.name}
                     </Text>
-                    <Text style={{ fontFamily: "CairoMed", fontSize: 10, marginVertical: 10 }}>
+                    <Text style={{ ...styles.reviewItemText, marginVertical: 10 }}>
                       {item?.productReview}
                     </Text>
                   </View>
@@ -355,13 +309,14 @@ const ProductInfoScreen = () => {
           : reviews && reviews.length === 0 ? <>
             <View style={styles.revHeader}>
               <MaterialIcons name="reviews" size={24} color="gold" style={{ marginHorizontal: 10 }} />
-              <Text style={{ fontFamily: "CairoBold",  fontSize: 14 }}>تقيمات عملائنا:</Text>
+              <Text style={styles.ourReviewsText}>{ProductLocal['ar'].ourRviews}:</Text>
             </View>
             <View style={styles.reviewContent}>
-              <Text style={{ fontSize: 15, color: "#55A8B9", textAlign: "center", marginVertical: 20, fontFamily: "CairoMed" }}>لا يوجد تقييمات حتى اللحظة</Text>
+              <Text style={styles.noReviewsText}>
+                {ProductLocal['ar'].noReviews}
+              </Text>
             </View>
           </> : null}
-
       </ScrollView>
     </View>
   );
@@ -370,6 +325,27 @@ const ProductInfoScreen = () => {
 export default ProductInfoScreen;
 
 const styles = StyleSheet.create({
+  screenContainer: {
+    width: "100%",
+    height: "100%"
+  },
+  mainScrollView: {
+    marginTop: 0,
+    flex: 1,
+    backgroundColor: "white"
+  },
+  imageStyle: {
+
+    marginTop: 0,
+    resizeMode: "contain",
+    backgroundColor: "#ccaa91"
+  },
+  infoContainer: {
+    padding: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   mainBtn: {
     backgroundColor: "#55a8b9",
     padding: 10,
@@ -404,5 +380,132 @@ const styles = StyleSheet.create({
     padding: 10,
     marginEnd: 10,
     borderRadius: 10
+  },
+  priceBeforeContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#55a8b9",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  priceBeforeText: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 7,
+    fontFamily: "CairoBold"
+  },
+  share: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#E0E0E0",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  fav: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    marginTop: "auto",
+    marginLeft: 20,
+    marginBottom: 20,
+  },
+  titleContainer: {
+    padding: 10
+  },
+  title: {
+    fontSize: 15,
+    fontWeight: "500"
+  },
+  nameContainer: {
+    flexDirection: 'row-reverse',
+    alignItems: "center",
+    marginBottom: 10
+  },
+  nameText: {
+    fontSize: 14,
+    fontFamily: "CairoBold"
+  },
+  beforeText: {
+    fontFamily: "CairoBold",
+    fontSize: 13,
+    marginVertical: 8
+  },
+  beforeValue: {
+    textDecorationLine: 'line-through',
+    textDecorationStyle: 'solid',
+    color: "red",
+    fontFamily: "CairoMed"
+  },
+  priceContainerView: {
+    flexDirection: 'row-reverse',
+    alignItems: "center"
+  },
+  priceText: {
+    fontFamily: "CairoBold",
+    fontSize: 13
+  },
+  priceViewContainerTwo: {
+    borderWidth: 2,
+    borderColor: "#55a8b9",
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    marginHorizontal: 10,
+    borderRadius: 10
+  },
+  priceViewContainerTwoText: {
+    color: "#55a8b9",
+    fontFamily: "CairoMed"
+  },
+  line: {
+    height: 1,
+    borderColor: "#D0D0D0",
+    borderWidth: 1
+  },
+  infoText: {
+    color: "#000",
+    marginHorizontal: 10,
+    fontFamily: "CairoMed",
+    fontSize: 12
+  },
+  addToCartText: {
+    color: "#fff",
+    fontFamily: "CairoMed"
+  },
+  revContainer: {
+    backgroundColor: "#55a8b9",
+    marginTop: 10
+  },
+  revHeaderText: {
+    fontSize: 14,
+    color: "#fff",
+    fontFamily: "CairoMed"
+  },
+  reviewsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10
+  },
+  reviewItemText: {
+    fontFamily: "CairoMed",
+    fontSize: 10
+  },
+  ourReviewsText: {
+    fontFamily: "CairoBold",
+    fontSize: 14
+  },
+  noReviewsText: {
+    fontSize: 15,
+    color: "#55A8B9",
+    textAlign: "center",
+    marginVertical: 20,
+    fontFamily: "CairoMed"
   }
 }); 

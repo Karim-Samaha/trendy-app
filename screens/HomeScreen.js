@@ -6,21 +6,17 @@ import {
   Platform,
   ScrollView,
   Pressable,
-  TextInput,
   Image,
-  Button,
 } from "react-native";
-import React, { useState, useEffect, useCallback, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { SliderBox } from "react-native-image-slider-box";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
 import { UserType } from "../UserContext";
-
 import { config } from "./config";
 import Product from "../components/Product";
 import Search from "../components/Search";
-
+import { HomeLocales } from "../constants/Locales";
 
 
 const HomeScreen = () => {
@@ -157,12 +153,7 @@ const HomeScreen = () => {
         }}
       >
         <Search />
-        <ScrollView style={{
-          direction: "rtl",
-          paddingVertical: 80,
-          marginTop: 10
-
-        }}>
+        <ScrollView style={styles.scrollView}>
           {images?.heros.length > 0 ? <SliderBox
             images={images.heros.map((item) => `${config.backendBase}${item?.imageSrc}`)}
             onCurrentImagePressed={i => handleBannersLinks(images.heros[i]?.route)}
@@ -174,7 +165,7 @@ const HomeScreen = () => {
           /> : null}
           <View style={{ direction: "rtl" }}>
             <Text style={styles.ctgHeader}>
-              التصنيفات
+              {HomeLocales['ar'].categoires}
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
               flexDirection: "row-reverse"
@@ -186,14 +177,7 @@ const HomeScreen = () => {
               {list.length > 0 ? list.map((item, index) => (
                 <Pressable
                   key={index}
-                  style={{
-                    margin: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "#FDF9E7",
-                    padding: 10,
-                    borderRadius: 10
-                  }}
+                  style={styles.categoryContainer}
                   onPress={() => navigation.navigate("SubCategories", {
                     id: item?.id,
                     title: item?.title,
@@ -215,13 +199,7 @@ const HomeScreen = () => {
                   />
 
                   <Text
-                    style={{
-                      textAlign: "center",
-                      fontSize: 16,
-                      fontWeight: "600",
-                      fontFamily:"CairoMed",
-                      marginTop: 5,
-                    }}
+                    style={styles.categoryContainer}
                   >
                     {item?.name}
                   </Text>
@@ -230,12 +208,7 @@ const HomeScreen = () => {
             </ScrollView>
           </View>
           <Text
-            style={{
-              height: 1,
-              borderColor: "#D0D0D0",
-              borderWidth: 2,
-              marginTop: 15,
-            }}
+            style={styles.sectionTitle}
           />
           <View>
             {sections["1"]?.productsList?.length > 0 ? <>
@@ -290,7 +263,6 @@ const HomeScreen = () => {
               <Text style={styles.ctgHeader}>
                 {sections["3"]?.categoryName}
               </Text>
-
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={scrollViewStyle(sections["3"]?.productsList)}
                 onContentSizeChange={scrollToEnd}
                 ref={sectionThreeRef}>
@@ -312,9 +284,7 @@ const HomeScreen = () => {
                   <Product item={item} key={item.id} />
                 ))}
               </ScrollView>
-
             </View>
-
           </> : null}
           {sections["5"]?.productsList?.length > 0 ? <>
             <View style={{ paddingBottom: 80 }}>
@@ -330,10 +300,7 @@ const HomeScreen = () => {
               </ScrollView>
 
             </View>
-
           </> : null}
-
-
         </ScrollView>
       </SafeAreaView >
 
@@ -358,7 +325,32 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 20,
     fontFamily: "CairoBold",
-   
     color: "#55a8b9",
   },
+  scrollView: {
+    direction: "rtl",
+    paddingVertical: 80,
+    marginTop: 10
+  },
+  categoryContainer: {
+    margin: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FDF9E7",
+    padding: 10,
+    borderRadius: 10
+  },
+  categoryName: {
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "600",
+    fontFamily: "CairoMed",
+    marginTop: 5,
+  },
+  sectionTitle: {
+    height: 1,
+    borderColor: "#D0D0D0",
+    borderWidth: 2,
+    marginTop: 15,
+  }
 });
