@@ -25,6 +25,7 @@ import _axios from "../Utils/axios";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import StoreDeleiverForm from "../components/StoreDeleiverForm";
 import { CartLocales } from "../constants/Locales";
+import axios from "axios";
 const CartScreen = () => {
   const cart = useSelector((state) => state.cart.cart);
   const [checkoutModal, setCheckoutModal] = useState(false)
@@ -32,6 +33,40 @@ const CartScreen = () => {
   const [couponResponse, setCouponResponse] = useState({});
   const [selectedOption, setSelectedOption] = useState('1');
   const [user, setUser] = useState();
+  const [paymentMethodsSetting, setPaymentMethodsSetting] = useState([]);
+  const [deleviryMethods, setDeleviryMethods] = useState("");
+  const colors = [
+    { val: "red", text: "احمر" },
+    { val: "white", text: "ابيض" },
+    { val: "brown", text: "بني" },
+    { val: "yellow", text: "اصفر" },
+    { val: "rgba(0,0,0,0.5)", text: "شفاف" },
+    { val: "green", text: "اخضر" },
+    { val: "blue", text: "ازرق" },
+    { val: "#0066CC", text: "كحلي" },
+    { val: "#000", text: "اسود" },
+    { val: "pink", text: "زهري" },
+    { val: "silver", text: "فضي" },
+    { val: "#FFD700", text: "ذهبي" },
+  ];
+  useEffect(() => {
+    axios
+      .get(`${config.backendUrl}/tags`)
+      .then((res) => res.data.data)
+      .then((data) => {
+        let deleviry = data.find(
+          (item) => item.type === "delivery"
+        );
+        let paymentMethods = data.find(
+          (item) => item.type === "paymentMethods"
+        );
+        setDeleviryMethods(deleviry?.items);
+        setPaymentMethodsSetting(paymentMethods?.items);
+      })
+      .catch((err) => console.log(err));
+
+    // Moyasar
+  }, []);
   const [storeDeleviryData, setStoreDeleviryData] = useState({
     name: "",
     phone: "",
@@ -139,6 +174,18 @@ const CartScreen = () => {
 
                       {add.price} رس
                     </Text>
+                    {add?.color &&
+                      <Text style={{ ...styles.productAddText, fontFamily: "CairoBold" }}>
+                        اللون :
+                        {colors.find((col) => col.val === add?.color)?.text}
+                      </Text>
+                    }
+                    {add?.text &&
+                      <Text style={{ ...styles.productAddText, fontFamily: "CairoBold" }}>
+                        خيارات المنتج :
+                        {add?.text}
+                      </Text>
+                    }
                   </View>
                 }) : null}
               </View>
@@ -190,34 +237,36 @@ const CartScreen = () => {
       </View>
       <View style={styles.container}>
 
-        {couponResponse?.redeemed ?
-          <View style={styles.couponHeader}>
-            <Feather name="check-circle" size={24} color="green" style={{ marginTop: 12 }} />
-            <Text style={styles.couponSuccess}>{CartLocales['ar'].couponActivated} {couponResponse?.precent}%</Text>
-          </View> : <>
-            <Text style={styles.label}>{CartLocales['ar'].couponTitle}</Text>
-            <View style={styles.inputContainer}>
-              <Pressable style={styles.button} onPress={validateCoupon}>
-                <Text style={styles.buttonText}>تفعيل</Text>
-              </Pressable>
-              <TextInput style={styles.input} placeholder={CartLocales['ar'].couponPlaceHolder} value={coupon} onChangeText={(e) => setCoupon(e)} />
-            </View>
-            {couponResponse?.valid === false &&
-              !couponResponse?.minimumAmount ?
-              <View style={styles.couponHeader}>
-                <MaterialIcons name="error-outline" size={24} color="red" style={{ marginTop: 12 }} />
-                <Text style={styles.couponErr}>{CartLocales['ar'].wrongCoupon}</Text>
+        {user && <>
+          {couponResponse?.redeemed ?
+            <View style={styles.couponHeader}>
+              <Feather name="check-circle" size={24} color="green" style={{ marginTop: 12 }} />
+              <Text style={styles.couponSuccess}>{CartLocales['ar'].couponActivated} {couponResponse?.precent}%</Text>
+            </View> : <>
+              <Text style={styles.label}>{CartLocales['ar'].couponTitle}</Text>
+              <View style={styles.inputContainer}>
+                <Pressable style={styles.button} onPress={validateCoupon}>
+                  <Text style={styles.buttonText}>تفعيل</Text>
+                </Pressable>
+                <TextInput style={styles.input} placeholder={CartLocales['ar'].couponPlaceHolder} value={coupon} onChangeText={(e) => setCoupon(e)} />
               </View>
-              : couponResponse?.valid === false &&
-                couponResponse?.minimumAmount ?
-                <View style={{ alignItems: "center", flexDirection: "row-reverse" }}>
+              {couponResponse?.valid === false &&
+                !couponResponse?.minimumAmount ?
+                <View style={styles.couponHeader}>
                   <MaterialIcons name="error-outline" size={24} color="red" style={{ marginTop: 12 }} />
-                  <Text style={styles.couponErr}>{CartLocales['ar'].minimumAmount}{" "}
-                    {couponResponse?.minimumAmount} رس</Text>
+                  <Text style={styles.couponErr}>{CartLocales['ar'].wrongCoupon}</Text>
                 </View>
-                : null}
+                : couponResponse?.valid === false &&
+                  couponResponse?.minimumAmount ?
+                  <View style={{ alignItems: "center", flexDirection: "row-reverse" }}>
+                    <MaterialIcons name="error-outline" size={24} color="red" style={{ marginTop: 12 }} />
+                    <Text style={styles.couponErr}>{CartLocales['ar'].minimumAmount}{" "}
+                      {couponResponse?.minimumAmount} رس</Text>
+                  </View>
+                  : null}
 
-          </>}
+            </>}
+        </>}
       </View>
       <View style={styles.cartInfoRow}>
         <Text style={styles.lightBoldTxt}>{CartLocales['ar'].totalNoVat} : </Text>
@@ -256,6 +305,7 @@ const CartScreen = () => {
         couponResponse={couponResponse}
         ShippingType={options.find((item) => item.id === selectedOption)?.text}
         ShippingInfo={storeDeleviryData}
+        paymentMethodsSetting={paymentMethodsSetting}
       />}
 
       <View style={styles.shippingContainer}>

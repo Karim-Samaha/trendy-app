@@ -53,13 +53,27 @@ const Login = () => {
     const [validResend, setValidResend] = useState(false);
     const [resendTimer, setResendTimer] = useState(0);
     const [resended, setResended] = useState(false);
-
     const [loginForm, setLoginInForm] = useState({
         username: "",
         password: "",
         name: "",
         phone: "",
     });
+    const switchMethod = (type) => {
+        setOtpSent(false)
+        setError("")
+        setIsNewRegester(false)
+        setValidResend(false)
+        setResendTimer(0)
+        setResended(false)
+        setLoginInForm({
+            username: "",
+            password: "",
+            name: "",
+            phone: "",
+        })
+        setMethod(type)
+    }
     const dispatch = useDispatch()
     useEffect(() => {
         if (!validResend) {
@@ -192,9 +206,9 @@ const Login = () => {
             {method === 'email' && <View style={styles.container}>
                 {otpSent ? <>
                     <View style={styles.inputContainer}>
-                        <Pressable onPress={() => setMethod("")}>
+                        {/* <Pressable onPress={() => setMethod("")}>
                             <AntDesign name="back" size={24} color="black" />
-                        </Pressable>
+                        </Pressable> */}
                         <Text style={styles.firstText}>{LoginLocal['ar'].otpSentText} {loginForm.username}</Text>
                         {isNewRegester && <>
                             <TextInput style={styles.input} value={loginForm.phone} placeholder={LoginLocal['ar'].phone}
@@ -214,12 +228,18 @@ const Login = () => {
                     >
                         <Text style={styles.btnTxt}>{LoginLocal['ar'].login}</Text>
                     </Pressable>
+                    <Pressable
+                        style={styles.secBtn}
+                        onPress={() => switchMethod("phone")}
+                    >
+                        <Text style={styles.secBtnTxt}>{LoginLocal['ar'].loginViaPhone}</Text>
+                    </Pressable>
 
                 </> : <>
                     <View style={styles.inputContainer}>
-                        <Pressable onPress={() => setMethod("")}>
+                        {/* <Pressable onPress={() => setMethod("")}>
                             <AntDesign name="back" size={24} color="black" />
-                        </Pressable>
+                        </Pressable> */}
                         <Text style={styles.firstText}>{LoginLocal['ar'].email}</Text>
                         <TextInput style={styles.input} value={loginForm.username}
                             onChangeText={(e) => {
@@ -237,14 +257,20 @@ const Login = () => {
                     >
                         <Text style={styles.btnTxt}>{LoginLocal['ar'].otpButton}</Text>
                     </Pressable>
+                    <Pressable
+                        style={styles.secBtn}
+                        onPress={() => switchMethod("phone")}
+                    >
+                        <Text style={styles.secBtnTxt}>{LoginLocal['ar'].loginViaPhone}</Text>
+                    </Pressable>
                 </>}
             </View>}
             {method === 'phone' && <View style={styles.container}>
                 {otpSent ? <>
                     <View style={styles.inputContainer}>
-                        <Pressable onPress={() => setMethod("")}>
+                        {/* <Pressable onPress={() => setMethod("")}>
                             <AntDesign name="back" size={24} color="black" />
-                        </Pressable>
+                        </Pressable> */}
                         <Text style={styles.firstText}>{LoginLocal['ar'].codeHasBeenSent} {loginForm.username}</Text>
                         {isNewRegester && <>
                             <TextInput style={styles.input} value={loginForm.name} placeholder={LoginLocal['ar'].name}
@@ -264,12 +290,18 @@ const Login = () => {
                     >
                         <Text style={styles.btnTxt}>{LoginLocal['ar'].login}</Text>
                     </Pressable>
+                    <Pressable
+                        style={styles.secBtn}
+                        onPress={() => switchMethod("email")}
+                    >
+                        <Text style={styles.secBtnTxt}>{LoginLocal['ar'].loginViaEmail}</Text>
+                    </Pressable>
 
                 </> : <>
                     <View style={styles.inputContainer}>
-                        <Pressable onPress={() => setMethod("")}>
+                        {/* <Pressable onPress={() => setMethod("")}>
                             <AntDesign name="back" size={24} color="black" />
-                        </Pressable>
+                        </Pressable> */}
                         <Text>{LoginLocal['ar'].phone}</Text>
                         <TextInput style={styles.input} value={loginForm.username} placeholder="966"
                             onChangeText={(e) => {
@@ -283,9 +315,14 @@ const Login = () => {
                     <Pressable
                         style={styles.mainBtn}
                         onPress={handleOtpRequest}
-
                     >
                         <Text style={styles.btnTxt}>{LoginLocal['ar'].otpButton}</Text>
+                    </Pressable>
+                    <Pressable
+                        style={styles.secBtn}
+                        onPress={() => switchMethod("email")}
+                    >
+                        <Text style={styles.secBtnTxt}>{LoginLocal['ar'].loginViaEmail}</Text>
                     </Pressable>
                 </>}
             </View>}
@@ -353,6 +390,22 @@ const styles = StyleSheet.create({
         borderRadius: 18,
         width: "95%",
         flex: 1,
+    },
+    secBtn: {
+        padding: 10,
+        backgroundColor: "#fff",
+        borderColor: "#55a8b9",
+        borderWidth: 1,
+        borderRadius: 18,
+        width: "95%",
+        flex: 1,
+        marginTop: 10
+    },
+    secBtnTxt: {
+        fontFamily: "CairoBold",
+        fontSize: 13,
+        textAlign: "center",
+        color: "#55a8b9"
     },
     btnTxt: {
         fontFamily: "CairoBold",

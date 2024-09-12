@@ -73,7 +73,7 @@ export const renderTotalPrice_ = (
     fintalTotal: totalCheckout.toFixed(2),
     deductedAmount: deductedAmount.toFixed(2),
     amountToApplyVatInReceipt: amountToApplyVatInReceipt.toFixed(2),
-    
+
   };
 };
 
@@ -100,4 +100,23 @@ export const getUser = async () => {
   }
   return parsedUser;
 
+}
+
+
+
+export function generateCustomId() {
+  function randomSegment(length) {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
+
+  return randomSegment(8) + '-' +
+    randomSegment(4) + '-' +
+    randomSegment(4) + '-' +
+    randomSegment(4) + '-' +
+    randomSegment(8);
 }

@@ -19,6 +19,7 @@ const OrderItem = ({ item, user }) => {
     };
     const status = {
         PROCCESSING: "قيد التنفيذ",
+        SCHEDULED: "قيد التنفيذ",
         ON_THE_WAY: "تم الشحن",
         DELEIVERD: "تم التوصيل",
         RETURNED: "مسترجع"
@@ -48,15 +49,18 @@ const OrderItem = ({ item, user }) => {
                     ...styles.orderStatus,
                     color: item.orderStatus === 'DELEIVERD' ? "#fff" : "#55a8b9",
                 }}>
-                    {status[item.orderStatus]}</Text>
+                    {status[item.orderStatus]}
+                </Text>
             </View>
         </View>
         {item.purchaseBulk.map((purchaseItem, index) => {
             return <View style={styles.orderInfo} key={index}>
-                <Image
-                    style={styles.image}
-                    source={{ uri: `${config.assetsUrl}/${purchaseItem?.image}` }}
-                />
+                <View style={styles.imageContainer}>
+                    <Image
+                        style={styles.image}
+                        source={{ uri: `${config.assetsUrl}/${purchaseItem?.image}` }}
+                    />
+                </View>
                 <View style={styles.infoContainer}>
                     <Text style={{ fontSize: 16, }}>{purchaseItem.name}</Text>
                     <Text style={styles.orderInfo}>{OrderItemLocal['ar'].qty} : <Text style={styles.boldTxt}>{purchaseItem.quantity}</Text></Text>
@@ -133,7 +137,7 @@ const styles = StyleSheet.create({
     orderInfo: {
         textAlign: "right",
         fontFamily: "CairoMed",
-        fontSize: 11
+        fontSize: 11,
     },
     boldTxt: {
         fontFamily: "CairoBold"
@@ -145,7 +149,7 @@ const styles = StyleSheet.create({
     infoContainer: {
         paddingHorizontal: 20,
         paddingTop: 20,
-        flexShrink: 1
+        flexShrink: 1,
     },
     orderStatus: {
         fontFamily: "CairoBold",
@@ -156,12 +160,18 @@ const styles = StyleSheet.create({
         width: 150, height: 48,
         justifyContent: "center",
         borderRadius: 11,
+
+    },
+    imageContainer: {
+        width: "100%",
+        flexDirection: "row-reverse",
+        paddingVertical: 10
     },
     image: {
         width: 120,
         height: 120,
         resizeMode: "contain",
-        borderRadius: 8
+        borderRadius: 8,
     },
     rateText: {
         color: "#5C71E5",

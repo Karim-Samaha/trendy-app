@@ -4,6 +4,7 @@ export const CartSlice = createSlice({
   name: "cart",
   initialState: {
     cart: [],
+    tabbyId: ""
   },
   reducers: {
     addToCart: (state, action) => {
@@ -50,11 +51,14 @@ export const CartSlice = createSlice({
     },
     cleanCart: (state) => {
       state.cart = [];
+    },
+    saveTabbyId: (state, action) => {
+      state.tabbyId = action.payload.tabbyId
     }
   },
 });
 
 
-export const { addToCart, removeFromCart, incementQuantity, decrementQuantity, cleanCart } = CartSlice.actions;
+export const { addToCart, removeFromCart, incementQuantity, decrementQuantity, cleanCart, saveTabbyId } = CartSlice.actions;
 
 export default CartSlice.reducer

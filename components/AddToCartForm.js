@@ -11,27 +11,36 @@ import ProductAddsModal from "./ProductAddModal";
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { ProductForm } from "../constants/Locales";
+import AddsItem from "./AddsItem";
 
 // import DropDownPicker from 'react-native-dropdown-picker';
 
 const AddToCartForm = ({ formType, product, setAddedToCart }) => {
-    const [isDatePickerVisible, setDatePickerVisibility] = useState(true);
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [isTimeVisible, setIsTimeVisible] = useState(false);
     const [selectedAdds, setSelectedAdds] = useState([])
     const [dateVal, setDateVal] = useState(new Date())
     const [timeVal, setTimeVal] = useState(new Date())
     const dateRef = useRef()
     const timeRef = useRef()
-    const showDatePicker = () => {
-        setDatePickerVisibility(true);
-    };
-
-    const hideDatePicker = () => {
-        setDatePickerVisibility(false);
-    };
-    const hideTimePicker = () => {
-        setIsTimeVisible(false);
-    };
+    const [options, setOptions] = useState({
+        color: "",
+        text: "",
+    });
+    const colors = [
+        { val: "red", text: "احمر" },
+        { val: "white", text: "ابيض" },
+        { val: "brown", text: "بني" },
+        { val: "yellow", text: "اصفر" },
+        { val: "rgba(0,0,0,0.5)", text: "شفاف" },
+        { val: "green", text: "اخضر" },
+        { val: "blue", text: "ازرق" },
+        { val: "#0066CC", text: "كحلي" },
+        { val: "#000", text: "اسود" },
+        { val: "pink", text: "زهري" },
+        { val: "silver", text: "فضي" },
+        { val: "#FFD700", text: "ذهبي" },
+    ];
 
     const [formValue, setFormValue] = useState({
         type: formType,
@@ -83,20 +92,28 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
         setFormValue(prev => ({ ...prev, deliveryDate: formatedDate }))
         setErrors((prev) => ({ ...prev, deliveryDate: false }));
     };
+    const handleHoursToBecomeTwoDigits = (hourNum) => {
+        if (!hourNum) return
+        let hourStr = `${hourNum}`
+        if (hourStr.length < 2) {
+            hourStr = `0${hourNum}`
+        }
+        return hourStr
+    }
     const handleTimeConfirm = (date) => {
+        setIsTimeVisible(false)
         const formatedDate = new Date(date.nativeEvent.timestamp)
         var hours = formatedDate.getHours();
         var minutes = formatedDate.getMinutes();
-        var ampm = hours >= 12 ? 'م' : 'ص';
+        var ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12'
+
         minutes = minutes < 10 ? '0' + minutes : minutes;
-        var strTime = hours + ':' + minutes + ' ' + ampm;
+        var strTime = ampm + ':' + handleHoursToBecomeTwoDigits(hours) + ':' + minutes
         setFormValue(prev => ({ ...prev, time: strTime }))
-        setIsTimeVisible(false)
-        timeRef.current.blur()
         setErrors((prev) => ({ ...prev, time: false, unvalidTime: false }));
-        setIsTimeVisible(false)
+
     };
     const dispatch = useDispatch()
     const addItemToCart = (item, formValue) => {
@@ -149,12 +166,24 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
     };
     const [giftSelect, setGiftSelected] = useState("بدون اضافات");
     const [giftsModal, setGiftsModal] = useState(false)
+    function randomNum() {
+        let digits = '0123456789';
+        let OTP = '';
+        let len = digits.length;
+        for (let i = 0; i < 5; i++) {
+            OTP += digits[Math.floor(Math.random() * len)];
+        }
+
+        return OTP;
+    }
     const handleSelectAdd = (item) => {
         const isIncluded = selectedAdds.find((prev) => prev?._id === item?._id)
-        if (isIncluded?._id) return null
-        setSelectedAdds(prev => ([...prev, { ...item, quantity: 1 }]))
+        // if (isIncluded?._id) return null
+        let num = randomNum()
+        setSelectedAdds(prev => ([...prev, { ...item, _id: `${num}-${item?._id}`, cartId: `${num}-${item?._id}`, quantity: 1 }]))
         setGiftsModal(false)
     }
+
     const handleSelectAddQty = (id, type) => {
         let item = selectedAdds.find((prev) => prev?._id === id)
         let quantity = item.quantity
@@ -175,6 +204,20 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
         const newAdds = selectedAdds.filter((item) => item._id !== id)
         setSelectedAdds(newAdds)
     }
+    const handleSlectedGiftOptions = (id, option, val) => {
+        let item = selectedAdds?.find(
+            (item) => item?.cartId === id
+        );
+        item[option] = val;
+        const newItems = selectedAdds?.map((prevItem) => {
+            if (item?.cartId === prevItem?.cartId) {
+                return item;
+            } else {
+                return prevItem;
+            }
+        });
+        setSelectedAdds(newItems);
+    };
     const data = [
         { key: '1', value: 'بدون اضافات' },
         { key: '2', value: 'كروت اهداء' },
@@ -209,24 +252,32 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
             </View>}
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>{ProductForm['ar'].date}</Text>
-                <TextInput style={styles.input} value={formValue.deliveryDate}
+                {/* <TextInput style={styles.input} value={formValue.deliveryDate}
                     ref={dateRef} editable={false}
-                />
+                /> */}
                 <Pressable onPress={() => setDatePickerVisibility(true)}
+                    style={styles.input}>
+                    <Text style={styles.dateVal}>{formValue.deliveryDate}</Text>
+                </Pressable>
+                {/* <Pressable onPress={() => setDatePickerVisibility(true)}
                     style={styles.editTimes}>
                     <Text style={styles.editText}>{ProductForm['ar'].edit}</Text>
-                </Pressable>
+                </Pressable> */}
                 {errors.deliveryDate && <Text style={styles.error}>{ProductForm['ar'].dateError}</Text>}
             </View>
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>{ProductForm['ar'].time}</Text>
-                <TextInput style={{ ...styles.input, position: "relative" }} value={formValue.time}
+                {/* <TextInput style={{ ...styles.input, position: "relative" }} value={formValue.time}
                     ref={timeRef} editable={false}
-                />
+                /> */}
                 <Pressable onPress={() => setIsTimeVisible(true)}
+                    style={styles.input}>
+                    <Text style={styles.dateVal}>{formValue.time}</Text>
+                </Pressable>
+                {/* <Pressable onPress={() => setIsTimeVisible(true)}
                     style={styles.editTimes}>
                     <Text style={styles.editText}>{ProductForm['ar'].edit}</Text>
-                </Pressable>
+                </Pressable> */}
             </View>
             {errors.time && <Text style={styles.error}>{ProductForm['ar'].timeError}</Text>}
             {errors.unvalidTime && <Text style={styles.error}>{ProductForm['ar'].unvalidTimeError}</Text>}
@@ -345,21 +396,12 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                 <ProductAddsModal show={giftsModal} close={() => setGiftsModal(false)} category={giftSelect} handleSelectAdd={handleSelectAdd} />
                 {selectedAdds.length > 0 ? <View style={styles.addsContainer}>
                     {selectedAdds.map((item) => {
-                        return <View style={styles.addsItem} key={item?._id}>
-                            <Text style={{ ...styles.label, fontSize: 12 }}>{item?.name}</Text>
-                            <View style={styles.addsController}>
-                                <Pressable style={{ marginHorizontal: 10 }} onPress={() => handleSelectAddQty(item?._id, "add")}>
-                                    <Feather name="plus" size={24} color="black" />
-                                </Pressable>
-                                <Text style={styles.label}>{item?.quantity}</Text>
-                                <Pressable style={{ marginHorizontal: 10 }} onPress={() => handleSelectAddQty(item?._id, "deduct")}>
-                                    <AntDesign name="minus" size={24} color="black" />
-                                </Pressable>
-                            </View>
-                            <Pressable onPress={() => deleteAdd(item?._id)}>
-                                <Text style={{ color: "red", ...styles.label }}>{ProductForm['ar'].delete}</Text>
-                            </Pressable>
-                        </View>
+                        return <AddsItem
+                            key={item?._id}
+                            item={item}
+                            handleSelectAddQty={handleSelectAddQty}
+                            deleteAdd={deleteAdd}
+                            handleSlectedGiftOptions={handleSlectedGiftOptions} />
                     })}
 
                 </View> : null}
@@ -394,6 +436,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                 mode="date"
                 locale="ar"
                 onChange={handleDateConfirm}
+                minimumDate={new Date()}
             />}
 
 
@@ -402,6 +445,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                     isVisible={timeVal}
                     value={new Date()}
                     mode="time"
+                    minimumDate={new Date()}
                     onChange={handleTimeConfirm}
                 />
             }
@@ -493,5 +537,10 @@ const styles = StyleSheet.create({
     editText: {
         fontFamily: "CairoBold",
         color: "#fff"
+    },
+    dateVal: {
+        fontFamily: "CairoBold",
+        color: "#000",
+        textAlign: "right"
     }
 });

@@ -21,6 +21,7 @@ import { config } from "../screens/config"
 import { getUser, renderTotalPrice_ } from "../Utils/helpers"
 import axios from "axios"
 import { PaymentLocal, RefundLocal } from "../constants/Locales"
+import { saveTabbyId } from "../redux/CartReducer"
 
 
 const ReadyUIPayments = {
@@ -37,22 +38,20 @@ const CheckoutPayments = {
 }
 
 
-const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType, ShippingInfo }) => {
+const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType, ShippingInfo, paymentMethodsSetting }) => {
     const [method, setMethod] = useState("CC")
     const [loading, setLoading] = useState(false)
     const cart = useSelector((state) => state.cart.cart);
     const renderTotalPrice = renderTotalPrice_(cart, couponResponse?.precent);
-
+    const dispatch = useDispatch()
     const navigation = useNavigation();
-    const PaymentMethods = [
-        // { img: require("../assets/payments/dialog-mada.png"), value: "MC" },
-        // { img: require("../assets/payments/dialog-stcpay.png"), value: "SP" },
-        { img: require("../assets/payments/dialog-vm.png"), value: "CC" },
-        { img: require("../assets/payments/tabby.png"), value: "TABYY" },
-        { img: require("../assets/payments/delv.png"), value: "CASH" },
-        { img: require("../assets/payments/transfer.png"), value: "TRANSFER" },
+    // const PaymentMethods = [
+    //     { img: require("../assets/payments/dialog-vm.png"), value: "CC" },
+    //     { img: require("../assets/payments/tabby.png"), value: "TABYY" },
+    //     { img: require("../assets/payments/delv.png"), value: "CASH" },
+    //     { img: require("../assets/payments/transfer.png"), value: "TRANSFER" },
 
-    ]
+    // ]
     const handlePayment = async () => {
         // create checkout session
         const user = await AsyncStorage.getItem(("user"))
@@ -91,9 +90,12 @@ const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType,
             navigation.navigate("Payment", {
                 user: parsedUser,
                 mobileSessionId: response.data.data._id,
-                amount: +amount * 100
+                amount: +amount * 100,
+                paymentUrl: null,
+                method: method,
             })
         }
+
     }
     const createCheckoutSession = async () => {
         const id = Math.random().toString(16).slice(2);
@@ -144,11 +146,220 @@ const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType,
             })
             .catch((err) => console.log(err));
     };
+    const handleTabbyPayment = async () => {
+        const user = await AsyncStorage.getItem(("user"))
+        if (user) {
+            let parsedUser = await JSON.parse(user)
+            _axios
+                .post(
+                    `${config.backendUrl}/create-tabby-session`,
+                    {
+                        tabbyPayload: {
+                            payment: {
+                                amount: `${amount}`,
+                                currency: "SAR",
+                                description: "testing product",
+                                shipping_address: {},
+                                order: {},
+                                buyer_history: {},
+                                order_history: [],
+                                meta: {},
+                                attachment: {
+                                    body: '{"flight_reservation_details": {"pnr": "TR9088999","itinerary": [...],"insurance": [...],"passengers": [...],"affiliate_name": "some affiliate"}}',
+                                    content_type: "application/vnd.tabby.v1+json",
+                                },
+                            },
+                            lang: "ar",
+                            merchant_code: "zid_sa",
+                            merchant_urls: {
+                                // change
+                                success: `${config.backendBase}/payment-success?gateway=tabby`,
+                                cancel: `${config.backendBase}/payment-success?gateway=tabby`,
+                                failure: `${config.backendBase}/payment-success?gateway=tabby`,
+                            },
+                        },
+                        sessionInfo: {
+                            description: cart.map((item) => ({
+                                id: item?.item?._id,
+                                price: item.price,
+                                priceBefore: item.priceBefore,
+                                name: item?.item?.name,
+                                formInfo: item.formInfo,
+                                color: item?.item?.color,
+                                quantity: item.quantity,
+                                selectedCard: item?.selectedCard,
+                                text: item?.item?.text,
+                                image: item?.item?.image,
+                            })),
+                            fintalTotal: amount,
+                            couponResponse,
+                            deleviryMethod: ShippingType,
+                            deleviryInfo: ShippingInfo,
+                            vat,
+                            pointsUsed: 0,
+                            userNote: "",
+                        },
+                    },
+                    { parsedUser }
+                )
+                .then((res) => {
+
+                    let url =
+                        res.data?.paymentSession?.configuration?.available_products
+                            ?.installments[0]?.web_url;
+                    console.log("!!!!!!!!!!!!!!!!!")
+                    console.log(url)
+                    console.log("!!!!!!!!!!!!!!!!!")
+                    if (url) {
+                        // sessionStorage.setItem("tabbyId", res.data?.paymentSession?.id);
+                        // window.location.href = url;
+                        // return;
+                        dispatch(saveTabbyId({ tabbyId: res.data?.paymentSession?.id }))
+                        navigation.navigate("Payment", {
+                            user: parsedUser,
+                            amount: +amount,
+                            paymentUrl: url,
+                            method: method,
+                            tabbySessionId: res.data?.paymentSession?.id
+                        })
+                    }
+                }).catch(err => console.log(err))
+        }
+
+    }
+
+    const handleTamarraPayment = async () => {
+        const user = await AsyncStorage.getItem(("user"))
+        if (user) {
+            let parsedUser = await JSON.parse(user)
+            _axios
+                .post(
+                    `${config.backendUrl}/create-tammara-session`,
+                    {
+                        gatewayBody: {
+                            total_amount: {
+                                amount: amount,
+                                currency: "SAR",
+                            },
+                            shipping_amount: {
+                                amount: 0,
+                                currency: "SAR",
+                            },
+                            tax_amount: {
+                                amount: 0,
+                                currency: "SAR",
+                            },
+                            order_reference_id: generateCustomId(),
+                            order_number: "A1232580",
+                            items: cart.map((item) => ({
+                                name: item.name,
+                                reference_id: item?._id,
+                                quantity: item?.quantity,
+                                type: "Digital",
+                                sku: "SA-124252",
+                                discount_amount: {
+                                    amount: 0,
+                                    currency: "SAR",
+                                },
+                                tax_amount: {
+                                    amount: 0,
+                                    currency: "SAR",
+                                },
+                                unit_price: {
+                                    amount: item.price,
+                                    currency: "SAR",
+                                },
+                                total_amount: {
+                                    amount: item.price,
+                                    currency: "SAR",
+                                },
+                            })),
+
+                            consumer: {
+                                email: "customer@email.com",
+                                first_name: "aaa",
+                                last_name: "aaa",
+                                phone_number: "96600000",
+                            },
+                            country_code: "SA",
+                            description: "Trendy Rose.",
+                            merchant_url: {
+
+                                cancel: `${config.backendBase}/check-payment`,
+                                failure: `${config.backendBase}/check-payment`,
+                                success: `${config.backendBase}/check-payment?gateway=tamara`,
+                                notification: `${config.backendBase}/check-payment`,
+                            },
+                            payment_type: "PAY_BY_INSTALMENTS",
+                            instalments: 3,
+                            shipping_address: {
+                                city: "Riyadh",
+                                country_code: "SA",
+                                first_name: "aaa",
+                                last_name: "aaa",
+                                line1: "3764 Al Urubah Rd",
+                                line2: "string",
+                                phone_number: "96600005",
+                                region: "As Sulimaniyah",
+                            },
+                            platform: "Trendy Rose",
+                            is_mobile: false,
+                            locale: "ar_SA",
+                        },
+
+                        sessionInfo: {
+                            description: cart.map((item) => ({
+                                id: item?.item?._id,
+                                price: item.price,
+                                priceBefore: item.priceBefore,
+                                name: item?.item?.name,
+                                formInfo: item.formInfo,
+                                color: item?.item?.color,
+                                quantity: item.quantity,
+                                selectedCard: item?.selectedCard,
+                                text: item?.item?.text,
+                                image: item?.item?.image,
+                            })),
+                            fintalTotal: amount,
+                            couponResponse,
+                            deleviryMethod: ShippingType,
+                            deleviryInfo: ShippingInfo,
+                            vat,
+                            pointsUsed: 0,
+                            userNote: "",
+                        },
+                    },
+                    { parsedUser }
+                )
+                .then((res) => {
+                    let url = res.data?.paymentSession?.checkout_url;
+                    if (url) {
+                        // sessionStorage.setItem("tabbyId", res.data?.paymentSession?.id);
+                        // window.location.href = url;
+                        // return;
+                        // dispatch(saveTabbyId({ tabbyId: res.data?.paymentSession?.id }))
+                        navigation.navigate("Payment", {
+                            user: parsedUser,
+                            amount: +amount,
+                            paymentUrl: url,
+                            method: method,
+                            tamaraSessionId: res.data?.paymentSession?.order_id,
+                            tamaraCheckoutId: res.data?.paymentSession?.checkout_id,
+                        })
+                    }
+                }).catch(err => console.log(err))
+        }
+
+    }
     const PayNow = () => {
         if (method === 'CC') {
             handlePayment()
         } else if (method === 'TRANSFER' || method === 'CASH') {
             createCheckoutSession()
+        } else if (method === 'TABBY') {
+            handleTabbyPayment()
+        } else if (method === 'TAMARA') {
+            handleTamarraPayment()
         }
     }
     return (
@@ -167,7 +378,7 @@ const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType,
                         </Text>
                     </View>
                     <View style={styles.methodsWrapper}>
-                        {PaymentMethods.map((m, i) => (
+                        {/* {PaymentMethods.map((m, i) => (
                             <TouchableOpacity
                                 key={i}
                                 onPress={() => {
@@ -181,7 +392,108 @@ const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType,
                             >
                                 <Image style={styles.img} source={m.img} />
                             </TouchableOpacity>
-                        ))}
+                        ))} */}
+                        {paymentMethodsSetting?.find(
+                            (item) => item.id === 1
+                        )?.active && <TouchableOpacity
+                            key={1}
+                            onPress={() => {
+                                setMethod('CC')
+                            }}
+                            style={
+                                method === 'CC'
+                                    ? [styles.methodWrapper, styles.selected]
+                                    : styles.methodWrapper
+                            }
+                        >
+                                <Image style={styles.img} source={require("../assets/payments/card.png")} />
+                                <Text>بطاقة بنكية</Text>
+                            </TouchableOpacity>}
+                        {paymentMethodsSetting?.find(
+                            (item) => item.id === 2
+                        )?.active && <TouchableOpacity
+                            key={2}
+                            onPress={() => {
+                                setMethod('TABBY')
+                            }}
+                            style={
+                                method === 'TABBY'
+                                    ? [styles.methodWrapper, styles.selected]
+                                    : styles.methodWrapper
+                            }
+                        >
+                                <Image style={styles.img} source={require("../assets/payments/tabby.jpg")} />
+                                <Text>تابي</Text>
+
+                            </TouchableOpacity>}
+                        {paymentMethodsSetting?.find(
+                            (item) => item.id === 3
+                        )?.active && <TouchableOpacity
+                            key={3}
+                            onPress={() => {
+                                setMethod('CASH')
+                            }}
+                            style={
+                                method === 'CASH'
+                                    ? [styles.methodWrapper, styles.selected]
+                                    : styles.methodWrapper
+                            }
+                        >
+                                <Image style={styles.img} source={require("../assets/payments/delv.png")} />
+                                <Text>الدفع عند الأستلام</Text>
+
+                            </TouchableOpacity>}
+                        {paymentMethodsSetting?.find(
+                            (item) => item.id === 4
+                        )?.active && <TouchableOpacity
+                            key={4}
+                            onPress={() => {
+                                setMethod('TRANSFER')
+                            }}
+                            style={
+                                method === 'TRANSFER'
+                                    ? [styles.methodWrapper, styles.selected]
+                                    : styles.methodWrapper
+                            }
+                        >
+                                <Image style={styles.img} source={require("../assets/payments/transfer.png")} />
+                                <Text>تحويل بنكي</Text>
+
+                            </TouchableOpacity>}
+                        {paymentMethodsSetting?.find(
+                            (item) => item.id === 5
+                        )?.active && <TouchableOpacity
+                            key={5}
+                            onPress={() => {
+                                setMethod('TAMARA')
+                            }}
+                            style={
+                                method === 'TAMARA'
+                                    ? [styles.methodWrapper, styles.selected]
+                                    : styles.methodWrapper
+                            }
+                        >
+                                <Image style={styles.img} source={require("../assets/payments/tamara.png")} />
+                                <Text>تمارا</Text>
+
+                            </TouchableOpacity>}
+                        {paymentMethodsSetting?.find(
+                            (item) => item.id === 7
+                        )?.active && <TouchableOpacity
+                            key={6}
+                            onPress={() => {
+                                setMethod('STC')
+                            }}
+                            style={
+                                method === 'STC'
+                                    ? [styles.methodWrapper, styles.selected]
+                                    : styles.methodWrapper
+                            }
+                        >
+                                <Image style={styles.img} source={require("../assets/payments/dialog-stcpay.png")} />
+                                <Text>اس تي سي</Text>
+
+                            </TouchableOpacity>}
                     </View>
                     {method === 'TRANSFER' &&
                         <View style={styles.bankInfoContainer}>
@@ -342,8 +654,8 @@ const styles = StyleSheet.create({
         fontFamily: "CairoMed",
         fontSize: 13
     },
-    bankContentTxt: { 
-        fontSize: 9, 
+    bankContentTxt: {
+        fontSize: 9,
         fontFamily: "CairoMed"
-     }
+    }
 })

@@ -182,6 +182,8 @@ export const ProductForm = {
         delete: "مسح",
         edit: "تعديل",
         giftRequiredError: "لم يتم اختيار اضافات",
+        color: "اللون",
+        productOptions: "خيارات المنتج"
     }
 }
 
