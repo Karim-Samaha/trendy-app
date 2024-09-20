@@ -53,9 +53,11 @@ const Search = () => {
             }}
         >
 
-            <TextInput placeholder="ابحث عن منتجك !" style={{
+            <TextInput placeholder="ابحث عن منتجك!" style={{
                 paddingHorizontal: 5,
                 fontFamily: "CairoMed",
+                width: 300,
+                height: 40
             }}
                 value={search}
                 onChangeText={(e) => setSearch(e)}

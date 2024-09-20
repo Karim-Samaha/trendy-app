@@ -68,7 +68,7 @@ const AccountInfo = () => {
 
     return (
         <>
-            <Search />
+            {/* <Search /> */}
             <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 0, paddingTop: 80 }}>
                 <View style={styles.container}>
                     <Text style={styles.headerTxt}>
@@ -121,7 +121,7 @@ const AccountInfo = () => {
                     </View>
                     {updated?.status === "success" && <View style={styles.inputHeaderContainer}>
                         <AntDesign name="checkcircle" size={24} color="green" />
-                        <Text style={styles.successTxt}>{AccountLocales['ar'].phone}</Text>
+                        <Text style={styles.successTxt}>{AccountLocales['ar'].success}</Text>
                     </View>}
                     <Pressable
                         onPress={handleSubmit}

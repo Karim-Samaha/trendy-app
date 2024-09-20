@@ -30,31 +30,41 @@ export const renderTotalPrice_ = (
   let deductedAmount = 0;
   let amountToApplyVatInReceipt = 0;
   let totalBeforeVat = 0
+  let fintalTotalWithNoAdds = 0;
 
-  items.map((item) => {
+
+  for (let i = 0; i < items.length; i++) {
+    let item = items[i];
+
     total += item.price * item.quantity;
     if (item.formInfo?.cardText?.length > 1) {
-      cards += 6;
+      cards += 6 * item.quantity;
+      total += 6 * item.quantity;
     }
-    if (item?.selectedCard?.length) {
-      for (let i = 0; i < item?.selectedCard.length; i++) {
+
+    if (item?.selectedCard?.length > 0) {
+      for (let j = 0; j < item?.selectedCard.length; j++) {
         extraPurchase +=
-          item?.selectedCard[i]?.price * item?.selectedCard[i]?.quantity;
+          item?.selectedCard[j]?.price * item?.selectedCard[j]?.quantity;
+        total += item?.selectedCard[j]?.price * item?.selectedCard[j]?.quantity;
       }
-      total = total + extraPurchase
+      // total = total + extraPurchase;
     }
-  });
-  let totalCheckout = total + cards + vat;
+
+    fintalTotalWithNoAdds += item.price * item.quantity;
+  }
+
+  let totalCheckout = total + cards;
   if (couponPrecent) {
     deductedAmount = (total * couponPrecent) / 100;
-    let amountToApplyVat = total - deductedAmount;
-    vat = +((amountToApplyVat * 15) / 100);
-    totalBeforeVat = total - vat
-    amountToApplyVatInReceipt = amountToApplyVat;
-    totalCheckout = amountToApplyVatInReceipt;
+    // let amountToApplyVat = total - deductedAmount;
+    vat = +((total * 15) / 100);
+    totalBeforeVat = total - vat;
+    amountToApplyVatInReceipt = total;
+    totalCheckout = amountToApplyVatInReceipt - deductedAmount;
   } else {
     vat = +((total * 15) / 100);
-    totalBeforeVat = total - vat
+    totalBeforeVat = total - vat;
     amountToApplyVatInReceipt = total;
     totalCheckout = amountToApplyVatInReceipt;
   }
@@ -66,14 +76,14 @@ export const renderTotalPrice_ = (
   }
   return {
     total: total.toFixed(2),
-    totalBeforeVat: totalBeforeVat.toFixed(2),
     cards: cards.toFixed(2),
+    totalBeforeVat: totalBeforeVat.toFixed(2),
     giftCards: extraPurchase.toFixed(2),
     vat: vat.toFixed(2),
     fintalTotal: totalCheckout.toFixed(2),
+    fintalTotalWithNoAdds: (totalCheckout - extraPurchase - cards).toFixed(2),
     deductedAmount: deductedAmount.toFixed(2),
     amountToApplyVatInReceipt: amountToApplyVatInReceipt.toFixed(2),
-
   };
 };
 

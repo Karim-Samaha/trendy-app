@@ -18,7 +18,7 @@ import { useNavigation } from "@react-navigation/native"
 import _axios from "../Utils/axios"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { config } from "../screens/config"
-import { getUser, renderTotalPrice_ } from "../Utils/helpers"
+import { generateCustomId, getUser, renderTotalPrice_ } from "../Utils/helpers"
 import axios from "axios"
 import { PaymentLocal, RefundLocal } from "../constants/Locales"
 import { saveTabbyId } from "../redux/CartReducer"
@@ -215,6 +215,7 @@ const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType,
                         // window.location.href = url;
                         // return;
                         dispatch(saveTabbyId({ tabbyId: res.data?.paymentSession?.id }))
+                        close()
                         navigation.navigate("Payment", {
                             user: parsedUser,
                             amount: +amount,
@@ -252,9 +253,9 @@ const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType,
                             order_reference_id: generateCustomId(),
                             order_number: "A1232580",
                             items: cart.map((item) => ({
-                                name: item.name,
-                                reference_id: item?._id,
-                                quantity: item?.quantity,
+                                name: item?.item?.name,
+                                reference_id: item?.item?._id,
+                                quantity: item?.item?.quantity,
                                 type: "Digital",
                                 sku: "SA-124252",
                                 discount_amount: {
@@ -266,11 +267,11 @@ const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType,
                                     currency: "SAR",
                                 },
                                 unit_price: {
-                                    amount: item.price,
+                                    amount: item?.item?.price,
                                     currency: "SAR",
                                 },
                                 total_amount: {
-                                    amount: item.price,
+                                    amount: item?.item?.price,
                                     currency: "SAR",
                                 },
                             })),
@@ -333,11 +334,14 @@ const PaymentDialog = ({ show, close, amount, vat, couponResponse, ShippingType,
                 )
                 .then((res) => {
                     let url = res.data?.paymentSession?.checkout_url;
+                    // console.log({res: res.data?.paymentSession})
+                    // console.log({cart: cart[0]?.item?._id})
                     if (url) {
                         // sessionStorage.setItem("tabbyId", res.data?.paymentSession?.id);
                         // window.location.href = url;
                         // return;
                         // dispatch(saveTabbyId({ tabbyId: res.data?.paymentSession?.id }))
+                        close()
                         navigation.navigate("Payment", {
                             user: parsedUser,
                             amount: +amount,

@@ -11,7 +11,8 @@ export const AccountLocales = {
         email: "البريد الالكتروني",
         address: "العنوان",
         phone: "الهاتف",
-        save: "حفظ"
+        save: "حفظ",
+        success: "تم الحفظ"
     }
 }
 
@@ -26,23 +27,28 @@ export const CartLocales = {
         couponPlaceHolder: "كوبون خصم",
         wrongCoupon: "الكود خاطئ",
         couponMinumum: "الحد الادني لاستخدام الكوبون",
-        totalNoVat: "المجموع غير شامل الضريبة",
+        totalNoVat: "المجموع الفرعي",
         discount: "قسيمة التخفيض",
         totalToApplyVat: "المجموع الخاضع للضريبة",
         vatText: "ضريبة القيمة المضافة",
-        shippingCost: "تكاليف الشحن",
+        shippingCost: "تكلفه الشحن مجاناً",
         totalPlusVat: "مجموع المنتجات شامل ضريبة القيمة المضافة",
+        totalProducts: "مجموع المنتجات",
+        totalCards: "تكلفة نص البطاقة",
+        totalAdds: "مجموع اضافات الورود",
         total: "مجموع الكلي",
         shippingHeader: "اختيار شركة الشحن",
         completePayment: "اتمام الدفع",
-        loginForPayment: "تسجيل الدخول لاتمام الدفع"
+        loginForPayment: "تسجيل الدخول لاتمام الدفع",
+        product: "منتج",
+        details: "تفاصيل الفاتورة"
     }
 }
 
 export const CustomerServiceLocales = {
     ar: {
         title: "خدمة العملاء والشكاوى والاقتراحات",
-        content: "نحن نرحب دائماً بتعاونك معنا ومشاركتنا كل مقترحاتك. يمكنك الاتصال على ارقامنا او عبر المحادثه المباشره من خلال WhatsApp"
+        content: "نحن نرحب دائماً بتعاونك معنا ومشاركتنا كل مقترحاتك. يمكنك الاتصال على ارقامنا او عبر المحادثه المباشره من خلال"
     }
 }
 
@@ -165,7 +171,7 @@ export const ProductForm = {
         timeError: "يجد تحديد وقت التوصيل",
         unvalidTimeError: "يجد تحديد وقت التوصيل بشكل صحيح",
         cardText: "نص البطاقة - اكتب إهدائك هنا ( + 6.00 ر.س )",
-        noAddressSelect: "لا اريد نحديد العنوان (فريق الدعم سيتواصل مع المستلم)",
+        noAddressSelect: "لا اعرف عنوان المستلم (فريق الدعم سيتواصل مع المستلم)",
         address: "العنوان",
         addressError: "يجد تحديد العنوان",
         productAdds: "اضافات الورود",

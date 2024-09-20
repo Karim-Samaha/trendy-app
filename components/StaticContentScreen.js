@@ -4,13 +4,28 @@ import {
     Text,
     View,
     ScrollView,
-
+    Linking,
+    Button,
+    Pressable
 } from "react-native";
 import React from "react";
 
 import _axios from "../Utils/axios";
 
-const StaticContentScreen = ({ title, content, secContent }) => {
+const StaticContentScreen = ({ title, content, secContent, linkUrlText, linkUrl }) => {
+    const openWhatsApp = () => {
+        let url = linkUrl;
+        Linking.canOpenURL(url)
+            .then((supported) => {
+                if (!supported) {
+                    alert("WhatsApp is not installed on your device");
+                } else {
+                    return Linking.openURL(url);
+                }
+            })
+            .catch((err) => console.error("Error occurred", err));
+    };
+
     return <ScrollView style={styles.container}>
         <View
             style={{
@@ -24,7 +39,10 @@ const StaticContentScreen = ({ title, content, secContent }) => {
         </View>
         <View>
             <Text style={styles.headerText}>{title}</Text>
-            <Text style={styles.contentText}>{content}</Text>
+            <Text style={styles.contentText}>{content}
+            {linkUrl && linkUrlText && <Pressable onPress={() => openWhatsApp()}>
+                <Text style={styles.whatsText}>{linkUrlText}</Text>
+            </Pressable>}</Text>
             {secContent && <Text style={styles.contentText}>{secContent}</Text>}
         </View>
     </ScrollView>
@@ -55,5 +73,10 @@ const styles = StyleSheet.create({
         padding: 10,
         fontSize: 13,
         fontFamily: "CairoMed"
+    },
+    whatsText: {
+        color: "green",
+        fontFamily: "CairoBold",
+        paddingHorizontal: 15,
     }
 });

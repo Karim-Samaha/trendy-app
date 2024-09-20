@@ -269,8 +269,8 @@ const CartScreen = () => {
         </>}
       </View>
       <View style={styles.cartInfoRow}>
-        <Text style={styles.lightBoldTxt}>{CartLocales['ar'].totalNoVat} : </Text>
-        <Text style={styles.boldTxt}>{renderTotalPrice.totalBeforeVat} رس</Text>
+        <Text style={styles.lightBoldTxt}>{CartLocales['ar'].totalNoVat} ({cart.length} {CartLocales['ar'].product}): </Text>
+        <Text style={styles.secboldTxt}>{renderTotalPrice.totalBeforeVat} رس</Text>
       </View>
       {couponResponse?.precent &&
         <View style={styles.cartInfoRow}>
@@ -278,24 +278,35 @@ const CartScreen = () => {
           <Text style={styles.boldTxt}>{renderTotalPrice.deductedAmount} رس</Text>
         </View>
       }
-      <View style={styles.cartInfoRow}>
+      {/* <View style={styles.cartInfoRow}>
         <Text style={styles.seclightBoldTxt}>{CartLocales['ar'].totalToApplyVat} : </Text>
         <Text style={styles.secboldTxt}>{renderTotalPrice.totalBeforeVat} رس</Text>
-      </View>
+      </View> */}
       <View style={styles.cartInfoRow}>
-        <Text style={styles.seclightBoldTxt}>{CartLocales['ar'].vatText} (15%) : </Text>
+        <Text style={styles.seclightBoldTxt}>{CartLocales['ar'].vatText}</Text>
         <Text style={styles.secboldTxt}>{renderTotalPrice.vat} رس</Text>
       </View>
       <View style={styles.cartInfoRow}>
-        <Text style={styles.seclightBoldTxt}>{CartLocales['ar'].shippingCost} : </Text>
-        <Text style={styles.secboldTxt}>0 رس</Text>
+        <Text style={styles.secboldTxt}>{CartLocales['ar'].shippingCost}</Text>
+        {/* <Text style={styles.secboldTxt}>0 رس</Text> */}
       </View>
       <View style={styles.cartInfoRow}>
-        <Text style={styles.seclightBoldTxt}>{CartLocales['ar'].totalPlusVat}  : </Text>
-        <Text style={styles.secboldTxt}>{renderTotalPrice.fintalTotal} رس</Text>
+        <Text style={{ ...styles.secboldTxt, color: "rgb(85, 168, 185)" }}>{CartLocales['ar'].details}</Text>
+      </View>
+      {renderTotalPrice?.giftCards?.length && <View style={styles.cartInfoRow}>
+        <Text style={styles.seclightBoldTxt}>{CartLocales['ar'].totalAdds}</Text>
+        <Text style={styles.secboldTxt}>{renderTotalPrice.giftCards} رس</Text>
+      </View>}
+      {renderTotalPrice?.cards?.length && <View style={styles.cartInfoRow}>
+        <Text style={styles.seclightBoldTxt}>{CartLocales['ar'].totalCards}</Text>
+        <Text style={styles.secboldTxt}>{renderTotalPrice.cards} رس</Text>
+      </View>}
+      <View style={styles.cartInfoRow}>
+        <Text style={styles.seclightBoldTxt}>{CartLocales['ar'].totalProducts}</Text>
+        <Text style={styles.secboldTxt}>{renderTotalPrice.fintalTotalWithNoAdds} رس</Text>
       </View>
       <View style={styles.cartInfoRow}>
-        <Text style={styles.seclightBoldTxt}>{CartLocales['ar'].total}  : </Text>
+        <Text style={styles.seclightBoldTxt}>{CartLocales['ar'].total}</Text>
         <Text style={styles.secboldTxt}>{renderTotalPrice.fintalTotal} رس</Text>
       </View>
       {checkoutModal && <PaymentDialog show={true}
@@ -496,11 +507,15 @@ const styles = StyleSheet.create({
     fontFamily: "CairoMed"
   },
   cartInfoRow: {
-    paddingHorizontal: 10,
+    marginHorizontal: 10,
     paddingVertical: 6,
+    paddingRight: 20,
     flexDirection: "row",
     alignItems: "center",
-    flexDirection: "row-reverse"
+    justifyContent: "space-between",
+    flexDirection: "row-reverse",
+    borderBottomColor:"rgba(226,232,240,.7)",
+    borderBottomWidth: 1
   },
   screenScrollView: {
     marginTop: 0,
@@ -608,7 +623,9 @@ const styles = StyleSheet.create({
   },
   secboldTxt: {
     fontSize: 14,
-    fontFamily: "CairoBold"
+    fontFamily: "CairoBold",
+    textAlign: "center",
+    minWidth: 100
   },
   seclightBoldTxt: {
     fontSize: 14,
