@@ -41,7 +41,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
         { val: "silver", text: "فضي" },
         { val: "#FFD700", text: "ذهبي" },
     ];
-
+    const [addressInputHeight, setAddressInputHeight] = useState(48); 
     const [formValue, setFormValue] = useState({
         type: formType,
         deliveryDate: "",
@@ -290,6 +290,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
                         setErrors((prev) => ({ ...prev, phone: false }))
                         setFormValue(prev => ({ ...prev, phone: e }))
                     }}
+                    placeholder="رقم الجوال"
                 />
                 {errors.phone && <Text style={styles.error}>{ProductForm['ar'].phoneError}</Text>}
             </View>
@@ -312,13 +313,20 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
 
             {formValue.addressSelected && <View style={styles.inputContainer}>
                 <Text style={styles.label}>{ProductForm['ar'].address}</Text>
-                <TextInput style={styles.input}
+                <TextInput style={{...styles.input, height: addressInputHeight, textAlignVertical: 'top', maxHeight: 150}}
                     value={formValue.address}
                     onChangeText={e => {
                         setFormValue(prev => ({ ...prev, address: e }))
                         setErrors((prev) => ({ ...prev, address: false }));
                     }
-                    } />
+                    }
+                    numberOfLines={10}
+                    multiline={true}
+                    onContentSizeChange={(event) => 
+                        setAddressInputHeight(event.nativeEvent.contentSize.height)
+                      }
+                    placeholder={"يفضل كتابة العنوان مختصر"}
+                />
                 {errors.address && formValue.addressSelected && < Text style={styles.error}>
                     {ProductForm['ar'].addressError}
                 </Text>}

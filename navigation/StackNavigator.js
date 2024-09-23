@@ -38,6 +38,8 @@ const fetchFonts = () => {
 const StackNavigator = () => {
 
   const { login } = useSelector((state) => state.user)
+  const cart = useSelector((state) => state.cart.cart);
+
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
   const dispatch = useDispatch();
@@ -88,9 +90,18 @@ const StackNavigator = () => {
             headerTintColor: "#fff",
             tabBarIcon: ({ focused }) =>
               focused ? (
-                <AntDesign name="shoppingcart" size={24} color="#008E97" />
-              ) : (
+                <>
+                  {cart.length > 0 ? <View style={styles.cartNumContainer}>
+                    <Text style={styles.cartNum}>{cart.length}</Text>
+                  </View> : null}
+                  <AntDesign name="shoppingcart" size={24} color="#008E97" />
+                </>
+              ) : (<>
+                {cart.length > 0 ? <View style={styles.cartNumContainer}>
+                  <Text style={styles.cartNum}>{cart.length}</Text>
+                </View> : null}
                 <AntDesign name="shoppingcart" size={24} color="black" />
+              </>
               ),
           }}
         />
@@ -190,7 +201,7 @@ const StackNavigator = () => {
             },
           }}
         />
-    
+
         <Stack.Screen
           name="Main"
           component={BottomTabs}
@@ -248,9 +259,9 @@ const StackNavigator = () => {
             title: 'تفاصيل المنتج',
             headerTintColor: "#fff",
           }} />
-      
-      
-    
+
+
+
         <Stack.Screen
           name="OrderHistory"
           component={OrderHistory}
@@ -383,4 +394,21 @@ const StackNavigator = () => {
 
 export default StackNavigator;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  cartNumContainer: {
+    backgroundColor: "#55a8b9",
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+    right: 5,
+    top: 5
+  },
+  cartNum: {
+    color: "#fff",
+
+  }
+
+});

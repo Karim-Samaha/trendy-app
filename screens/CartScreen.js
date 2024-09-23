@@ -321,7 +321,58 @@ const CartScreen = () => {
 
       <View style={styles.shippingContainer}>
         <Text style={styles.header}>{CartLocales['ar'].shippingHeader} </Text>
-        {options.map((option) => (
+        {deleviryMethods && deleviryMethods?.find((item) => item?.id === 1)?.active && <TouchableOpacity
+          key={1}
+          style={[
+            styles.option,
+            selectedOption === 1 && styles.selectedOption,
+          ]}
+          onPress={() => setSelectedOption(1)}
+        >
+          <Text
+            style={[
+              styles.optionText,
+              selectedOption === 1 && styles.selectedOptionText,
+            ]}
+          >
+            {options[0]?.text}
+          </Text>
+        </TouchableOpacity>}
+        {deleviryMethods && deleviryMethods?.find((item) => item?.id === 2)?.active && <TouchableOpacity
+          key={2}
+          style={[
+            styles.option,
+            selectedOption === 2 && styles.selectedOption,
+          ]}
+          onPress={() => setSelectedOption(2)}
+        >
+          <Text
+            style={[
+              styles.optionText,
+              selectedOption === 2 && styles.selectedOptionText,
+            ]}
+          >
+            {options[1]?.text}
+          </Text>
+        </TouchableOpacity>}
+        {deleviryMethods && deleviryMethods?.find((item) => item?.id === 3)?.active && <TouchableOpacity
+          key={3}
+          style={[
+            styles.option,
+            selectedOption === 3 && styles.selectedOption,
+          ]}
+          onPress={() => setSelectedOption(3)}
+        >
+          <Text
+            style={[
+              styles.optionText,
+              selectedOption === 3 && styles.selectedOptionText,
+            ]}
+          >
+            {options[2]?.text}
+          </Text>
+        </TouchableOpacity>}
+        {/* {options.map((option) => (
           <TouchableOpacity
             key={option.id}
             style={[
@@ -339,11 +390,11 @@ const CartScreen = () => {
               {option.text}
             </Text>
           </TouchableOpacity>
-        ))}
-        {selectedOption === '3' && <StoreDeleiverForm storeDeleviryData={storeDeleviryData} setStoreDeleviryData={setStoreDeleviryData} />}
+        ))} */}
+        {selectedOption === 3 && <StoreDeleiverForm storeDeleviryData={storeDeleviryData} setStoreDeleviryData={setStoreDeleviryData} />}
       </View>
       {user ?
-        (selectedOption !== '3' || selectedOption === '3' && storeDeleviryData.valid) &&
+        (selectedOption !== 3 || selectedOption === 3 && storeDeleviryData.valid) &&
         <Pressable
           // onPress={() => navigation.navigate("Confirm")}
           style={styles.checkoutBtn}
@@ -514,7 +565,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     flexDirection: "row-reverse",
-    borderBottomColor:"rgba(226,232,240,.7)",
+    borderBottomColor: "rgba(226,232,240,.7)",
     borderBottomWidth: 1
   },
   screenScrollView: {
