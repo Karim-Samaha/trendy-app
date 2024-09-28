@@ -634,7 +634,7 @@ const styles = StyleSheet.create({
   },
   qty: {
     fontFamily: "CairoBold",
-    marginBottom: 5
+    marginBottom: 5,
   },
   decrease: {
     backgroundColor: "#55a8b9",
@@ -645,8 +645,8 @@ const styles = StyleSheet.create({
   delete: {
     backgroundColor: "#D8D8D8",
     padding: 7,
-    borderTopLeftRadius: 6,
-    borderBottomLeftRadius: 6,
+    borderTopRightRadius: 6,
+    borderBottomRightRadius: 6,
   },
   secDelete: {
     backgroundColor: "white",

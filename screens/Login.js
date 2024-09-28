@@ -303,7 +303,7 @@ const Login = () => {
                             <AntDesign name="back" size={24} color="black" />
                         </Pressable> */}
                         <Text>{LoginLocal['ar'].phone}</Text>
-                        <TextInput style={styles.input} value={loginForm.username} placeholder="966"
+                        <TextInput style={styles.input} value={loginForm.username} placeholder="05"
                             onChangeText={(e) => {
                                 setLoginInForm((prev) => ({ ...prev, username: e }))
                                 setError("")
@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: "#55a8b9",
         borderRadius: 18,
-        width: "95%",
+        width: "100%",
         flex: 1,
     },
     secBtn: {
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
         borderColor: "#55a8b9",
         borderWidth: 1,
         borderRadius: 18,
-        width: "95%",
+        width: "100%",
         flex: 1,
         marginTop: 10
     },
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: "#55a8b9",
         borderRadius: 18,
-        width: "95%",
+        width: "100%",
         flex: 1,
     },
     error: {
