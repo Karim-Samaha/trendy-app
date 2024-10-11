@@ -137,7 +137,7 @@ const HomeScreen = () => {
   }
   const scrollViewStyle = (list) => {
     if (list.length > 3) {
-      return { flexDirection: "row-reverse" }
+      return { flexDirection: "row-reverse", width: `${(list.length / 2.9 * 100)}%`  }
     } else {
       return { flexDirection: "row-reverse", minWidth: "100%" }
     }
@@ -168,7 +168,7 @@ const HomeScreen = () => {
               {HomeLocales['ar'].categoires}
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
-              flexDirection: "row-reverse"
+              flexDirection: "row-reverse",
             }}
               onContentSizeChange={scrollToEnd}
               ref={categoryRef}

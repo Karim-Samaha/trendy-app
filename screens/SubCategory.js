@@ -6,23 +6,10 @@ import {
     Platform,
     ScrollView,
     Pressable,
-    TextInput,
-    Image,
-    Button,
-    TouchableOpacity
 } from "react-native";
-import React, { useState, useEffect, useCallback, useContext, useRef, useLayoutEffect } from "react";
-import { Feather } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import axios from "axios";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserType } from "../UserContext";
-import jwt_decode from "jwt-decode";
 import { config } from "./config";
 import Product from "../components/Product";
 import Search from "../components/Search";
@@ -51,7 +38,7 @@ const SubCategorie = () => {
     }
     const fetchCategoryAllProducts = async () => {
         const categoryId = await route.params?.item?._id
-        const response = await axios.get(`${config.backendUrl}/category/${categoryId}/all-products?limit=${limit}&channel=web`)
+        const response = await axios.get(`${config.backendUrl}/category/${categoryId}/all-products?limit=200&channel=web`)
         let setObj = new Set(response.data.data.map(JSON.stringify));
         let output = Array.from(setObj).map(JSON.parse);
         let active = output.filter((item) => item.active)
@@ -61,7 +48,7 @@ const SubCategorie = () => {
 
     const fetchSubCategory = async () => {
         const categoryId = await route.params?.item?._id
-        const response = await axios.get(`${config.backendUrl}/subcategory?ctg=${categoryId}&limit=${limit}`)
+        const response = await axios.get(`${config.backendUrl}/subcategory?ctg=${categoryId}&limit=200`)
         console.log("!!!")
 
         setSubCategories(response.data.data.reverse())
@@ -69,7 +56,7 @@ const SubCategorie = () => {
 
     const fetchSubCategoryProducts = async () => {
         const subCategoryId = currentSubId
-        const response = await axios.get(`${config.backendUrl}/subcategory/${subCategoryId}?limit=${limit}`)
+        const response = await axios.get(`${config.backendUrl}/subcategory/${subCategoryId}?limit=200`)
         setProducts(response.data.data.productList.reverse())
         setProductLoaded(true)
     }
@@ -156,13 +143,13 @@ const SubCategorie = () => {
                             </Text>
                             : null}
                     </View>
-                    {productLoaded && products.length >= 8 && <View style={{ alignItems: "center" }}>
+                    {/* {productLoaded && products.length >= 8 && <View style={{ alignItems: "center" }}>
                         <TouchableOpacity style={styles.moreBtn} onPress={requestMore}>
                             <Text style={styles.moreText}>
                                 {subCategorisLocal['ar'].more}
                             </Text>
                         </TouchableOpacity>
-                    </View>}
+                    </View>} */}
                 </View>
             </ScrollView>
         </SafeAreaView >
