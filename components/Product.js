@@ -30,8 +30,7 @@ const Product = ({ item, containerStyle, twoCell, handleAddToCart }) => {
         <Image
             style={{ ...styles.image, height: containerStyle?.width || 120 }}
             source={{
-                uri: imageHasError ? "https://picsum.photos/200/300" :
-                    `${config.assetsUrl}/${item?.image}`
+                uri: `${config.assetsUrl}/${item?.image}`
             }}
             onError={() => setImageHasError(true)}
 
