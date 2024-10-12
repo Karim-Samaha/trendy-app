@@ -1,4 +1,4 @@
-import { View, Pressable, Image, Text, StyleSheet } from "react-native"
+import { View, Pressable, Image, Text, StyleSheet, Dimensions } from "react-native"
 import { useNavigation } from "@react-navigation/native";
 import { config } from "../screens/config";
 import { useState } from "react";
@@ -7,6 +7,8 @@ import { ProductLocal } from "../constants/Locales";
 const Product = ({ item, containerStyle, twoCell, handleAddToCart }) => {
     const navigation = useNavigation();
     const [imageHasError, setImageHasError] = useState(false)
+    const { width, height } = Dimensions.get('window')
+
     return <Pressable
         onPress={() =>
             navigation.navigate("Info", {
@@ -22,7 +24,7 @@ const Product = ({ item, containerStyle, twoCell, handleAddToCart }) => {
         }
         style={{
             ...styles.container, marginHorizontal: twoCell ? "2.5%" : 10,
-            width: twoCell ? "45%" : "6%",
+            width: twoCell ? "45%" : width * 0.33,
         }}
     >
         <Image

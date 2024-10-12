@@ -137,7 +137,7 @@ const HomeScreen = () => {
   }
   const scrollViewStyle = (list) => {
     if (list.length > 3) {
-      return { flexDirection: "row-reverse", width: `${(list.length / 2.75 * 100)}%`  }
+      return { flexDirection: "row-reverse" }
     } else {
       return { flexDirection: "row-reverse", minWidth: "100%" }
     }
@@ -216,9 +216,12 @@ const HomeScreen = () => {
                 {sections["1"]?.categoryName}
               </Text>
 
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={scrollViewStyle(sections["1"]?.productsList)}
+              <ScrollView horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={scrollViewStyle(sections["1"]?.productsList)}
                 onContentSizeChange={scrollToEnd}
                 ref={sectionOneRef}
+
               >
                 {sections["1"]?.productsList?.map((item, index) => (
                   <Product item={item} key={item.id} />
