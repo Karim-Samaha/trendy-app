@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../screens/HomeScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Entypo } from "@expo/vector-icons";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import ProductInfoScreen from "../screens/ProductInfoScreen";
@@ -66,9 +67,15 @@ const StackNavigator = () => {
   }, [])
 
   if (!fontsLoaded) return null
+  const screenOptions = {
+    tabBarStyle:{
+      height:60,
+    },
+ 
+  };
   function BottomTabs() {
     return (
-      <Tab.Navigator initialRouteName={'Home'}>
+      <Tab.Navigator initialRouteName={'Home'} {...{ screenOptions }}>
         <Tab.Screen
           name="Cart"
           component={CartScreen}
@@ -76,6 +83,7 @@ const StackNavigator = () => {
             tabBarLabel: "السلة",
             tabBarLabelStyle: {
               color: "#008E97", fontFamily: "CairoBold",
+              marginBottom: 5
             },
             headerTitleStyle: {
               fontFamily: "CairoMed"
@@ -112,6 +120,8 @@ const StackNavigator = () => {
             tabBarLabel: "حسابي",
             tabBarLabelStyle: {
               color: "#008E97", fontFamily: "CairoBold",
+              marginBottom: 5
+
             }, headerShown: true,
             headerStyle: {
               backgroundColor: '#55a8b9',
@@ -138,6 +148,7 @@ const StackNavigator = () => {
             tabBarLabel: "التصنيفات",
             tabBarLabelStyle: {
               color: "#008E97", fontFamily: "CairoBold",
+              marginBottom: 5
             }, headerShown: true,
             headerStyle: {
               backgroundColor: '#55a8b9',
@@ -150,9 +161,10 @@ const StackNavigator = () => {
             headerTintColor: "#fff",
             tabBarIcon: ({ focused }) =>
               focused ? (
-                <Entypo name="home" size={24} color="#008E97" />
+                <Entypo name="list" size={24} color="#008E97" />
+
               ) : (
-                <AntDesign name="home" size={24} color="black" />
+                <Entypo name="list" size={24} color="black" />
               ),
           }}
         />
@@ -163,6 +175,8 @@ const StackNavigator = () => {
             tabBarLabel: "الرئيسية",
             tabBarLabelStyle: {
               color: "#008E97", fontFamily: "CairoBold",
+              marginBottom: 5
+
             }, headerShown: true,
             headerStyle: {
               backgroundColor: '#55a8b9',
