@@ -137,7 +137,7 @@ const HomeScreen = () => {
   }
   const scrollViewStyle = (list) => {
     if (list.length > 3) {
-      return { flexDirection: "row-reverse", width: `${(list.length / 2.9 * 100)}%`  }
+      return { flexDirection: "row-reverse", width: `${(list.length / 2.75 * 100)}%`  }
     } else {
       return { flexDirection: "row-reverse", minWidth: "100%" }
     }
