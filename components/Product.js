@@ -105,23 +105,27 @@ const styles = StyleSheet.create({
     price: {
         fontSize: 14,
         fontFamily: "CairoBold",
-        paddingHorizontal: 5
+        paddingHorizontal: 5,
+        color: "#55a8b9"
     },
     priceBeforeContainer: {
         backgroundColor: "#FDFDFD",
         paddingVertical: 5,
-        width: 100,
+        width: 70,
         justifyContent: "center",
         alignItems: "center",
         marginTop: 10,
         borderRadius: 11,
         borderWidth: 1,
-        borderColor: "#55a8b9"
+        borderColor: "#55a8b9",
+        position: "absolute",
+        top: "-2%",
+        right: "4%"
     },
     precent: {
         textAlign: "center",
         color: "#55a8b9",
-        fontSize: 13,
+        fontSize: 11,
         fontWeight: "bold",
     },
     addToCartText: {
