@@ -1,183 +1,201 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    StyleSheet,
-    Modal,
-} from 'react-native';
-import { config } from '../screens/config';
-import { getUser } from '../Utils/helpers';
-import _axios from '../Utils/axios';
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  Platform,
+} from "react-native";
+import { config } from "../screens/config";
+import { getUser } from "../Utils/helpers";
+import _axios from "../Utils/axios";
 import { Feather } from "@expo/vector-icons";
-import { ReviewLocal } from '../constants/Locales';
+import { ReviewLocal } from "../constants/Locales";
 const ReviewModal = ({ isModalVisible, toggleModal, id }) => {
+  const [submited, setSubmited] = useState(false);
+  const [formValue, setFormValue] = useState({
+    productReview: "",
+    storeReview: "",
+    productRate: 1,
+    storeRate: 1,
+  });
+  const handleProductRate = (num) => {
+    setFormValue((prev) => ({ ...prev, productRate: num }));
+  };
+  const handleStoreRate = (num) => {
+    setFormValue((prev) => ({ ...prev, storeRate: num }));
+  };
+  const textType = (field, val) => {
+    setFormValue((prev) => ({ ...prev, [field]: val }));
+  };
+  const submitReview = async () => {
+    const user = await getUser();
+    _axios
+      .post(
+        `${config.backendUrl}/reviews/${id}?channel=web`,
+        {
+          storeReview: formValue.storeReview,
+          storeRating: formValue.storeRate,
+          productReview: formValue.productReview,
+          productRating: formValue.storeRate,
+        },
+        { user }
+      )
+      .then((res) => setSubmited(true))
+      .catch((err) => console.log(err));
+  };
+  const renderStars = (rating, setRating) => {
+    return (
+      <View style={styles.starsContainer}>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <TouchableOpacity key={index} onPress={() => setRating(index + 1)}>
+            <Text style={styles.star}>{index < rating ? "★" : "☆"}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
 
-    const [submited, setSubmited] = useState(false);
-    const [formValue, setFormValue] = useState({
-        productReview: "",
-        storeReview: "",
-        productRate: 1,
-        storeRate: 1,
-    });
-    const handleProductRate = (num) => {
-        setFormValue((prev) => ({ ...prev, productRate: num }))
-    }
-    const handleStoreRate = (num) => {
-        setFormValue((prev) => ({ ...prev, storeRate: num }))
-    }
-    const textType = (field, val) => {
-        setFormValue((prev) => ({ ...prev, [field]: val }))
-    }
-    const submitReview = async () => {
-        const user = await getUser()
-        _axios.post(
-            `${config.backendUrl}/reviews/${id}?channel=web`,
-            {
-                storeReview: formValue.storeReview,
-                storeRating: formValue.storeRate,
-                productReview: formValue.productReview,
-                productRating: formValue.storeRate,
-            },
-            { user }
-        )
-            .then((res) => setSubmited(true))
-            .catch((err) => console.log(err));
-    };
-    const renderStars = (rating, setRating) => {
-        return (
-            <View style={styles.starsContainer}>
-                {Array.from({ length: 5 }).map((_, index) => (
-                    <TouchableOpacity
-                        key={index}
-                        onPress={() => setRating(index + 1)}
-                    >
-                        <Text style={styles.star}>{index < rating ? '★' : '☆'}</Text>
-                    </TouchableOpacity>
-                ))}
-            </View>
-        );
-    };
-
-    return <Modal isVisible={isModalVisible}>
-        {submited ? <View style={styles.modalContent}>
-            <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-                <Text style={styles.closeText}>×</Text>
-            </TouchableOpacity>
-            <View style={styles.success}>
-                <Feather name="check-circle" size={40} color="green" style={{ marginTop: 12 }} />
-                <Text style={styles.successText}>{ReviewLocal['ar'].success}</Text>
-            </View>
-        </View> : <View style={styles.modalContent}>
-            <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-                <Text style={styles.closeText}>×</Text>
-            </TouchableOpacity>
-            <View style={styles.formGroup}>
-                <Text style={styles.label}>{ReviewLocal['ar'].reviewProductHeader}</Text>
-                <TextInput
-                    placeholder="تقييم المنتج"
-                    style={styles.input}
-                    onChangeText={e => textType('productReview', e)}
-                    value={formValue.productReview}
-                />
-                <Text style={styles.subLabel}>{ReviewLocal['ar'].reviewProduct}</Text>
-                {renderStars(formValue.productRate, handleProductRate)}
-            </View>
-            <View style={styles.formGroup}>
-                <Text style={styles.label}>{ReviewLocal['ar'].storeReviewHeader}</Text>
-                <TextInput
-                    placeholder="تقييم الموقع"
-                    style={styles.input}
-                    onChangeText={e => textType('storeReview', e)}
-                    value={formValue.storeReview}
-                />
-                <Text style={styles.subLabel}>{ReviewLocal['ar'].reviewStore}</Text>
-                {renderStars(formValue.storeRate, handleStoreRate)}
-            </View>
-            <TouchableOpacity style={styles.submitButton} onPress={submitReview}>
-                <Text style={styles.submitButtonText}>{ReviewLocal['ar'].submit}</Text>
-            </TouchableOpacity>
-        </View>}
+  return (
+    <Modal isVisible={isModalVisible}>
+      <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
+        <Text style={styles.closeText}>×</Text>
+      </TouchableOpacity>
+      {submited ? (
+        <View style={styles.modalContent}>
+          <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
+            <Text style={styles.closeText}>×</Text>
+          </TouchableOpacity>
+          <View style={styles.success}>
+            <Feather
+              name="check-circle"
+              size={40}
+              color="green"
+              style={{ marginTop: 12 }}
+            />
+            <Text style={styles.successText}>{ReviewLocal["ar"].success}</Text>
+          </View>
+        </View>
+      ) : (
+        <View style={styles.modalContent}>
+          <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
+            <Text style={styles.closeText}>×</Text>
+          </TouchableOpacity>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>
+              {ReviewLocal["ar"].reviewProductHeader}
+            </Text>
+            <TextInput
+              placeholder="تقييم المنتج"
+              style={styles.input}
+              onChangeText={(e) => textType("productReview", e)}
+              value={formValue.productReview}
+            />
+            <Text style={styles.subLabel}>
+              {ReviewLocal["ar"].reviewProduct}
+            </Text>
+            {renderStars(formValue.productRate, handleProductRate)}
+          </View>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>
+              {ReviewLocal["ar"].storeReviewHeader}
+            </Text>
+            <TextInput
+              placeholder="تقييم الموقع"
+              style={styles.input}
+              onChangeText={(e) => textType("storeReview", e)}
+              value={formValue.storeReview}
+            />
+            <Text style={styles.subLabel}>{ReviewLocal["ar"].reviewStore}</Text>
+            {renderStars(formValue.storeRate, handleStoreRate)}
+          </View>
+          <TouchableOpacity style={styles.submitButton} onPress={submitReview}>
+            <Text style={styles.submitButtonText}>
+              {ReviewLocal["ar"].submit}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </Modal>
+  );
+};
 
-}
-
-export default ReviewModal
+export default ReviewModal;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalContent: {
-        backgroundColor: 'white',
-        padding: 22,
-        borderRadius: 8,
-        borderColor: 'rgba(0, 0, 0, 0.1)',
-    },
-    closeButton: {
-        alignSelf: 'flex-start',
-    },
-    closeText: {
-        fontSize: 24,
-        color: '#000',
-    },
-    formGroup: {
-        marginBottom: 20,
-    },
-    label: {
-        fontSize: 16,
-        fontFamily: "CairoBold",
-        marginBottom: 8,
-    },
-    subLabel: {
-        fontSize: 16,
-        marginTop: 8,
-        marginBottom: 4,
-        fontFamily: "CairoMed"
-
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        padding: 10,
-        fontSize: 14,
-        textAlign: 'right',
-        fontFamily: "CairoMed"
-
-    },
-    starsContainer: {
-        flexDirection: 'row-reverse',
-        justifyContent: 'flex-start',
-    },
-    star: {
-        fontSize: 24,
-        marginHorizontal: 2,
-        color: '#FFD700', // Gold color for the stars
-    },
-    submitButton: {
-        backgroundColor: '#55a8b9',
-        padding: 15,
-        borderRadius: 8,
-        alignItems: 'center',
-    },
-    submitButtonText: {
-        color: 'white',
-        fontSize: 14,
-        fontFamily: "CairoBold"
-
-    },
-    success: {
-        alignItems: "center",
-        marginTop: 50
-    },
-    successText: {
-        color: "green",
-        fontSize: 22,
-        marginTop: 50,
-        fontFamily: "CairoMed"
-    }
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 22,
+    borderRadius: 8,
+    borderColor: "rgba(0, 0, 0, 0.1)",
+  },
+  closeButton: {
+    alignSelf: "flex-start",
+  },
+  closeText: {
+    fontSize: 24,
+    color: "#000",
+  },
+  formGroup: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontFamily: "CairoBold",
+    marginBottom: 8,
+    textAlign: Platform.OS === "ios" && "right",
+  },
+  subLabel: {
+    fontSize: 16,
+    marginTop: 8,
+    marginBottom: 4,
+    fontFamily: "CairoMed",
+    textAlign: Platform.OS === "ios" && "right",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    padding: 10,
+    fontSize: 14,
+    textAlign: "right",
+    fontFamily: "CairoMed",
+  },
+  starsContainer: {
+    flexDirection: "row-reverse",
+    justifyContent: "flex-start",
+  },
+  star: {
+    fontSize: 24,
+    marginHorizontal: 2,
+    color: "#FFD700", // Gold color for the stars
+  },
+  submitButton: {
+    backgroundColor: "#55a8b9",
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  submitButtonText: {
+    color: "white",
+    fontSize: 14,
+    fontFamily: "CairoBold",
+  },
+  success: {
+    alignItems: "center",
+    marginTop: 50,
+  },
+  successText: {
+    color: "green",
+    fontSize: 22,
+    marginTop: 50,
+    fontFamily: "CairoMed",
+  },
 });

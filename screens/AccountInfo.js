@@ -1,199 +1,225 @@
 import {
-    StyleSheet,
-    Text,
-    View,
-    ScrollView,
-    Pressable,
-    TextInput,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Pressable,
+  TextInput,
+  Platform,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import _axios from "../Utils/axios";
 import { config } from "./config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Ionicons from '@expo/vector-icons/Ionicons';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import Entypo from '@expo/vector-icons/Entypo';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Ionicons from "@expo/vector-icons/Ionicons";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Entypo from "@expo/vector-icons/Entypo";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Search from "../components/Search";
 import { AccountLocales } from "../constants/Locales";
 const AccountInfo = () => {
-    const [form, setForm] = useState({
-        name: "",
-        email: "",
-        address: "",
-        phone: "",
-    });
-    const [updated, setUpdated] = useState({});
-    const [user, setUser] = useState({});
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    address: "",
+    phone: "",
+  });
+  const [updated, setUpdated] = useState({});
+  const [user, setUser] = useState({});
 
-    const fetchUserInfo = async () => {
-        const user = await AsyncStorage.getItem(("user"))
-        if (user) {
-            let parsedUser = JSON.parse(user)
-            setUser(parsedUser)
-            try {
-                const response = await _axios.post(`${config.backendUrl}/user/get-user-info`,
-                    {}, { parsedUser })
-                setForm({
-                    name: response.data.data?.name || "",
-                    email: response.data.data?.email || "",
-                    address: response.data.data?.address || "",
-                    phone: response.data?.data.phone || "",
-                });
-                console.log({ response })
-            } catch (err) {
-                console.log(err)
-            }
-        }
+  const fetchUserInfo = async () => {
+    const user = await AsyncStorage.getItem("user");
+    if (user) {
+      let parsedUser = JSON.parse(user);
+      setUser(parsedUser);
+      try {
+        const response = await _axios.post(
+          `${config.backendUrl}/user/get-user-info`,
+          {},
+          { parsedUser }
+        );
+        setForm({
+          name: response.data.data?.name || "",
+          email: response.data.data?.email || "",
+          address: response.data.data?.address || "",
+          phone: response.data?.data.phone || "",
+        });
+        console.log({ response });
+      } catch (err) {
+        console.log(err);
+      }
     }
-    useEffect(() => {
-        fetchUserInfo()
-    }, []);
-    const handleSubmit = async () => {
-        await _axios
-            .post(
-                `${config.backendUrl}/user/update-info`,
-                form,
-                //@ts-ignore
-                { user }
-            )
-            .then((res) => {
-                setUpdated(res.data);
-            })
-            .catch((err) => setErr(true));
-    };
+  };
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
+  const handleSubmit = async () => {
+    await _axios
+      .post(
+        `${config.backendUrl}/user/update-info`,
+        form,
+        //@ts-ignore
+        { user }
+      )
+      .then((res) => {
+        setUpdated(res.data);
+      })
+      .catch((err) => setErr(true));
+  };
 
+  return (
+    <>
+      {/* <Search /> */}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ marginTop: 0, paddingTop: 80 }}
+      >
+        <View style={styles.container}>
+          <Text style={styles.headerTxt}>
+            {AccountLocales["ar"].accountDetails}
+            {`  `}
+            <FontAwesome5 name="info-circle" size={24} color="silver" />
+          </Text>
+          <View style={styles.formContainer}>
+            <View style={styles.inputContainer}>
+              <View style={styles.inputHeaderContainer}>
+                <MaterialCommunityIcons
+                  name="rename-box"
+                  size={24}
+                  color="silver"
+                />
+                <Text style={styles.inputlLabelTxt}>
+                  {AccountLocales["ar"].name}
+                </Text>
+              </View>
+              <TextInput
+                style={styles.input}
+                value={form.name}
+                onChangeText={(e) => setForm((prev) => ({ ...prev, name: e }))}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <View style={styles.inputHeaderContainer}>
+                <MaterialIcons name="email" size={24} color="silver" />
+                <Text style={styles.inputlLabelTxt}>
+                  {AccountLocales["ar"].email}
+                </Text>
+              </View>
+              <TextInput
+                style={styles.input}
+                value={form.email}
+                onChangeText={(e) => setForm((prev) => ({ ...prev, email: e }))}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <View style={styles.inputHeaderContainer}>
+                <Entypo name="address" size={24} color="silver" />
+                <Text style={styles.inputlLabelTxt}>
+                  {AccountLocales["ar"].address}
+                </Text>
+              </View>
+              <TextInput
+                style={styles.input}
+                value={form.address}
+                onChangeText={(e) =>
+                  setForm((prev) => ({ ...prev, address: e }))
+                }
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <View style={styles.inputHeaderContainer}>
+                <AntDesign name="phone" size={24} color="silver" />
+                <Text style={styles.inputlLabelTxt}>
+                  {AccountLocales["ar"].phone}
+                </Text>
+              </View>
+              <TextInput
+                style={styles.input}
+                value={form.phone}
+                onChangeText={(e) => setForm((prev) => ({ ...prev, phone: e }))}
+              />
+            </View>
+          </View>
+          {updated?.status === "success" && (
+            <View style={styles.inputHeaderContainer}>
+              <AntDesign name="checkcircle" size={24} color="green" />
+              <Text style={styles.successTxt}>
+                {AccountLocales["ar"].success}
+              </Text>
+            </View>
+          )}
 
-    return (
-        <>
-            {/* <Search /> */}
-            <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 0, paddingTop: 80 }}>
-                <View style={styles.container}>
-                    <Text style={styles.headerTxt}>
-                        {AccountLocales['ar'].accountDetails}
-                        {`  `}
-                        <FontAwesome5 name="info-circle" size={24} color="silver" />
-                    </Text>
-                    <View style={styles.formContainer}>
-                        <View style={styles.inputContainer}>
-                            <View style={styles.inputHeaderContainer}>
-                                <MaterialCommunityIcons name="rename-box" size={24} color="silver" />
-                                <Text style={styles.inputlLabelTxt}>{AccountLocales['ar'].name}
-                                </Text>
-                            </View>
-                            <TextInput style={styles.input} value={form.name}
-                                onChangeText={(e) => setForm(prev => ({ ...prev, name: e }))}
-                            />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <View style={styles.inputHeaderContainer}>
-                                <MaterialIcons name="email" size={24} color="silver" />
-                                <Text style={styles.inputlLabelTxt}>{AccountLocales['ar'].email}
-                                </Text>
-                            </View>
-                            <TextInput style={styles.input} value={form.email}
-                                onChangeText={(e) => setForm(prev => ({ ...prev, email: e }))}
-                            />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <View style={styles.inputHeaderContainer}>
-                                <Entypo name="address" size={24} color="silver" />
-                                <Text style={styles.inputlLabelTxt}>{AccountLocales['ar'].address}
-                                </Text>
-                            </View>
-                            <TextInput style={styles.input} value={form.address}
-                                onChangeText={(e) => setForm(prev => ({ ...prev, address: e }))}
-                            />
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <View style={styles.inputHeaderContainer}>
-                                <AntDesign name="phone" size={24} color="silver" />
-                                <Text style={styles.inputlLabelTxt}>{AccountLocales['ar'].phone}
-                                </Text>
-                            </View>
-                            <TextInput style={styles.input} value={form.phone}
-                                onChangeText={(e) => setForm(prev => ({ ...prev, phone: e }))}
-
-                            />
-                        </View>
-                    </View>
-                    {updated?.status === "success" && <View style={styles.inputHeaderContainer}>
-                        <AntDesign name="checkcircle" size={24} color="green" />
-                        <Text style={styles.successTxt}>{AccountLocales['ar'].success}</Text>
-                    </View>}
-                    <Pressable
-                        onPress={handleSubmit}
-                        style={styles.submitBtn}
-                    >
-                        <View>
-                            <Text style={styles.submitBtnTxt}>{AccountLocales['ar'].save}</Text>
-                        </View>
-                    </Pressable>
-
-                </View>
-            </ScrollView>
-        </>
-    );
+          <Pressable onPress={handleSubmit} style={styles.submitBtn}>
+            <View>
+              <Text style={styles.submitBtnTxt}>
+                {AccountLocales["ar"].save}
+              </Text>
+            </View>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </>
+  );
 };
 
 export default AccountInfo;
 
 const styles = StyleSheet.create({
-    formContainer: {
-        marginTop: 40
-    },
-    inputContainer: {
-        width: "100%",
-
-    },
-    input: {
-        width: "100%",
-        height: 48,
-        borderColor: "#55a8b9",
-        borderWidth: 1,
-        borderRadius: 11,
-        marginTop: 10,
-        marginBottom: 10,
-        padding: 10,
-        textAlign: "right",
-        fontFamily: "CairoMed"
-    },
-    container: {
-        padding: 10
-    },
-    headerTxt: {
-        fontSize: 20,
-        fontWeight: "bold",
-        marginTop: 10
-    },
-    inputHeaderContainer: {
-        display: "flex",
-        alignItems: "center",
-        flexDirection: "row-reverse"
-    },
-    inputlLabelTxt: {
-        marginHorizontal: 10,
-        fontFamily: "CairoMed"
-    },
-    successTxt: {
-        marginHorizontal: 10,
-        color: "green",
-        fontWeight: "bold",
-        fontFamily: "CairoMed"
-    },
-    submitBtn: {
-        backgroundColor: "#55a8b9",
-        padding: 10,
-        borderRadius: 20,
-        justifyContent: "center",
-        alignItems: "center",
-        marginHorizontal: 10,
-        marginVertical: 10,
-    },
-    submitBtnTxt: {
-        color: "#fff",
-        fontFamily: "CairoBold"
-    }
+  formContainer: {
+    marginTop: 40,
+  },
+  inputContainer: {
+    width: "100%",
+  },
+  input: {
+    width: "100%",
+    height: 48,
+    borderColor: "#55a8b9",
+    borderWidth: 1,
+    borderRadius: 11,
+    marginTop: 10,
+    marginBottom: 10,
+    padding: 10,
+    textAlign: "right",
+    fontFamily: "CairoMed",
+  },
+  container: {
+    padding: 10,
+  },
+  headerTxt: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 10,
+    textAlign: Platform.OS === "ios" && "right",
+  },
+  inputHeaderContainer: {
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "row-reverse",
+  },
+  inputlLabelTxt: {
+    marginHorizontal: 10,
+    fontFamily: "CairoMed",
+  },
+  successTxt: {
+    marginHorizontal: 10,
+    color: "green",
+    fontWeight: "bold",
+    fontFamily: "CairoMed",
+  },
+  submitBtn: {
+    backgroundColor: "#55a8b9",
+    padding: 10,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 10,
+    marginVertical: 10,
+  },
+  submitBtnTxt: {
+    color: "#fff",
+    fontFamily: "CairoBold",
+  },
 });
