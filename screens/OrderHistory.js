@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ScrollView, Pressable } from "react-native";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { config } from "./config";
 import _axios from "../Utils/axios";
@@ -8,7 +8,9 @@ import OrderItem from "../components/OrderItem";
 import { useDispatch } from "react-redux";
 import { cleanCart } from "../redux/CartReducer";
 import { OrderLocal } from "../constants/Locales";
+import { LanguageContext } from "../context/langContext";
 const OrderHistory = () => {
+  const { lang } = useContext(LanguageContext)
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 3,
@@ -52,7 +54,7 @@ const OrderHistory = () => {
   useLayoutEffect(() => {
     if (route.params?.callback) {
       navigation.setOptions({
-        title: "تم استلام طلبك",
+        title: lang === "en" ? "Recived you order" : "تم استلام طلبك",
       });
       dispatch(cleanCart());
     }
@@ -60,11 +62,11 @@ const OrderHistory = () => {
 
   return (
     <ScrollView style={styles.scrollView}>
-      <View style={styles.headerContainer}>
+      <View style={{ ...styles.headerContainer, flexDirection: lang === 'en' ? "row" : "row-reverse" }}>
         {route.params?.callback ? (
-          <Text style={styles.headerText}>{OrderLocal["ar"].successOrder}</Text>
+          <Text style={styles.headerText}>{OrderLocal[lang].successOrder}</Text>
         ) : (
-          <Text style={styles.headerText}>{OrderLocal["ar"].header}</Text>
+          <Text style={styles.headerText}>{OrderLocal[lang].header}</Text>
         )}
       </View>
 
@@ -74,19 +76,19 @@ const OrderHistory = () => {
         {route.params?.callback
           ? orders.length > 0
             ? orders
-                ?.slice(0, 1)
-                .map((item, index) => (
-                  <OrderItem item={item} key={item?._id} user={user} />
-                ))
+              ?.slice(0, 1)
+              .map((item, index) => (
+                <OrderItem item={item} key={item?._id} user={user} />
+              ))
             : null
           : orders.length > 0
-          ? orders?.map((item, index) => (
+            ? orders?.map((item, index) => (
               <OrderItem item={item} key={item?._id} user={user} />
             ))
-          : null}
+            : null}
         {!route.params?.callback && (
           <Pressable style={styles.more} onPress={hangleShowMore}>
-            <Text style={styles.showMoreText}>{OrderLocal["ar"].showMore}</Text>
+            <Text style={styles.showMoreText}>{OrderLocal[lang].showMore}</Text>
           </Pressable>
         )}
       </View>
@@ -115,7 +117,6 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: "row",
     alignItems: "center",
-    flexDirection: "row-reverse",
   },
   headerText: {
     fontSize: 16,

@@ -11,7 +11,7 @@ import {
   Share,
   Platform,
 } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -30,9 +30,13 @@ import axios from "axios";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AddToCartMessage from "../components/AddToCartMessage";
 import RenderHTML from "react-native-render-html";
-import { ProductLocal, TrendyBenfLocal } from "../constants/Locales";
+import { currency, ProductLocal, TrendyBenfLocal } from "../constants/Locales";
+import { LanguageContext } from "../context/langContext";
+import { textAlign } from "../Utils/align";
+import { renderEnglishName } from "../Utils/renderEnglishName";
 
 const ProductInfoScreen = () => {
+  const { lang } = useContext(LanguageContext)
   const tagsStyles = {
     ol: {
       direction: Platform.OS === "ios" ? "ltr" : "rtl",
@@ -60,15 +64,15 @@ const ProductInfoScreen = () => {
       flexDirection: "row-reverse",
       direction: Platform.OS === "ios" ? "ltr" : "rtl",
       fontSize: 15,
-      textAlign: Platform.OS === "ios" && "right",
+      textAlign: textAlign(lang),
     },
     span: {
       flexDirection: "row-reverse",
-      textAlign: "right",
+      textAlign: textAlign(lang),
     },
     div: {
       flexDirection: "row-reverse",
-      textAlign: "right",
+      textAlign: textAlign(lang),
     },
   };
 
@@ -169,9 +173,9 @@ const ProductInfoScreen = () => {
                       100 -
                       (route.params.item?.price /
                         route.params.item?.priceBefore) *
-                        100
+                      100
                     ).toFixed(0)}
-                    % {ProductLocal["ar"].discount}
+                    % {ProductLocal[lang].discount}
                   </Text>
                 </View>
               )}
@@ -203,60 +207,65 @@ const ProductInfoScreen = () => {
 
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{route?.params?.title}</Text>
-          <View style={styles.nameContainer}>
-            <Text style={styles.nameText}>{route?.params.item?.name}</Text>
+          <View style={{ ...styles.nameContainer, flexDirection: lang === 'en' ? "row" : "row-reverse" }}>
+            <Text style={styles.nameText}>{lang === "ar" ? route?.params.item?.name : renderEnglishName(route?.params.item)}</Text>
           </View>
           <View>
             {route?.params?.item?.priceBefore && (
-              <Text style={styles.beforeText}>
-                {ProductLocal["ar"].priceBefore} :
+              <Text style={{ ...styles.beforeText, textAlign: textAlign(lang) }}>
+                {ProductLocal[lang].priceBefore} :
                 <Text style={styles.beforeValue}>
-                  {route?.params.item.priceBefore} رس
+                  {route?.params.item.priceBefore} {currency[lang]}
                 </Text>
               </Text>
             )}
-            <View style={styles.priceContainerView}>
-              <Text style={styles.priceText}>{ProductLocal["ar"].price} :</Text>
+            <View style={{ ...styles.priceContainerView, flexDirection: lang === "en" ? "row" : "row-reverse" }}>
+              <Text style={styles.priceText}>{ProductLocal[lang].price} :</Text>
               <View style={styles.priceViewContainerTwo}>
                 <Text style={styles.priceViewContainerTwoText}>
-                  {route?.params.price} رس
+                  {route?.params.price} {currency[lang]}
                 </Text>
               </View>
             </View>
           </View>
         </View>
         <Text style={styles.line} />
-        <View style={{ ...styles.feature, backgroundColor: "#FDF2F2" }}>
+        <View style={{ ...styles.feature, backgroundColor: "#FDF2F2", flexDirection: lang === "en" ? "row" : "row-reverse" }}>
           <FontAwesome5 name="shipping-fast" size={24} color="black" />
-          <Text style={styles.infoText}>{TrendyBenfLocal["ar"].header1}</Text>
+          <Text style={styles.infoText}>{TrendyBenfLocal[lang].header1}</Text>
         </View>
-        <View style={{ ...styles.feature, backgroundColor: "#F0F9FF" }}>
+        <View style={{ ...styles.feature, backgroundColor: "#F0F9FF", flexDirection: lang === "en" ? "row" : "row-reverse" }}>
           <Entypo name="address" size={24} color="black" />
-          <Text style={styles.infoText}>{TrendyBenfLocal["ar"].header2}</Text>
+          <Text style={styles.infoText}>{TrendyBenfLocal[lang].header2}</Text>
         </View>
-        <View style={{ ...styles.feature, backgroundColor: "#EFFBF4" }}>
+        <View style={{ ...styles.feature, backgroundColor: "#EFFBF4", flexDirection: lang === "en" ? "row" : "row-reverse" }}>
           <AntDesign name="earth" size={24} color="black" />
-          <Text style={styles.infoText}>{TrendyBenfLocal["ar"].header3}</Text>
+          <Text style={styles.infoText}>{TrendyBenfLocal[lang].header3}</Text>
         </View>
-        <View style={{ ...styles.feature, backgroundColor: "#FFFBEB" }}>
+        <View style={{ ...styles.feature, backgroundColor: "#FFFBEB", flexDirection: lang === "en" ? "row" : "row-reverse" }}>
           <FontAwesome6 name="money-bill-transfer" size={24} color="black" />
-          <Text style={styles.infoText}>{TrendyBenfLocal["ar"].header4}</Text>
+          <Text style={styles.infoText}>{TrendyBenfLocal[lang].header4}</Text>
         </View>
-        <View style={styles.descHeader}>
+        {route.params.item?.descriptionEn && <View style={styles.descHeader}>
           <FontAwesome5
             name="info-circle"
             size={24}
             color="silver"
             style={{ marginHorizontal: 10 }}
           />
-          <Text style={{ fontWeight: "bold", fontSize: 18 }}>عن المنتج:</Text>
-        </View>
+          <Text style={{ fontWeight: "bold", fontSize: 18 }}>{ProductLocal[lang].aboutProduct}:</Text>
+        </View>}
         <View style={{ ...styles.descContent }}>
-          <RenderHTML
+          {lang === 'en' && route.params.item?.descriptionEn && <RenderHTML
+            contentWidth={"100%"}
+            source={{ html: route.params.item?.descriptionEn }}
+            tagsStyles={tagsStyles}
+          />}
+          {lang !== "en" && <RenderHTML
             contentWidth={"100%"}
             source={{ html: route.params.item?.description }}
             tagsStyles={tagsStyles}
-          />
+          />}
         </View>
 
         {formType !== "NORMAL_ORDER" && (
@@ -267,7 +276,7 @@ const ProductInfoScreen = () => {
           >
             <View>
               <Text style={styles.addToCartText}>
-                {ProductLocal["ar"].addToCart}
+                {ProductLocal[lang].addToCart}
               </Text>
             </View>
           </Pressable>
@@ -276,7 +285,7 @@ const ProductInfoScreen = () => {
         {formType !== "GIFT" && (
           <Pressable onPress={() => setFormType("GIFT")} style={styles.mainBtn}>
             <Text style={styles.addToCartText}>
-              {ProductLocal["ar"].butAsGift}
+              {ProductLocal[lang].buyAsGift}
             </Text>
           </Pressable>
         )}
@@ -290,7 +299,7 @@ const ProductInfoScreen = () => {
 
         {reviews && reviews.length > 0 ? (
           <View style={styles.revContainer}>
-            <View style={styles.revHeader}>
+            <View style={{ ...styles.revHeader, flexDirection: lang === "en" ? "row" : "row-reverse" }}>
               <MaterialIcons
                 name="reviews"
                 size={24}
@@ -298,7 +307,7 @@ const ProductInfoScreen = () => {
                 style={{ marginHorizontal: 10 }}
               />
               <Text style={styles.revHeaderText}>
-                {ProductLocal["ar"].ourRviews}:
+                {ProductLocal[lang].ourRviews}:
               </Text>
             </View>
             <View style={styles.reviewsContainer}>
@@ -338,12 +347,12 @@ const ProductInfoScreen = () => {
                 style={{ marginHorizontal: 10 }}
               />
               <Text style={styles.ourReviewsText}>
-                {ProductLocal["ar"].ourRviews}:
+                {ProductLocal[lang].ourRviews}:
               </Text>
             </View>
             <View style={styles.reviewContent}>
               <Text style={styles.noReviewsText}>
-                {ProductLocal["ar"].noReviews}
+                {ProductLocal[lang].noReviews}
               </Text>
             </View>
           </>
@@ -390,7 +399,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   revHeader: {
-    flexDirection: "row-reverse",
     marginTop: 10,
   },
   descContent: {
@@ -400,7 +408,6 @@ const styles = StyleSheet.create({
   feature: {
     padding: 10,
     marginHorizontal: 10,
-    flexDirection: "row-reverse",
     marginTop: 10,
     borderRadius: 10,
   },
@@ -454,7 +461,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   nameContainer: {
-    flexDirection: "row-reverse",
     alignItems: "center",
     marginBottom: 10,
   },
@@ -466,7 +472,6 @@ const styles = StyleSheet.create({
     fontFamily: "CairoBold",
     fontSize: 13,
     marginVertical: 8,
-    textAlign: Platform.OS === "ios" && "right",
   },
   beforeValue: {
     textDecorationLine: "line-through",
@@ -475,7 +480,6 @@ const styles = StyleSheet.create({
     fontFamily: "CairoMed",
   },
   priceContainerView: {
-    flexDirection: "row-reverse",
     alignItems: "center",
   },
   priceText: {

@@ -17,10 +17,13 @@ import { UserType } from "../UserContext";
 import jwt_decode from "jwt-decode";
 import { config } from "./config";
 import Search from "../components/Search";
+import { LanguageContext } from "../context/langContext";
+import { renderEnglishName } from "../Utils/renderEnglishName";
 
 const Categories = () => {
     const [list, setList] = useState([])
     const [listImgError, setListImgError] = useState([])
+    const { lang } = useContext(LanguageContext)
 
 
 
@@ -96,15 +99,8 @@ const Categories = () => {
                                     })}
 
                                 >
-                                    {/* <Image
-                                        style={styles.categoryImg}
-                                        source={{
-                                            uri: listImgError.includes(item?._id) ? "https://picsum.photos/200/300"
-                                                : `${config.backendBase}${item.image}`
-                                        }}
-                                        onError={() => setListImgError((prev) => ([...prev, item?._id]))}
-                                    /> */}
-                                    
+
+
                                     <Image
                                         style={styles.categoryImg}
                                         source={{
@@ -115,7 +111,7 @@ const Categories = () => {
                                     <Text
                                         style={styles.categoryText}
                                     >
-                                        {item?.name}
+                                        {lang === 'ar' ? item?.name : renderEnglishName(item)}
                                     </Text>
                                 </Pressable>
                             ))}

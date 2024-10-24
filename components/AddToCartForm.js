@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,8 @@ import { SelectList } from "react-native-dropdown-select-list";
 import ProductAddsModal from "./ProductAddModal";
 import { ProductForm } from "../constants/Locales";
 import AddsItem from "./AddsItem";
+import { LanguageContext } from "../context/langContext";
+import { textAlign } from "../Utils/align";
 
 // import DropDownPicker from 'react-native-dropdown-picker';
 
@@ -240,14 +242,15 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
     { key: "5", value: "تغريسات" },
     { key: "6", value: "قسائم شرائية" },
   ];
+  const { lang } = useContext(LanguageContext)
 
   return (
     <View style={styles.container}>
       {formType === "GIFT" && (
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>{ProductForm["ar"].senderName}</Text>
+          <Text style={{...styles.label, textAlign: textAlign(lang)}}>{ProductForm[lang].senderName}</Text>
           <TextInput
-            style={styles.input}
+            style={{...styles.input, textAlign: textAlign(lang)}}
             value={formValue.sentFrom}
             onChangeText={(e) => {
               setFormValue((prev) => ({ ...prev, sentFrom: e }));
@@ -257,9 +260,9 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
       )}
       {formType === "GIFT" && (
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>{ProductForm["ar"].reciverName}</Text>
+          <Text style={{...styles.label, textAlign: textAlign(lang)}}>{ProductForm[lang].reciverName}</Text>
           <TextInput
-            style={styles.input}
+            style={{...styles.input, textAlign: textAlign(lang)}}
             value={formValue.sentTo}
             onChangeText={(e) => {
               setFormValue((prev) => ({ ...prev, sentTo: e }));
@@ -268,12 +271,12 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
         </View>
       )}
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>{ProductForm["ar"].date}</Text>
+        <Text style={{...styles.label, textAlign: textAlign(lang)}}>{ProductForm[lang].date}</Text>
         {Platform.OS === "ios" ? (
           <>
             <Pressable
               onPress={() => setDatePickerVisibility(true)}
-              style={styles.input}
+              style={{...styles.input, textAlign: textAlign(lang)}}
             >
               <Text style={styles.dateVal}>{formValue.deliveryDate}</Text>
             </Pressable>
@@ -297,23 +300,23 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
         ) : (
           <Pressable
             onPress={() => setDatePickerVisibility(true)}
-            style={styles.input}
+            style={{...styles.input, textAlign: textAlign(lang)}}
           >
             <Text style={styles.dateVal}>{formValue.deliveryDate}</Text>
           </Pressable>
         )}
         {errors.deliveryDate && (
-          <Text style={styles.error}>{ProductForm["ar"].dateError}</Text>
+          <Text style={{...styles.error, textAlign: textAlign(lang)}}>{ProductForm[lang].dateError}</Text>
         )}
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>{ProductForm["ar"].time}</Text>
+        <Text style={{...styles.label, textAlign: textAlign(lang)}}>{ProductForm[lang].time}</Text>
 
         {Platform.OS === "ios" ? (
           <>
             <Pressable
               onPress={() => setIsTimeVisible(true)}
-              style={styles.input}
+              style={{...styles.input, textAlign: textAlign(lang)}}
             >
               <Text style={styles.dateVal}>{formValue.time}</Text>
             </Pressable>
@@ -331,22 +334,22 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
         ) : (
           <Pressable
             onPress={() => setIsTimeVisible(true)}
-            style={styles.input}
+            style={{...styles.input, textAlign: textAlign(lang)}}
           >
             <Text style={styles.dateVal}>{formValue.time}</Text>
           </Pressable>
         )}
       </View>
       {errors.time && (
-        <Text style={styles.error}>{ProductForm["ar"].timeError}</Text>
+        <Text style={{...styles.error, textAlign: textAlign(lang)}}>{ProductForm[lang].timeError}</Text>
       )}
       {errors.unvalidTime && (
-        <Text style={styles.error}>{ProductForm["ar"].unvalidTimeError}</Text>
+        <Text style={{...styles.error, textAlign: textAlign(lang)}}>{ProductForm[lang].unvalidTimeError}</Text>
       )}
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>{ProductForm["ar"].phone}</Text>
+        <Text style={{...styles.label, textAlign: textAlign(lang)}}>{ProductForm[lang].phone}</Text>
         <TextInput
-          style={{ ...styles.input, textAlignVertical: "top" }}
+          style={{ ...styles.input, textAlignVertical: "top", textAlign: textAlign(lang) }}
           multiline={true}
           value={formValue.phone}
           keyboardType="numeric"
@@ -354,16 +357,16 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
             setErrors((prev) => ({ ...prev, phone: false }));
             setFormValue((prev) => ({ ...prev, phone: e }));
           }}
-          placeholder="رقم الجوال"
+          placeholder={lang === "en" ? "Mobile Number" : "رقم الجوال"}
         />
         {errors.phone && (
-          <Text style={styles.error}>{ProductForm["ar"].phoneError}</Text>
+          <Text style={{...styles.error, textAlign: textAlign(lang)}}>{ProductForm[lang].phoneError}</Text>
         )}
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>{ProductForm["ar"].cardText}</Text>
+        <Text style={{...styles.label, textAlign: textAlign(lang)}}>{ProductForm[lang].cardText}</Text>
         <TextInput
-          style={{ ...styles.input, height: 150, textAlignVertical: "top" }}
+          style={{ ...styles.input, height: 150, textAlignVertical: "top", textAlign: textAlign(lang) }}
           multiline={true}
           value={formValue.cardText}
           onChangeText={(e) =>
@@ -378,10 +381,11 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
             marginHorizontal: 10,
             marginVertical: 10,
             ...styles.label,
+            textAlign: textAlign(lang),
             fontSize: 12,
           }}
         >
-          {ProductForm["ar"].noAddressSelect}
+          {ProductForm[lang].noAddressSelect}
         </Text>
         <Checkbox
           value={!formValue.addressSelected}
@@ -393,7 +397,7 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
 
       {formValue.addressSelected && (
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>{ProductForm["ar"].address}</Text>
+          <Text style={{...styles.label, textAlign: textAlign(lang)}}>{ProductForm[lang].address}</Text>
           <TextInput
             style={{
               ...styles.input,
@@ -401,7 +405,8 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
               textAlignVertical: "top",
               minHeight: 48,
               maxHeight: 150,
-              marginBottom: Platform.OS === "ios" && 30,
+              marginBottom: Platform.OS === "ios" ? 30: 0,
+              textAlign: textAlign(lang)
             }}
             value={formValue.address}
             onChangeText={(e) => {
@@ -416,12 +421,12 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
             placeholder={"يفضل كتابة العنوان مختصر"}
           />
           {errors.address && formValue.addressSelected && (
-            <Text style={styles.error}>{ProductForm["ar"].addressError}</Text>
+            <Text style={{...styles.error, textAlign: textAlign(lang)}}>{ProductForm[lang].addressError}</Text>
           )}
         </View>
       )}
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>{ProductForm["ar"].productAdds}</Text>
+        <Text style={{...styles.label, textAlign: textAlign(lang)}}>{ProductForm[lang].productAdds}</Text>
         <SelectList
           setSelected={(val) => {
             setErrors((prev) => ({ ...prev, withGiftRequred: false }));
@@ -441,15 +446,15 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
           }}
         />
         {errors.withGiftRequred && (
-          <Text style={{ ...styles.error, marginTop: 10 }}>
-            {ProductForm["ar"].giftRequiredError}
+          <Text style={{ ...styles.error, marginTop: 10, textAlign: textAlign(lang) }}>
+            {ProductForm[lang].giftRequiredError}
           </Text>
         )}
         {formType === "GIFT" && (
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>{ProductForm["ar"].video}</Text>
+            <Text style={{...styles.label, textAlign: textAlign(lang)}}>{ProductForm[lang].video}</Text>
             <TextInput
-              style={styles.input}
+              style={{...styles.input, textAlign: textAlign(lang)}}
               value={formValue.giftLink}
               onChangeText={(e) => {
                 setFormValue((prev) => ({ ...prev, giftLink: e }));
@@ -463,8 +468,8 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
             style={styles.extraPurchaseBtn}
           >
             <View>
-              <Text style={{ color: "#fff", ...styles.label }}>
-                {ProductForm["ar"].cardsSelect}
+              <Text style={{ color: "#fff", ...styles.label, textAlign: textAlign(lang) }}>
+                {ProductForm[lang].cardsSelect}
               </Text>
             </View>
           </Pressable>
@@ -475,8 +480,8 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
             style={styles.extraPurchaseBtn}
           >
             <View>
-              <Text style={{ color: "#fff", ...styles.label }}>
-                {ProductForm["ar"].cheoSelect}
+              <Text style={{ color: "#fff", ...styles.label, textAlign: textAlign(lang) }}>
+                {ProductForm[lang].cheoSelect}
               </Text>
             </View>
           </Pressable>
@@ -487,8 +492,8 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
             style={styles.extraPurchaseBtn}
           >
             <View>
-              <Text style={{ color: "#fff", ...styles.label }}>
-                {ProductForm["ar"].ballonsSelect}
+              <Text style={{ color: "#fff", ...styles.label, textAlign: textAlign(lang) }}>
+                {ProductForm[lang].ballonsSelect}
               </Text>
             </View>
           </Pressable>
@@ -499,8 +504,8 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
             style={styles.extraPurchaseBtn}
           >
             <View>
-              <Text style={{ color: "#fff", ...styles.label }}>
-                {ProductForm["ar"].sticksSelect}
+              <Text style={{ color: "#fff", ...styles.label , textAlign: textAlign(lang)}}>
+                {ProductForm[lang].sticksSelect}
               </Text>
             </View>
           </Pressable>
@@ -511,8 +516,8 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
             style={styles.extraPurchaseBtn}
           >
             <View>
-              <Text style={{ color: "#fff", ...styles.label }}>
-                {ProductForm["ar"].giftCardSelect}
+              <Text style={{ color: "#fff", ...styles.label, textAlign: textAlign(lang) }}>
+                {ProductForm[lang].giftCardSelect}
               </Text>
             </View>
           </Pressable>
@@ -545,8 +550,8 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
           style={styles.extraPurchaseBtn}
         >
           <View>
-            <Text style={{ color: "#fff", ...styles.label }}>
-              {ProductForm["ar"].addToCart}
+            <Text style={{ color: "#fff", ...styles.label, textAlign: textAlign(lang)  }}>
+              {ProductForm[lang].addToCart}
             </Text>
           </View>
         </Pressable>
@@ -557,8 +562,8 @@ const AddToCartForm = ({ formType, product, setAddedToCart }) => {
           style={styles.extraPurchaseBtn}
         >
           <View>
-            <Text style={{ color: "#fff", ...styles.label }}>
-              {ProductForm["ar"].giftAdd}
+            <Text style={{ color: "#fff", ...styles.label, textAlign: textAlign(lang)  }}>
+              {ProductForm[lang].giftAdd}
             </Text>
           </View>
         </Pressable>
@@ -608,7 +613,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     padding: 10,
-    textAlign: "right",
     fontFamily: "CairoMed",
   },
   checkboxContainer: {
@@ -618,7 +622,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: "CairoMed",
-    textAlign: Platform.OS === "ios" && "right",
   },
   error: {
     color: "red",
@@ -627,7 +630,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     fontSize: 16,
     fontWeight: "bold",
-    textAlign: Platform.OS === "ios" && "right",
   },
   addsContainer: {},
   addsItem: {

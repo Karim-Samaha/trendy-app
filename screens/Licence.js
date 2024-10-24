@@ -1,8 +1,12 @@
+import { useContext } from "react"
 import StaticContentScreen from "../components/StaticContentScreen"
 import { LicenceLocal } from "../constants/Locales"
+import { LanguageContext } from "../context/langContext"
 const Licence = () => {
-    return <StaticContentScreen title={LicenceLocal['ar'].title} content={LicenceLocal['ar'].content}
-     secContent={LicenceLocal['ar'].subContent}/>
+    const { lang } = useContext(LanguageContext)
+
+    return <StaticContentScreen title={LicenceLocal[lang].title} content={LicenceLocal[lang].content}
+     secContent={LicenceLocal[lang].subContent}/>
 }
 
 export default Licence

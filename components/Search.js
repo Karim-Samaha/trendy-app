@@ -14,11 +14,15 @@ import React, {
 } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { textAlign } from "../Utils/align";
+import { LanguageContext } from "../context/langContext";
 
 const Search = () => {
   const route = useRoute();
   const [search, setSearch] = useState(route?.params?.search || "");
   const navigation = useNavigation();
+  const { lang } = useContext(LanguageContext)
+
   const handleSearch = () => {
     if (search.length > 3) {
       navigation.navigate("Search", {
@@ -53,18 +57,18 @@ const Search = () => {
           height: 38,
           flex: 1,
           direction: Platform.OS === "ios" ? "ltr" : "rtl",
-          flexDirection: "row-reverse",
+          flexDirection: lang === 'en'? "row" : "row-reverse",
           position: "relative",
         }}
       >
         <TextInput
-          placeholder="ابحث عن منتجك!"
+          placeholder={lang === 'en' ? "Search for Product" : "ابحث عن منتجك"}
           style={{
             paddingHorizontal: 5,
             fontFamily: "CairoMed",
             width: 300,
             height: 40,
-            textAlign: Platform.OS === "ios" && "right",
+            textAlign: textAlign(lang),
           }}
           value={search}
           onChangeText={(e) => setSearch(e)}

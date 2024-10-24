@@ -9,13 +9,17 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { config } from "../screens/config";
-import { useState } from "react";
-import { ProductLocal } from "../constants/Locales";
+import { useContext, useState } from "react";
+import { currency, ProductLocal } from "../constants/Locales";
+import { direction, textAlign } from "../Utils/align";
+import { LanguageContext } from "../context/langContext";
+import { renderEnglishName } from "../Utils/renderEnglishName";
 
 const Product = ({ item, containerStyle, twoCell, handleAddToCart }) => {
   const navigation = useNavigation();
   const [imageHasError, setImageHasError] = useState(false);
   const { width, height } = Dimensions.get("window");
+  const { lang } = useContext(LanguageContext)
 
   return (
     <Pressable
@@ -44,17 +48,23 @@ const Product = ({ item, containerStyle, twoCell, handleAddToCart }) => {
         }}
         onError={() => setImageHasError(true)}
       />
-      <View style={{ minHeight: 50 }}>
-        <Text numberOfLines={2} style={styles.name}>
-          {item.name.length > 35
-            ? `${item.name.substring(0, 35)}...`
-            : item.name}
+      <View style={{ minHeight: 50, width: "100%" }}>
+        <Text numberOfLines={2} style={{ ...styles.name, textAlign: textAlign(lang), }}>
+          {lang === 'ar' ? <>
+            {item.name.length > 35
+              ? `${item.name.substring(0, 35)}...`
+              : item.name}
+          </> : <>
+            {item?.nameEn?.length > 35
+              ? renderEnglishName({ name: item.name, nameEn: `${item?.nameEn?.substring(0, 35)}...` })
+              : renderEnglishName(item)}
+          </>}
         </Text>
       </View>
-      <View>
+      <View style={{ width: "100%" }}>
         {item.priceBefore && (
-          <Text style={styles.priceBefore}>
-            {ProductLocal["ar"].priceBefore} :{" "}
+          <Text style={{ ...styles.priceBefore, textAlign: textAlign(lang) }}>
+            {ProductLocal[lang].priceBefore} :{" "}
             <Text
               style={{
                 textDecorationLine: "line-through",
@@ -66,12 +76,12 @@ const Product = ({ item, containerStyle, twoCell, handleAddToCart }) => {
             </Text>
           </Text>
         )}
-        <Text style={styles.price}>{item.price} ر.س</Text>
+        <Text style={styles.price}>{item.price} {currency[lang]}</Text>
       </View>
       {item?.priceBefore && (
         <View style={styles.priceBeforeContainer}>
           <Text style={styles.precent}>
-            {ProductLocal["ar"].discount}{" "}
+            {ProductLocal[lang].discount}{" "}
             {100 - ((item.price / item.priceBefore) * 100).toFixed(0)} %
           </Text>
         </View>
@@ -107,7 +117,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     minWidth: 120,
     maxWidth: 170,
-    direction: Platform.OS === "ios" && "ltr",
+    direction: direction(),
   },
   image: {
     width: "100%",
@@ -118,7 +128,6 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 12,
     fontFamily: "CairoMed",
-    textAlign: Platform.OS === "ios" && "right",
   },
   priceBefore: {
     fontSize: 9,
@@ -147,7 +156,7 @@ const styles = StyleSheet.create({
   precent: {
     textAlign: "center",
     color: "#55a8b9",
-    fontSize: 11,
+    fontSize: 9,
     fontWeight: "bold",
   },
   addToCartText: {

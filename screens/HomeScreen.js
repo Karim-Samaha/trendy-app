@@ -17,6 +17,9 @@ import { config } from "./config";
 import Product from "../components/Product";
 import Search from "../components/Search";
 import { HomeLocales } from "../constants/Locales";
+import { LanguageContext } from "../context/langContext";
+import { direction, textAlign } from "../Utils/align";
+import { renderEnglishName } from "../Utils/renderEnglishName";
 
 const HomeScreen = () => {
   const [sections, setSections] = useState({});
@@ -32,6 +35,7 @@ const HomeScreen = () => {
   const sectionFiveRef = useRef();
 
   const scrollToEnd = (ref) => {
+    if (lang === 'en') return
     categoryRef.current?.scrollToEnd({ animated: false });
     sectionOneRef.current?.scrollToEnd({ animated: false });
     sectionTwoRef.current?.scrollToEnd({ animated: false });
@@ -44,7 +48,7 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const [, setAddresses] = useState([]);
   const { userId } = useContext(UserType);
-
+  const { lang } = useContext(LanguageContext)
   const fetchCategory = async () => {
     try {
       const response = await axios.get(`${config.backendUrl}/category`);
@@ -107,7 +111,7 @@ const HomeScreen = () => {
 
     return res;
   }
-  useEffect(() => {}, [images]);
+  useEffect(() => { }, [images]);
   useEffect(() => {
     Promise.all([
       fetchCategory(),
@@ -148,9 +152,9 @@ const HomeScreen = () => {
   };
   const scrollViewStyle = (list) => {
     if (list.length > 3) {
-      return { flexDirection: "row-reverse", direction: "rtl" };
+      return { flexDirection: lang === 'en' ? "row" : "row-reverse", direction: "rtl" };
     } else {
-      return { flexDirection: "row-reverse", minWidth: "100%" };
+      return { flexDirection: lang === 'en' ? "row" : "row-reverse", minWidth: "100%" };
     }
   };
 
@@ -185,63 +189,63 @@ const HomeScreen = () => {
             />
           ) : null}
           <View style={{ direction: Platform.OS == "ios" ? "ltr" : "rtl" }}>
-            <Text style={styles.ctgHeader}>{HomeLocales["ar"].categoires}</Text>
+            <Text style={{ ...styles.ctgHeader, textAlign: textAlign(lang) }}>{HomeLocales[lang].categoires}</Text>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{
-                flexDirection: "row-reverse",
+                flexDirection: lang === 'en' ? "row" : "row-reverse",
               }}
               onContentSizeChange={scrollToEnd}
               ref={categoryRef}
             >
               {list.length > 0
                 ? list.map((item, index) => (
-                    <Pressable
-                      key={index}
-                      style={styles.categoryContainer}
-                      onPress={() =>
-                        navigation.navigate("SubCategories", {
-                          id: item?.id,
-                          title: item?.title,
-                          price: item?.price,
-                          carouselImages: item?.carouselImages,
-                          color: item?.color,
-                          size: item?.size,
-                          oldPrice: item?.oldPrice,
-                          item: item,
-                        })
+                  <Pressable
+                    key={index}
+                    style={styles.categoryContainer}
+                    onPress={() =>
+                      navigation.navigate("SubCategories", {
+                        id: item?.id,
+                        title: item?.title,
+                        price: item?.price,
+                        carouselImages: item?.carouselImages,
+                        color: item?.color,
+                        size: item?.size,
+                        oldPrice: item?.oldPrice,
+                        item: item,
+                      })
+                    }
+                  >
+                    <Image
+                      style={{
+                        width: 100,
+                        height: 100,
+                        resizeMode: "cover",
+                        borderRadius: 11,
+                      }}
+                      source={{
+                        uri: listImgError.includes(item?._id)
+                          ? "https://picsum.photos/200/300"
+                          : `${config.backendBase}${item.image}`,
+                      }}
+                      onError={() =>
+                        setListImgError((prev) => [...prev, item?._id])
                       }
-                    >
-                      <Image
-                        style={{
-                          width: 100,
-                          height: 100,
-                          resizeMode: "cover",
-                          borderRadius: 11,
-                        }}
-                        source={{
-                          uri: listImgError.includes(item?._id)
-                            ? "https://picsum.photos/200/300"
-                            : `${config.backendBase}${item.image}`,
-                        }}
-                        onError={() =>
-                          setListImgError((prev) => [...prev, item?._id])
-                        }
-                      />
+                    />
 
-                      <Text style={styles.categoryContainer}>{item?.name}</Text>
-                    </Pressable>
-                  ))
+                    <Text style={styles.categoryContainer}>{lang === 'ar' ? item?.name : renderEnglishName(item)}</Text>
+                  </Pressable>
+                ))
                 : null}
             </ScrollView>
           </View>
           <Text style={styles.sectionTitle} />
-          <View style={{ direction: Platform.OS === "ios" && "ltr" }}>
+          <View style={{ direction: direction() }}>
             {sections["1"]?.productsList?.length > 0 ? (
               <>
-                <Text style={styles.ctgHeader}>
-                  {sections["1"]?.categoryName}
+                <Text style={{ ...styles.ctgHeader, textAlign: textAlign(lang) }}>
+                  {lang === 'en' ? renderEnglishName({ name: sections["1"].categoryName, nameEn: sections["1"].categoryNameEn }) : sections["1"]?.categoryName}
                 </Text>
 
                 <ScrollView
@@ -273,11 +277,11 @@ const HomeScreen = () => {
               </>
             )}
           </View>
-          <View style={{ direction: Platform.OS === "ios" && "ltr" }}>
+          <View style={{ direction: direction() }}>
             {sections["2"]?.productsList?.length > 0 ? (
               <>
-                <Text style={styles.ctgHeader}>
-                  {sections["2"]?.categoryName}
+                <Text style={{ ...styles.ctgHeader, textAlign: textAlign(lang) }}>
+                  {lang === 'en' ? renderEnglishName({ name: sections["2"].categoryName, nameEn: sections["2"].categoryNameEn }) : sections["2"]?.categoryName}
                 </Text>
 
                 <ScrollView
@@ -312,13 +316,13 @@ const HomeScreen = () => {
           <View
             style={{
               paddingBottom: 80,
-              direction: Platform.OS === "ios" && "ltr",
+              direction: direction(),
             }}
           >
             {sections["3"]?.productsList?.length > 0 ? (
               <>
-                <Text style={styles.ctgHeader}>
-                  {sections["3"]?.categoryName}
+                <Text style={{ ...styles.ctgHeader, textAlign: textAlign(lang) }}>
+                  {lang === 'en' ? renderEnglishName({ name: sections["3"].categoryName, nameEn: sections["3"].categoryNameEn }) : sections["3"]?.categoryName}
                 </Text>
                 <ScrollView
                   horizontal
@@ -341,11 +345,11 @@ const HomeScreen = () => {
               <View
                 style={{
                   marginTop: -80,
-                  direction: Platform.OS === "ios" && "ltr",
+                  direction: direction(),
                 }}
               >
-                <Text style={styles.ctgHeader}>
-                  {sections["4"]?.categoryName}
+                <Text style={{ ...styles.ctgHeader, textAlign: textAlign(lang) }}>
+                  {lang === 'en' ? renderEnglishName({ name: sections["4"].categoryName, nameEn: sections["4"].categoryNameEn }) : sections["4"]?.categoryName}
                 </Text>
                 <ScrollView
                   horizontal
@@ -368,11 +372,11 @@ const HomeScreen = () => {
               <View
                 style={{
                   paddingBottom: 80,
-                  direction: Platform.OS === "ios" && "ltr",
+                  direction: direction(),
                 }}
               >
-                <Text style={styles.ctgHeader}>
-                  {sections["5"]?.categoryName}
+                <Text style={{ ...styles.ctgHeader, textAlign: textAlign(lang) }}>
+                  {lang === 'en' ? renderEnglishName({ name: sections["5"].categoryName, nameEn: sections["5"].categoryNameEn }) : sections["5"]?.categoryName}
                 </Text>
                 <ScrollView
                   horizontal
@@ -413,7 +417,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: "CairoBold",
     color: "#55a8b9",
-    textAlign: Platform.OS === "ios" && "right",
   },
   scrollView: {
     direction: "rtl",

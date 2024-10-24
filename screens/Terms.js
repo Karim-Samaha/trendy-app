@@ -1,8 +1,12 @@
+import { useContext } from "react"
 import StaticContentScreen from "../components/StaticContentScreen"
 import { TermsLocal } from "../constants/Locales"
+import { LanguageContext } from "../context/langContext"
 
 const Terms = () => {
-    return <StaticContentScreen title={TermsLocal['ar'].title} content={TermsLocal['ar'].content} />
+    const { lang } = useContext(LanguageContext)
+
+    return <StaticContentScreen title={TermsLocal[lang].title} content={TermsLocal[lang].content} />
 }
 
 export default Terms

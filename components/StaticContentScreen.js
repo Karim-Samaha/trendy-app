@@ -9,9 +9,11 @@ import {
   Pressable,
   Platform,
 } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 
 import _axios from "../Utils/axios";
+import { textAlign } from "../Utils/align";
+import { LanguageContext } from "../context/langContext";
 
 const StaticContentScreen = ({
   title,
@@ -20,6 +22,8 @@ const StaticContentScreen = ({
   linkUrlText,
   linkUrl,
 }) => {
+  const { lang } = useContext(LanguageContext)
+
   const openWhatsApp = () => {
     let url = linkUrl;
     Linking.canOpenURL(url)
@@ -44,16 +48,16 @@ const StaticContentScreen = ({
         <Image style={styles.logoImg} source={require("../assets/logo.png")} />
       </View>
       <View>
-        <Text style={styles.headerText}>{title}</Text>
-        <Text style={styles.contentText}>
+        <Text style={{...styles.headerText, textAlign: textAlign(lang)}}>{title}</Text>
+        <Text style={{...styles.contentText, textAlign: textAlign(lang)}}>
           {content}
           {linkUrl && linkUrlText && (
             <Pressable onPress={() => openWhatsApp()}>
-              <Text style={styles.whatsText}>{linkUrlText}</Text>
+              <Text style={{...styles.whatsText, textAlign: textAlign(lang)}}>{linkUrlText}</Text>
             </Pressable>
           )}
         </Text>
-        {secContent && <Text style={styles.contentText}>{secContent}</Text>}
+        {secContent && <Text style={{...styles.contentText, textAlign: textAlign(lang)}}>{secContent}</Text>}
       </View>
     </ScrollView>
   );
@@ -78,19 +82,16 @@ const styles = StyleSheet.create({
     fontSize: 22,
     marginTop: 25,
     fontFamily: "CairoBold",
-    textAlign: Platform.OS === "ios" && "right",
   },
   contentText: {
     padding: 10,
     fontSize: 13,
     fontFamily: "CairoMed",
-    textAlign: Platform.OS === "ios" && "right",
   },
   whatsText: {
     color: "green",
     fontFamily: "CairoBold",
     paddingHorizontal: Platform.OS === "ios" ? 0 : 15,
     marginVertical: Platform.OS === "ios" ? 10 : 0,
-    textAlign: Platform.OS === "ios" && "right",
   },
 });

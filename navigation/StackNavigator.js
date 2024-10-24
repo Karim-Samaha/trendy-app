@@ -1,5 +1,5 @@
 import { Platform, StyleSheet, Text, View } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../screens/HomeScreen";
@@ -26,6 +26,9 @@ import RefundPolicy from "../screens/RefundPolicy";
 import CustomerService from "../screens/CustomerService";
 import Licence from "../screens/Licence";
 import * as Font from "expo-font";
+import { LanguageContext } from "../context/langContext";
+import { HomeLocales } from "../constants/Locales";
+import { direction } from "../Utils/align";
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -37,7 +40,7 @@ const fetchFonts = () => {
 const StackNavigator = () => {
   const { login } = useSelector((state) => state.user);
   const cart = useSelector((state) => state.cart.cart);
-
+  const { lang, getSavedLang } = useContext(LanguageContext)
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
   const dispatch = useDispatch();
@@ -54,6 +57,7 @@ const StackNavigator = () => {
 
   useEffect(() => {
     checkIsLogedIn();
+    getSavedLang();
   }, []);
   const loadFonts = useCallback(async () => {
     await fetchFonts();
@@ -69,136 +73,140 @@ const StackNavigator = () => {
       height: Platform.OS === "ios" ? 85 : 60,
     },
   };
+  const tabScreens = [
+    <Tab.Screen
+      name="Cart"
+      component={CartScreen}
+      options={{
+        tabBarLabel: HomeLocales[lang].cart,
+        tabBarLabelStyle: {
+          color: "#008E97",
+          fontFamily: "CairoBold",
+          marginBottom: 5,
+        },
+        headerTitleStyle: {
+          fontFamily: "CairoMed",
+        },
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: "#55a8b9",
+        },
+        headerTitleAlign: "center",
+        title: HomeLocales[lang].cart,
+        headerTintColor: "#fff",
+        tabBarIcon: ({ focused }) =>
+          focused ? (
+            <>
+              {cart.length > 0 ? (
+                <View style={styles.cartNumContainer}>
+                  <Text style={styles.cartNum}>{cart.length}</Text>
+                </View>
+              ) : null}
+              <AntDesign name="shoppingcart" size={24} color="#008E97" />
+            </>
+          ) : (
+            <>
+              {cart.length > 0 ? (
+                <View style={styles.cartNumContainer}>
+                  <Text style={styles.cartNum}>{cart.length}</Text>
+                </View>
+              ) : null}
+              <AntDesign name="shoppingcart" size={24} color="black" />
+            </>
+          ),
+      }}
+    />,
+    <Tab.Screen
+      name="Profile"
+      component={login ? ProfileScreen : Login}
+      options={{
+        tabBarLabel: HomeLocales[lang].profile,
+        tabBarLabelStyle: {
+          color: "#008E97",
+          fontFamily: "CairoBold",
+          marginBottom: 5,
+        },
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: "#55a8b9",
+          fontFamily: "CairoBold",
+        },
+        headerTitleAlign: "center",
+        title: login ? HomeLocales[lang].profile : lang === 'en' ? "Login" : "تسجيل الدخول",
+        headerTitleStyle: {
+          fontFamily: "CairoMed",
+        },
+        headerTintColor: "#fff",
+        tabBarIcon: ({ focused }) =>
+          focused ? (
+            <Ionicons name="person" size={24} color="#008E97" />
+          ) : (
+            <Ionicons name="person-outline" size={24} color="black" />
+          ),
+      }}
+    />,
+    <Tab.Screen
+      name="Categories"
+      component={Categories}
+      options={{
+        tabBarLabel: HomeLocales[lang].categoires,
+        tabBarLabelStyle: {
+          color: "#008E97",
+          fontFamily: "CairoBold",
+          marginBottom: 5,
+        },
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: "#55a8b9",
+        },
+        headerTitleAlign: "center",
+        title: HomeLocales[lang].categoires,
+        headerTitleStyle: {
+          fontFamily: "CairoMed",
+        },
+        headerTintColor: "#fff",
+        tabBarIcon: ({ focused }) =>
+          focused ? (
+            <Entypo name="list" size={24} color="#008E97" />
+          ) : (
+            <Entypo name="list" size={24} color="black" />
+          ),
+      }}
+    />,
+    <Tab.Screen
+      name="Home"
+      component={HomeScreen}
+      options={{
+        tabBarLabel: HomeLocales[lang].home,
+        tabBarLabelStyle: {
+          color: "#008E97",
+          fontFamily: "CairoBold",
+          marginBottom: 5,
+        },
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: "#55a8b9",
+        },
+        headerTitleStyle: {
+          fontFamily: "CairoMed",
+        },
+        headerTitleAlign: "center",
+        title: HomeLocales[lang].home,
+        headerTintColor: "#fff",
+        tabBarIcon: ({ focused }) =>
+          focused ? (
+            <Entypo name="home" size={24} color="#008E97" />
+          ) : (
+            <AntDesign name="home" size={24} color="black" />
+          ),
+      }}
+    />
+  ]
   function BottomTabs() {
+
     return (
       <Tab.Navigator initialRouteName={"Home"} {...{ screenOptions }}>
-        <Tab.Screen
-          name="Cart"
-          component={CartScreen}
-          options={{
-            tabBarLabel: "السلة",
-            tabBarLabelStyle: {
-              color: "#008E97",
-              fontFamily: "CairoBold",
-              marginBottom: 5,
-            },
-            headerTitleStyle: {
-              fontFamily: "CairoMed",
-            },
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: "#55a8b9",
-            },
-            headerTitleAlign: "center",
-            title: "العربة",
-            headerTintColor: "#fff",
-            tabBarIcon: ({ focused }) =>
-              focused ? (
-                <>
-                  {cart.length > 0 ? (
-                    <View style={styles.cartNumContainer}>
-                      <Text style={styles.cartNum}>{cart.length}</Text>
-                    </View>
-                  ) : null}
-                  <AntDesign name="shoppingcart" size={24} color="#008E97" />
-                </>
-              ) : (
-                <>
-                  {cart.length > 0 ? (
-                    <View style={styles.cartNumContainer}>
-                      <Text style={styles.cartNum}>{cart.length}</Text>
-                    </View>
-                  ) : null}
-                  <AntDesign name="shoppingcart" size={24} color="black" />
-                </>
-              ),
-          }}
-        />
-        <Tab.Screen
-          name="Profile"
-          component={login ? ProfileScreen : Login}
-          options={{
-            tabBarLabel: "حسابي",
-            tabBarLabelStyle: {
-              color: "#008E97",
-              fontFamily: "CairoBold",
-              marginBottom: 5,
-            },
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: "#55a8b9",
-              fontFamily: "CairoBold",
-            },
-            headerTitleAlign: "center",
-            title: login ? "حسابي" : "تسجيل الدخول",
-            headerTitleStyle: {
-              fontFamily: "CairoMed",
-            },
-            headerTintColor: "#fff",
-            tabBarIcon: ({ focused }) =>
-              focused ? (
-                <Ionicons name="person" size={24} color="#008E97" />
-              ) : (
-                <Ionicons name="person-outline" size={24} color="black" />
-              ),
-          }}
-        />
-        <Tab.Screen
-          name="Categories"
-          component={Categories}
-          options={{
-            tabBarLabel: "التصنيفات",
-            tabBarLabelStyle: {
-              color: "#008E97",
-              fontFamily: "CairoBold",
-              marginBottom: 5,
-            },
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: "#55a8b9",
-            },
-            headerTitleAlign: "center",
-            title: "التصنيفات",
-            headerTitleStyle: {
-              fontFamily: "CairoMed",
-            },
-            headerTintColor: "#fff",
-            tabBarIcon: ({ focused }) =>
-              focused ? (
-                <Entypo name="list" size={24} color="#008E97" />
-              ) : (
-                <Entypo name="list" size={24} color="black" />
-              ),
-          }}
-        />
-        <Tab.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            tabBarLabel: "الرئيسية",
-            tabBarLabelStyle: {
-              color: "#008E97",
-              fontFamily: "CairoBold",
-              marginBottom: 5,
-            },
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: "#55a8b9",
-            },
-            headerTitleStyle: {
-              fontFamily: "CairoMed",
-            },
-            headerTitleAlign: "center",
-            title: "الرئيسية",
-            headerTintColor: "#fff",
-            tabBarIcon: ({ focused }) =>
-              focused ? (
-                <Entypo name="home" size={24} color="#008E97" />
-              ) : (
-                <AntDesign name="home" size={24} color="black" />
-              ),
-          }}
-        />
+        {lang === 'en' ? tabScreens.reverse().map((item) => item) : tabScreens.map((item) => item)}
       </Tab.Navigator>
     );
   }
@@ -243,7 +251,7 @@ const StackNavigator = () => {
               fontFamily: "CairoMed",
             },
             headerTitleAlign: "center",
-            title: "التصنيفات",
+            title: HomeLocales[lang].categoires,
             headerTintColor: "#fff",
           }}
         />
@@ -259,7 +267,7 @@ const StackNavigator = () => {
               fontFamily: "CairoMed",
             },
             headerTitleAlign: "center",
-            title: "نتائج البحث",
+            title: lang === "en" ? "Search Results" : "نتائج البحث",
             headerTintColor: "#fff",
           }}
         />
@@ -275,7 +283,7 @@ const StackNavigator = () => {
               fontFamily: "CairoMed",
             },
             headerTitleAlign: "center",
-            title: "تفاصيل المنتج",
+            title: lang === "en" ? "Product Details" : "تفاصيل المنتج",
             headerTintColor: "#fff",
           }}
         />
@@ -292,7 +300,7 @@ const StackNavigator = () => {
               fontFamily: "CairoMed",
             },
             headerTitleAlign: "center",
-            title: "الطلبات السابقة",
+            title: lang === "en" ? "Order History" : "الطلبات السابقة",
             headerTintColor: "#fff",
           }}
         />
@@ -308,7 +316,7 @@ const StackNavigator = () => {
               fontFamily: "CairoMed",
             },
             headerTitleAlign: "center",
-            title: "الدفع",
+            title: lang === "en" ? "Payment" : "الدفع",
             headerTintColor: "#fff",
           }}
         />
@@ -324,7 +332,7 @@ const StackNavigator = () => {
               fontFamily: "CairoMed",
             },
             headerTitleAlign: "center",
-            title: "بيانات الحساب",
+            title: lang === "en" ? "Account Info" : "بيانات الحساب",
             headerTintColor: "#fff",
           }}
         />
@@ -340,7 +348,7 @@ const StackNavigator = () => {
               fontFamily: "CairoMed",
             },
             headerTitleAlign: "center",
-            title: "قائمتي",
+            title: lang === "en" ? "My List" : "قائمتي",
             headerTintColor: "#fff",
           }}
         />
@@ -356,7 +364,7 @@ const StackNavigator = () => {
               fontFamily: "CairoMed",
             },
             headerTitleAlign: "center",
-            title: "الشروط والأحكام",
+            title: lang === "en" ? "Terms And Condition" : "الشروط والأحكام",
             headerTintColor: "#fff",
           }}
         />
@@ -372,7 +380,7 @@ const StackNavigator = () => {
               fontFamily: "CairoMed",
             },
             headerTitleAlign: "center",
-            title: "سياسة الاستبدال والاسترجاع",
+            title: lang === "en" ? "Refund Policy" : "سياسة الاستبدال والاسترجاع",
             headerTintColor: "#fff",
           }}
         />
@@ -388,7 +396,7 @@ const StackNavigator = () => {
               fontFamily: "CairoMed",
             },
             headerTitleAlign: "center",
-            title: "خدمة العملاء والشكاوى والاقتراحات",
+            title: lang === "en" ? "Customer support" : "خدمة العملاء والشكاوى والاقتراحات",
             headerTintColor: "#fff",
           }}
         />
@@ -404,7 +412,7 @@ const StackNavigator = () => {
               fontFamily: "CairoMed",
             },
             headerTitleAlign: "center",
-            title: "التراخيص",
+            title: lang === "en" ? "Licenses" : "التراخيص",
             headerTintColor: "#fff",
           }}
         />

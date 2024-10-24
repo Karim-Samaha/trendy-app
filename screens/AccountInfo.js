@@ -7,7 +7,7 @@ import {
   TextInput,
   Platform,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import _axios from "../Utils/axios";
 import { config } from "./config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -19,7 +19,10 @@ import Entypo from "@expo/vector-icons/Entypo";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Search from "../components/Search";
 import { AccountLocales } from "../constants/Locales";
+import { textAlign } from "../Utils/align";
+import { LanguageContext } from "../context/langContext";
 const AccountInfo = () => {
+  const { lang } = useContext(LanguageContext)
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -77,51 +80,51 @@ const AccountInfo = () => {
         style={{ marginTop: 0, paddingTop: 80 }}
       >
         <View style={styles.container}>
-          <Text style={styles.headerTxt}>
-            {AccountLocales["ar"].accountDetails}
+          <Text style={{ ...styles.headerTxt, textAlign: textAlign(lang) }}>
+            {AccountLocales[lang].accountDetails}
             {`  `}
             <FontAwesome5 name="info-circle" size={24} color="silver" />
           </Text>
           <View style={styles.formContainer}>
             <View style={styles.inputContainer}>
-              <View style={styles.inputHeaderContainer}>
+              <View style={{ ...styles.inputHeaderContainer, flexDirection: lang === 'en' ? "row" : "row-reverse" }}>
                 <MaterialCommunityIcons
                   name="rename-box"
                   size={24}
                   color="silver"
                 />
                 <Text style={styles.inputlLabelTxt}>
-                  {AccountLocales["ar"].name}
+                  {AccountLocales[lang].name}
                 </Text>
               </View>
               <TextInput
-                style={styles.input}
+                style={{ ...styles.input, textAlign: textAlign(lang) }}
                 value={form.name}
                 onChangeText={(e) => setForm((prev) => ({ ...prev, name: e }))}
               />
             </View>
             <View style={styles.inputContainer}>
-              <View style={styles.inputHeaderContainer}>
+              <View style={{ ...styles.inputHeaderContainer, flexDirection: lang === 'en' ? "row" : "row-reverse" }}>
                 <MaterialIcons name="email" size={24} color="silver" />
                 <Text style={styles.inputlLabelTxt}>
-                  {AccountLocales["ar"].email}
+                  {AccountLocales[lang].email}
                 </Text>
               </View>
               <TextInput
-                style={styles.input}
+                style={{ ...styles.input, textAlign: textAlign(lang) }}
                 value={form.email}
                 onChangeText={(e) => setForm((prev) => ({ ...prev, email: e }))}
               />
             </View>
             <View style={styles.inputContainer}>
-              <View style={styles.inputHeaderContainer}>
+              <View style={{ ...styles.inputHeaderContainer, flexDirection: lang === 'en' ? "row" : "row-reverse" }}>
                 <Entypo name="address" size={24} color="silver" />
                 <Text style={styles.inputlLabelTxt}>
-                  {AccountLocales["ar"].address}
+                  {AccountLocales[lang].address}
                 </Text>
               </View>
               <TextInput
-                style={styles.input}
+                style={{ ...styles.input, textAlign: textAlign(lang) }}
                 value={form.address}
                 onChangeText={(e) =>
                   setForm((prev) => ({ ...prev, address: e }))
@@ -129,32 +132,31 @@ const AccountInfo = () => {
               />
             </View>
             <View style={styles.inputContainer}>
-              <View style={styles.inputHeaderContainer}>
+              <View style={{ ...styles.inputHeaderContainer, flexDirection: lang === 'en' ? "row" : "row-reverse" }}>
                 <AntDesign name="phone" size={24} color="silver" />
                 <Text style={styles.inputlLabelTxt}>
-                  {AccountLocales["ar"].phone}
+                  {AccountLocales[lang].phone}
                 </Text>
               </View>
               <TextInput
-                style={styles.input}
+                style={{ ...styles.input, textAlign: textAlign(lang) }}
                 value={form.phone}
                 onChangeText={(e) => setForm((prev) => ({ ...prev, phone: e }))}
               />
             </View>
           </View>
           {updated?.status === "success" && (
-            <View style={styles.inputHeaderContainer}>
+            <View style={{ ...styles.inputHeaderContainer, flexDirection: lang === 'en' ? "row" : "row-reverse" }}>
               <AntDesign name="checkcircle" size={24} color="green" />
               <Text style={styles.successTxt}>
-                {AccountLocales["ar"].success}
+                {AccountLocales[lang].success}
               </Text>
             </View>
           )}
-
           <Pressable onPress={handleSubmit} style={styles.submitBtn}>
             <View>
               <Text style={styles.submitBtnTxt}>
-                {AccountLocales["ar"].save}
+                {AccountLocales[lang].save}
               </Text>
             </View>
           </Pressable>
@@ -192,12 +194,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginTop: 10,
-    textAlign: Platform.OS === "ios" && "right",
   },
   inputHeaderContainer: {
     display: "flex",
     alignItems: "center",
-    flexDirection: "row-reverse",
   },
   inputlLabelTxt: {
     marginHorizontal: 10,

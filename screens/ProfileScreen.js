@@ -20,9 +20,10 @@ import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import Search from "../components/Search";
 import StaticLinks from "../components/StaticLinks";
 import { ProfileLocals } from "../constants/Locales";
+import { LanguageContext } from "../context/langContext";
 
 const ProfileScreen = () => {
-
+  const { lang } = useContext(LanguageContext)
   const [user_, setUser_] = useState({})
   const checkIsLogedIn = async () => {
     const user = await AsyncStorage.getItem(("user"))
@@ -65,10 +66,10 @@ const ProfileScreen = () => {
               style={styles.linkPress}
               onPress={() => navigation.navigate("OrderHistory")}
             >
-              <View style={styles.linkContentContainer}>
-                <FontAwesome5 name="history" size={24} color="#55a8b9" />
+              <View style={{ flexDirection: lang === 'en' ? "row" : "row-reverse" }}>
+              <FontAwesome5 name="history" size={24} color="#55a8b9" />
                 <Text style={styles.linkText}>
-                  {ProfileLocals['ar'].orders}
+                  {ProfileLocals[lang].orders}
                 </Text>
               </View>
 
@@ -79,10 +80,10 @@ const ProfileScreen = () => {
               onPress={() => navigation.navigate("Account")}
 
             >
-              <View style={styles.linkContentContainer}>
-                <MaterialIcons name="manage-accounts" size={24} color="#55a8b9" />
+              <View style={{ flexDirection: lang === 'en' ? "row" : "row-reverse" }}>
+              <MaterialIcons name="manage-accounts" size={24} color="#55a8b9" />
                 <Text style={styles.linkText}>
-                  {ProfileLocals['ar'].profile}
+                  {ProfileLocals[lang].profile}
                 </Text>
               </View>
             </Pressable>
@@ -95,10 +96,10 @@ const ProfileScreen = () => {
               style={styles.linkPress}
               onPress={() => navigation.navigate("Favorite")}
             >
-              <View style={styles.linkContentContainer}>
-                <MaterialIcons name="favorite" size={24} color="#55a8b9" />
+              <View style={{ flexDirection: lang === 'en' ? "row" : "row-reverse" }}>
+              <MaterialIcons name="favorite" size={24} color="#55a8b9" />
                 <Text style={styles.linkText}>
-                  {ProfileLocals['ar'].favList}
+                  {ProfileLocals[lang].favList}
                 </Text>
               </View>
             </Pressable>
@@ -107,10 +108,10 @@ const ProfileScreen = () => {
               style={styles.signOut}
               onPress={signOut}
             >
-              <View style={styles.linkContentContainer}>
+              <View style={{ flexDirection: lang === 'en' ? "row" : "row-reverse" }}>
                 <SimpleLineIcons name="logout" size={22} color="black" />
                 <Text style={{ fontFamily: "CairoBold", fontSize: 13, color: "#fff", marginHorizontal: 10 }}>
-                  {ProfileLocals['ar'].logOut}
+                  {ProfileLocals[lang].logOut}
                 </Text>
               </View>
             </Pressable>
@@ -175,9 +176,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     fontFamily: "CairoBold"
   },
-  linkContentContainer: {
-    flexDirection: "row-reverse"
-  },
+
   viewContainer: {
     flexDirection: "column",
     alignItems: "center",

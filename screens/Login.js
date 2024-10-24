@@ -20,7 +20,10 @@ import _axios from "../Utils/axios";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import StaticLinks from "../components/StaticLinks";
 import { LoginLocal } from "../constants/Locales";
+import { LanguageContext } from "../context/langContext";
+import { textAlign } from "../Utils/align";
 const Login = () => {
+  const { lang } = useContext(LanguageContext)
   const { userId, setUserId } = useContext(UserType);
   const route = useRoute();
   const navigation = useNavigation();
@@ -99,7 +102,7 @@ const Login = () => {
       (isNewRegester && !credentials.name) ||
       (isNewRegester && method !== "phone" && !credentials.phone);
     if (newUserNotValid) {
-      setError("يجد ادخال كل اليانات المطلوبة");
+      setError(lang === 'ar' ? "يجد ادخال كل اليانات المطلوبة" : "All fields are required");
       return;
     }
     if (loginForm.username.substring(0, 1) === "0") {
@@ -127,11 +130,11 @@ const Login = () => {
         } else {
           let apiResults = res?.error;
           if (apiResults.user?.error === "wrongCredintials") {
-            setError(LoginLocal["ar"].wrongInput);
+            setError(LoginLocal[lang].wrongInput);
           }
         }
       })
-      .catch((err) => setError(LoginLocal["ar"].wrongInput));
+      .catch((err) => setError(LoginLocal[lang].wrongInput));
   };
   const validateEmail = (email) => {
     console.log({ debEmail: email === "karim.admin@admin.com" });
@@ -160,7 +163,7 @@ const Login = () => {
         });
     } else {
       let isEmailValid = validateEmail(loginForm.username);
-      if (!isEmailValid) setError(LoginLocal["ar"].wrongInput);
+      if (!isEmailValid) setError(LoginLocal[lang].wrongInput);
 
       if (isEmailValid) {
         try {
@@ -183,7 +186,7 @@ const Login = () => {
               });
           }
         } catch (err) {
-          setError(LoginLocal["ar"].somthingWentWrong);
+          setError(LoginLocal[lang].somthingWentWrong);
         }
       }
     }
@@ -202,23 +205,23 @@ const Login = () => {
                 {/* <Pressable onPress={() => setMethod("")}>
                             <AntDesign name="back" size={24} color="black" />
                         </Pressable> */}
-                <Text style={styles.firstText}>
-                  {LoginLocal["ar"].otpSentText} {loginForm.username}
+                <Text style={{ ...styles.firstText, textAlign: textAlign(lang) }}>
+                  {LoginLocal[lang].otpSentText} {loginForm.username}
                 </Text>
                 {isNewRegester && (
                   <>
                     <TextInput
-                      style={styles.input}
+                      style={{ ...styles.input, textAlign: textAlign(lang) }}
                       value={loginForm.phone}
-                      placeholder={LoginLocal["ar"].phone}
+                      placeholder={LoginLocal[lang].phone}
                       onChangeText={(e) =>
                         setLoginInForm((prev) => ({ ...prev, phone: e }))
                       }
                     />
                     <TextInput
-                      style={styles.input}
+                      style={{ ...styles.input, textAlign: textAlign(lang) }}
                       value={loginForm.name}
-                      placeholder={LoginLocal["ar"].name}
+                      placeholder={LoginLocal[lang].name}
                       onChangeText={(e) =>
                         setLoginInForm((prev) => ({ ...prev, name: e }))
                       }
@@ -226,9 +229,9 @@ const Login = () => {
                   </>
                 )}
                 <TextInput
-                  style={styles.input}
+                  style={{ ...styles.input, textAlign: textAlign(lang) }}
                   value={loginForm.password}
-                  placeholder={LoginLocal["ar"].otpPlaceHolder}
+                  placeholder={LoginLocal[lang].otpPlaceHolder}
                   onChangeText={(e) =>
                     setLoginInForm((prev) => ({ ...prev, password: e }))
                   }
@@ -237,14 +240,14 @@ const Login = () => {
                 {error && <Text style={styles.error}>{error}</Text>}
               </View>
               <Pressable style={styles.prymaryBtn} onPress={handleSignIn}>
-                <Text style={styles.btnTxt}>{LoginLocal["ar"].login}</Text>
+                <Text style={styles.btnTxt}>{LoginLocal[lang].login}</Text>
               </Pressable>
               <Pressable
                 style={styles.secBtn}
                 onPress={() => switchMethod("phone")}
               >
                 <Text style={styles.secBtnTxt}>
-                  {LoginLocal["ar"].loginViaPhone}
+                  {LoginLocal[lang].loginViaPhone}
                 </Text>
               </Pressable>
             </>
@@ -254,9 +257,9 @@ const Login = () => {
                 {/* <Pressable onPress={() => setMethod("")}>
                             <AntDesign name="back" size={24} color="black" />
                         </Pressable> */}
-                <Text style={styles.firstText}>{LoginLocal["ar"].email}</Text>
+                <Text style={{ ...styles.firstText, textAlign: textAlign(lang) }}>{LoginLocal[lang].email}</Text>
                 <TextInput
-                  style={styles.input}
+                  style={{ ...styles.input, textAlign: textAlign(lang) }}
                   value={loginForm.username}
                   onChangeText={(e) => {
                     setLoginInForm((prev) => ({ ...prev, username: e }));
@@ -267,14 +270,14 @@ const Login = () => {
               </View>
 
               <Pressable style={styles.mainBtn} onPress={handleOtpRequest}>
-                <Text style={styles.btnTxt}>{LoginLocal["ar"].otpButton}</Text>
+                <Text style={styles.btnTxt}>{LoginLocal[lang].otpButton}</Text>
               </Pressable>
               <Pressable
                 style={styles.secBtn}
                 onPress={() => switchMethod("phone")}
               >
                 <Text style={styles.secBtnTxt}>
-                  {LoginLocal["ar"].loginViaPhone}
+                  {LoginLocal[lang].loginViaPhone}
                 </Text>
               </Pressable>
             </>
@@ -289,15 +292,15 @@ const Login = () => {
                 {/* <Pressable onPress={() => setMethod("")}>
                             <AntDesign name="back" size={24} color="black" />
                         </Pressable> */}
-                <Text style={styles.firstText}>
-                  {LoginLocal["ar"].codeHasBeenSent} {loginForm.username}
+                <Text style={{ ...styles.firstText, textAlign: textAlign(lang) }}>
+                  {LoginLocal[lang].codeHasBeenSent} {loginForm.username}
                 </Text>
                 {isNewRegester && (
                   <>
                     <TextInput
-                      style={styles.input}
+                      style={{ ...styles.input, textAlign: textAlign(lang) }}
                       value={loginForm.name}
-                      placeholder={LoginLocal["ar"].name}
+                      placeholder={LoginLocal[lang].name}
                       onChangeText={(e) =>
                         setLoginInForm((prev) => ({ ...prev, name: e }))
                       }
@@ -305,9 +308,9 @@ const Login = () => {
                   </>
                 )}
                 <TextInput
-                  style={styles.input}
+                  style={{ ...styles.input, textAlign: textAlign(lang) }}
                   value={loginForm.password}
-                  placeholder={LoginLocal["ar"].otpPlaceHolder}
+                  placeholder={LoginLocal[lang].otpPlaceHolder}
                   onChangeText={(e) => {
                     setLoginInForm((prev) => ({ ...prev, password: e }));
                     setError("");
@@ -316,14 +319,14 @@ const Login = () => {
                 {error && <Text style={styles.error}>{error}</Text>}
               </View>
               <Pressable style={styles.prymaryBtn} onPress={handleSignIn}>
-                <Text style={styles.btnTxt}>{LoginLocal["ar"].login}</Text>
+                <Text style={styles.btnTxt}>{LoginLocal[lang].login}</Text>
               </Pressable>
               <Pressable
                 style={styles.secBtn}
                 onPress={() => switchMethod("email")}
               >
                 <Text style={styles.secBtnTxt}>
-                  {LoginLocal["ar"].loginViaEmail}
+                  {LoginLocal[lang].loginViaEmail}
                 </Text>
               </Pressable>
             </>
@@ -333,9 +336,9 @@ const Login = () => {
                 {/* <Pressable onPress={() => setMethod("")}>
                             <AntDesign name="back" size={24} color="black" />
                         </Pressable> */}
-                <Text style={styles.firstText}>{LoginLocal["ar"].phone}</Text>
+                <Text style={{ ...styles.firstText, textAlign: textAlign(lang) }}>{LoginLocal[lang].phone}</Text>
                 <TextInput
-                  style={styles.input}
+                  style={{ ...styles.input, textAlign: textAlign(lang) }}
                   value={loginForm.username}
                   placeholder="05"
                   onChangeText={(e) => {
@@ -347,14 +350,14 @@ const Login = () => {
               </View>
 
               <Pressable style={styles.mainBtn} onPress={handleOtpRequest}>
-                <Text style={styles.btnTxt}>{LoginLocal["ar"].otpButton}</Text>
+                <Text style={styles.btnTxt}>{LoginLocal[lang].otpButton}</Text>
               </Pressable>
               <Pressable
                 style={styles.secBtn}
                 onPress={() => switchMethod("email")}
               >
                 <Text style={styles.secBtnTxt}>
-                  {LoginLocal["ar"].loginViaEmail}
+                  {LoginLocal[lang].loginViaEmail}
                 </Text>
               </Pressable>
             </>
@@ -369,7 +372,7 @@ const Login = () => {
               onPress={() => setMethod("email")}
             >
               <Text style={styles.loginTxt}>
-                {LoginLocal["ar"].loginViaEmail}
+                {LoginLocal[lang].loginViaEmail}
               </Text>
             </Pressable>
           </View>
@@ -379,7 +382,7 @@ const Login = () => {
               onPress={() => setMethod("phone")}
             >
               <Text style={styles.btnTxt}>
-                {LoginLocal["ar"].loginViaPhone}
+                {LoginLocal[lang].loginViaPhone}
               </Text>
             </Pressable>
           </View>
@@ -414,7 +417,6 @@ const styles = StyleSheet.create({
   firstText: {
     fontFamily: "CairoMed",
     fontSize: 13,
-    textAlign: Platform.OS === "ios" && "right",
   },
   prymaryBtn: {
     padding: 10,
@@ -464,7 +466,6 @@ const styles = StyleSheet.create({
     padding: 10,
     fontFamily: "CairoMed",
     fontSize: 13,
-    textAlign: "right",
   },
   mainBtn: {
     padding: 10,

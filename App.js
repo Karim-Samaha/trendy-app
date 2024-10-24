@@ -7,6 +7,7 @@ import { store, persistor } from "./store";
 import { UserContext } from "./UserContext";
 import { PersistGate } from 'redux-persist/integration/react';
 import { useEffect, useState } from "react";
+import { LanguageProvider } from "./context/langContext";
 
 I18nManager.allowRTL(false)
 
@@ -18,11 +19,11 @@ export default function App() {
 
     // Check if the current direction matches the desired one
     if (forceLTR && I18nManager.isRTL) {
-      I18nManager.forceRTL(false); 
+      I18nManager.forceRTL(false);
       I18nManager.allowRTL(false)
       setLayoutChanged(true)
 
-       // Force LTR if system is RTL
+      // Force LTR if system is RTL
       // setLayoutChanged(true);  // Trigger re-render to apply new layout
     } else if (!forceLTR && !I18nManager.isRTL) {
       I18nManager.forceRTL(true);  // Force RTL if system is LTR
@@ -32,19 +33,21 @@ export default function App() {
 
 
   if (layoutChanged) {
-    console.log({I18nManager})
+    console.log({ I18nManager })
     return null;  // Render null while layout direction is being set
   }
-  
+
   return (
     <>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <StatusBar style="light" backgroundColor="#55a8b9" />
-          <UserContext>
-            <StackNavigator />
-            <ModalPortal />
-          </UserContext>
+          <LanguageProvider>
+            <StatusBar style="light" backgroundColor="#55a8b9" />
+            <UserContext>
+              <StackNavigator />
+              <ModalPortal />
+            </UserContext>
+          </LanguageProvider>
         </PersistGate>
       </Provider>
     </>

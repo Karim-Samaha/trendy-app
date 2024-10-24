@@ -7,10 +7,14 @@ import {
   Platform,
 } from "react-native";
 import { config } from "../screens/config";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ReviewModal from "./ReviewModal";
-import { OrderItemLocal } from "../constants/Locales";
+import { currency, OrderItemLocal } from "../constants/Locales";
+import { LanguageContext } from "../context/langContext";
+import { textAlign } from "../Utils/align";
+import { removeArabicChars, renderEnglishName } from "../Utils/renderEnglishName";
 const OrderItem = ({ item, user }) => {
+  const { lang } = useContext(LanguageContext)
   const [isModalVisible, setModalVisible] = useState(false);
   const openModal = () => {
     setModalVisible(true);
@@ -20,43 +24,43 @@ const OrderItem = ({ item, user }) => {
     console.log("!!!!!!!!!!!!!!!!!!");
   };
   const status = {
-    PROCCESSING: "قيد التنفيذ",
-    WORKING_ON_IT: "جاري التجهيز",
-    SCHEDULED: "قيد التنفيذ",
-    ON_THE_WAY: "تم الشحن",
-    DELEIVERD: "تم التوصيل",
-    RETURNED: "مسترجع",
-    CANCELED: "مسترجع",
+    PROCCESSING: lang === "en" ? "Processing" : "قيد التنفيذ",
+    WORKING_ON_IT: lang === "en" ? "Working on it" : "جاري التجهيز",
+    SCHEDULED: lang === "en" ? "Processing" : "قيد التنفيذ",
+    ON_THE_WAY: lang === 'en' ? "On The Way" : "تم الشحن",
+    DELEIVERD: lang === "en" ? "Delivered" : "تم التوصيل",
+    RETURNED: lang === "en" ? "Returned" : "مسترجع",
+    CANCELED: lang === "en" ? "Returned" : "مسترجع",
   };
-  console.log(item);
   return (
     <View style={styles.screenContainer} key={item?._id}>
       <View style={styles.orderHeader}>
         <Text
           style={{
             fontFamily: "CairoMed",
-            textAlign: Platform.OS === "ios" && "right",
+            textAlign: textAlign(lang),
           }}
         >
-          {OrderItemLocal["ar"].refNum} :{" "}
-          <Text style={styles.boldTxt}>{item?._id}</Text>
+          {OrderItemLocal[lang].refNum} :{" "}
+          <Text style={{ ...styles.boldTxt, textAlign: textAlign(lang) }}>{item?._id}</Text>
         </Text>
-        <Pressable style={styles.rate} onPress={openModal}>
-          <Text style={styles.rateText}>{OrderItemLocal["ar"].rate}</Text>
+        <Pressable style={{ ...styles.rate, left: lang === "en" ? "90%" : 5 }} onPress={openModal}>
+          <Text style={styles.rateText}>{OrderItemLocal[lang].rate}</Text>
         </Pressable>
-        <Text style={styles.midTxt}>
-          {OrderItemLocal["ar"].date} :{" "}
-          <Text style={styles.boldTxt}>{item?.createdAt.split("T")[0]}</Text>
+        <Text style={{ ...styles.midTxt, textAlign: textAlign(lang) }}>
+          {OrderItemLocal[lang].date} :{" "}
+          <Text style={{ ...styles.boldTxt, textAlign: textAlign(lang) }}>{item?.createdAt.split("T")[0]}</Text>
         </Text>
-        <Text style={styles.midTxt}>
-          {OrderItemLocal["ar"].price} :{" "}
-          <Text style={styles.boldTxt}>{item?.amount / 100}رس</Text>
+        <Text style={{ ...styles.midTxt, textAlign: textAlign(lang) }}>
+          {OrderItemLocal[lang].price} :{" "}
+          <Text style={{ ...styles.boldTxt, textAlign: textAlign(lang) }}>{item?.amount / 100}{" "}{currency[lang]}</Text>
         </Text>
         <View
           style={{
             ...styles.orderStatusContainer,
             backgroundColor:
               item.orderStatus === "DELEIVERD" ? "green" : "#faefe3",
+            marginLeft: lang === 'en' ? "auto" : 0
           }}
         >
           <Text
@@ -72,7 +76,7 @@ const OrderItem = ({ item, user }) => {
       {item.purchaseBulk.map((purchaseItem, index) => {
         return (
           <View style={styles.orderInfo} key={index}>
-            <View style={styles.imageContainer}>
+            <View style={{ ...styles.imageContainer, flexDirection: lang === 'en' ? "row" : "row-reverse" }}>
               <Image
                 style={styles.image}
                 source={{ uri: `${config.assetsUrl}/${purchaseItem?.image}` }}
@@ -82,26 +86,26 @@ const OrderItem = ({ item, user }) => {
               <Text
                 style={{
                   fontSize: 16,
-                  textAlign: Platform.OS === "ios" && "right",
+                  textAlign: textAlign(lang),
                 }}
               >
-                {purchaseItem.name}
+                {lang === "ar" ? purchaseItem.name : renderEnglishName(purchaseItem)}
               </Text>
-              <Text style={styles.orderInfo}>
-                {OrderItemLocal["ar"].qty} :{" "}
-                <Text style={styles.boldTxt}>{purchaseItem.quantity}</Text>
+              <Text style={{ ...styles.orderInfo, textAlign: textAlign(lang) }}>
+                {OrderItemLocal[lang].qty} :{" "}
+                <Text style={{ ...styles.boldTxt, textAlign: textAlign(lang) }}>{purchaseItem.quantity}</Text>
               </Text>
-              <Text style={styles.orderInfo}>
-                {OrderItemLocal["ar"].price} :{" "}
-                <Text style={styles.boldTxt}>{purchaseItem.price}رس</Text>
+              <Text style={{ ...styles.orderInfo, textAlign: textAlign(lang) }}>
+                {OrderItemLocal[lang].price} :{" "}
+                <Text style={{ ...styles.boldTxt, textAlign: textAlign(lang) }}>{purchaseItem.price}{" "} {currency[lang]}</Text>
               </Text>
-              <Text style={styles.orderInfo}>
-                {OrderItemLocal["ar"].shipping} :{" "}
-                <Text style={styles.boldTxt}>{item.ShippingType}</Text>
+              <Text style={{ ...styles.orderInfo, textAlign: textAlign(lang) }}>
+                {OrderItemLocal[lang].shipping} :{" "}
+                <Text style={{ ...styles.boldTxt, textAlign: textAlign(lang) }}>{lang === 'ar' ? item.ShippingType : removeArabicChars(item.ShippingType)}</Text>
               </Text>
-              <Text style={styles.orderInfo}>
-                {OrderItemLocal["ar"].reciverName} :{" "}
-                <Text style={styles.boldTxt}>
+              <Text style={{ ...styles.orderInfo, textAlign: textAlign(lang) }}>
+                {OrderItemLocal[lang].reciverName} :{" "}
+                <Text style={{ ...styles.boldTxt, textAlign: textAlign(lang) }}>
                   {purchaseItem?.formInfo?.sentTo ||
                     item.ShippingInfo?.name ||
                     user?.name ||
@@ -109,39 +113,40 @@ const OrderItem = ({ item, user }) => {
                     ""}
                 </Text>
               </Text>
-              <Text style={styles.orderInfo}>
-                {OrderItemLocal["ar"].address} :{" "}
-                <Text style={styles.boldTxt}>
+              <Text style={{ ...styles.orderInfo, textAlign: textAlign(lang) }}>
+                {OrderItemLocal[lang].address} :{" "}
+                <Text style={{ ...styles.boldTxt, textAlign: textAlign(lang) }}>
                   {" "}
-                  {purchaseItem?.formInfo?.address ||
+                  {purchaseItem?.formInfo?.address || lang === 'en' ? "No address were specified" :
                     "لم يتم تحديد العنوان (سيقوم الدعم بالتواصل مع المستلم)"}
                 </Text>
               </Text>
-              <View style={styles.extra}>
-                <Text> التوصيل ( + 0.00 ر.س )</Text>
+
+              <View style={{ ...styles.extra, marginLeft: lang === 'en' ? "auto" : 0 }}>
+                <Text> {OrderItemLocal[lang].delv} ( + 0.00 {currency[lang]})</Text>
               </View>
-              <View style={styles.extra}>
+              <View style={{ ...styles.extra, marginLeft: lang === 'en' ? "auto" : 0 }}>
                 <Text>
-                  وسيلة الدفع :{" "}
+                  {OrderItemLocal[lang].method} :{" "}
                   <Text style={{ fontWeight: "bold" }}>{item.source}</Text>
                 </Text>
               </View>
               {purchaseItem.formInfo?.cardText.length > 0 ? (
-                <View style={styles.extra}>
+                <View style={{ ...styles.extra, marginLeft: lang === 'en' ? "auto" : 0 }}>
                   <Text>
                     {" "}
-                    {OrderItemLocal["ar"].cardText}
-                    <Text style={styles.boldTxt}>( + 6.00 ر.س )</Text>
+                    {OrderItemLocal[lang].cardText}
+                    <Text style={{ ...styles.boldTxt, textAlign: textAlign(lang) }}>( + 6.00 {currency[lang]} )</Text>
                   </Text>
                 </View>
               ) : null}
               {purchaseItem?.selectedCard?.price ? (
-                <View style={styles.extra}>
+                <View style={{ ...styles.extra, marginLeft: lang === 'en' ? "auto" : 0 }}>
                   <Text>
                     {" "}
-                    {OrderItemLocal["ar"].adds}
-                    <Text style={styles.boldTxt}>
-                      ( + {purchaseItem?.selectedCard?.price} ر.س )
+                    {OrderItemLocal[lang].adds}
+                    <Text style={{ ...styles.boldTxt, textAlign: textAlign(lang) }}>
+                      ( + {purchaseItem?.selectedCard?.price} {currency[lang]} )
                     </Text>
                   </Text>
                 </View>
@@ -183,7 +188,6 @@ const styles = StyleSheet.create({
   },
   rate: {
     position: "absolute",
-    left: 5,
     top: 5,
     fontWeight: "bold",
   },
@@ -216,12 +220,10 @@ const styles = StyleSheet.create({
   },
   boldTxt: {
     fontFamily: "CairoBold",
-    textAlign: Platform.OS === "ios" && "right",
   },
   midTxt: {
     marginTop: 10,
     fontFamily: "CairoMed",
-    textAlign: Platform.OS === "ios" && "right",
   },
   infoContainer: {
     paddingHorizontal: 20,
@@ -241,7 +243,6 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: "100%",
-    flexDirection: "row-reverse",
     paddingVertical: 10,
   },
   image: {
@@ -262,5 +263,6 @@ const styles = StyleSheet.create({
     borderLeftWidth: 0,
     borderTopWidth: 0,
     borderRightWidth: 0,
+
   },
 });
